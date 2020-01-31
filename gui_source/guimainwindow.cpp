@@ -155,7 +155,7 @@ void GuiMainWindow::handle()
     if(currentRow!=-1)
     {
         int nID=ui->listWidgetSymTags->currentItem()->data(Qt::UserRole).toInt();
-//        QWinPDB::HANDLE_OPTIONS handleOptions={0};
+        QWinPDB::HANDLE_OPTIONS handleOptions={0};
 
 //        handleOptions.bOffsets=ui->checkBoxOffsets->isChecked();
 //        handleOptions.bSizes=ui->checkBoxSizes->isChecked();
@@ -165,7 +165,7 @@ void GuiMainWindow::handle()
 //        ui->textBrowserResult->setText(sResult);
         QWinPDB::ELEM elem=pWinPDB->getElem(nID);
 
-        QString sText=QWinPDB::elemToString(&elem);
+        QString sText=QWinPDB::elemToString(&elem,&handleOptions);
 
         ui->textBrowserResult->setText(sText);
     }
