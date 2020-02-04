@@ -165,7 +165,7 @@ void GuiMainWindow::handle()
 //        ui->textBrowserResult->setText(sResult);
         QWinPDB::ELEM elem=pWinPDB->getElem(nID);
 
-        QString sText=QWinPDB::elemToString(&elem,&handleOptions);
+        QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
 
         ui->textBrowserResult->setText(sText);
     }

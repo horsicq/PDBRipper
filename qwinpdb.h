@@ -572,7 +572,7 @@ public:
         bool bNoFunctions;
     };
 
-    static QString elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel=0);
+    static QString elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsStruct);
 
 private:
     void cleanup();
@@ -611,7 +611,7 @@ private:
     QString _handle(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt); // TODO return struct
     ELEMENT getElement(IDiaSymbol *pParent);
     QString elementToString(ELEMENT *pElement,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt);
-    static QString rtypeToString(RTYPE rtype,HANDLE_OPTIONS *pHandleOptions);
+    static QString rtypeToString(RTYPE rtype,HANDLE_OPTIONS *pHandleOptions, bool bIsStruct);
     static QString getAccessString(int nAccess);
 
     static QString _getTab(int nLevel);
