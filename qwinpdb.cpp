@@ -197,6 +197,11 @@ QWinPDB::RECORD_UDT QWinPDB::_getRecordUDT(IDiaSymbol *pSymbol)
     pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
     pSymbol->get_volatileType(&result._volatileType);
 
+    if(result._udtKind==0)      result.sType="struct";
+    else if(result._udtKind==1) result.sType="class";
+    else if(result._udtKind==2) result.sType="union";
+    else if(result._udtKind==3) result.sType="interface";
+
     return result;
 }
 
@@ -667,9 +672,9 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             result.bIsConst=udt._constType;
             result.bIsUnaligned=udt._unalignedType;
             result.bIsVolatile=udt._volatileType;
-
+            result.sType=udt.sType;
             result.type=RD_UDT;
-            result.sType=udt._name; // TODO const
+            result.sTypeName=udt._name; // TODO const
         }
         else if(dwSymTag==SymTagPointerType)
         {
@@ -719,7 +724,16 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             result.bIsVolatile=enumType._volatileType;
 
             result.type=RD_ENUM;
-            result.sType=enumType._name; // TODO const
+            result.sTypeName=enumType._name; // TODO const
+            result.sType="enum";
+        }
+        else if(dwSymTag==SymTagFunctionType)
+        {
+            RECORD_FUNCTIONTYPE ft=_getRecordFunctionType(pType);
+            result.bIsConst=ft._constType;
+            result.bIsUnaligned=ft._unalignedType;
+            result.bIsVolatile=ft._volatileType;
+            result.type=RD_FUNCTION;
         }
         else
         {
@@ -1245,7 +1259,15 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, QWinPDB::HANDLE_OPTIONS *pH
 
     if(rtype.type==RD_UDT)
     {
-        sResult+=rtype.sType;
+        sResult+=QString("%1 %2").arg(rtype.sType).arg(rtype.sTypeName);
+    }
+    else if(rtype.type==RD_ENUM)
+    {
+        sResult+=QString("%1 %2").arg(rtype.sType).arg(rtype.sTypeName);
+    }
+    else if(rtype.type==RD_FUNCTION)
+    {
+        sResult+="FUNCTION: TODO";
     }
     else if(rtype.type==RD_BASETYPE)
     {
@@ -1814,17 +1836,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     }
     else if(pElem->elemType==ELEM_TYPE_UDT)
     {
-        QString sType;
-
-        switch(pElem->_udt._udtKind)
-        {
-            case 0: sType="struct";         break;
-            case 1: sType="class";          break;
-            case 2: sType="union";          break;
-            case 3: sType="interface";      break;
-        }
-
-        sResult+=_getTab(nLevel)+QString("%1 %2").arg(sType).arg(pElem->_udt._name);
+        sResult+=_getTab(nLevel)+QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
 
         QList<QString> listBaseClasses;
 

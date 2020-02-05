@@ -72,7 +72,8 @@ public:
         RD_UNKNOWN=0,
         RD_BASETYPE,
         RD_UDT,
-        RD_ENUM
+        RD_ENUM,
+        RD_FUNCTION
     };
 
     struct RTYPE
@@ -80,6 +81,7 @@ public:
         RD type;
         int nBaseType;
         QString sType;
+        QString sTypeName;
         QString sName;
         int nSize;
         int nOffset;
@@ -208,6 +210,7 @@ public:
         BOOL _unalignedType;
         DWORD _virtualTableShapeId;
         BOOL _volatileType;
+        QString sType;
     };
 
     struct RECORD_TYPEDEF
