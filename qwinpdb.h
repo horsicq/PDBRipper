@@ -76,7 +76,7 @@ public:
         RD_FUNCTION
     };
 
-    struct RTYPE
+    struct _RTYPE
     {
         RD type;
         int nBaseType;
@@ -94,6 +94,12 @@ public:
         int nPointerDeep;
         bool bIsArray;
         QList<int> listArrayCount;
+    };
+
+    struct RTYPE
+    {
+        _RTYPE rt;
+        QList<_RTYPE> listArgs;
     };
 
     enum ELEMENT_TYPE
