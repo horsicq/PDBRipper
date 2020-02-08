@@ -295,9 +295,9 @@ QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol)
     // TODO extra options
 
     result.rtype=getSymbolType(pSymbol);
-    result.rtype.rt.sName=result._name;
-    result.rtype.rt.nOffset=result._offset;
-    result.rtype.rt.nAccess=result._access;
+    result.rtype.sName=result._name;
+    result.rtype.nOffset=result._offset;
+    result.rtype.nAccess=result._access;
 
     return result;
 }
@@ -643,6 +643,8 @@ QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol)
         qDebug("No type"); // TODO Check
     }
 
+//    pType->Release();
+
     return result;
 }
 
@@ -659,24 +661,24 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
         if(dwSymTag==SymTagBaseType)
         {
             RECORD_BASETYPE baseType=_getRecordBaseType(pType);
-            result.rt.nSize=baseType._length;
-            result.rt.bIsConst=baseType._constType;
-            result.rt.bIsUnaligned=baseType._unalignedType;
-            result.rt.bIsVolatile=baseType._volatileType;
+            result.nSize=baseType._length;
+            result.bIsConst=baseType._constType;
+            result.bIsUnaligned=baseType._unalignedType;
+            result.bIsVolatile=baseType._volatileType;
 
-            result.rt.type=RD_BASETYPE;
-            result.rt.nBaseType=baseType._baseType; // TODO const
+            result.type=RD_BASETYPE;
+            result.nBaseType=baseType._baseType; // TODO const
         }
         else if(dwSymTag==SymTagUDT)
         {
             RECORD_UDT udt=_getRecordUDT(pType);
-            result.rt.nSize=udt._length;
-            result.rt.bIsConst=udt._constType;
-            result.rt.bIsUnaligned=udt._unalignedType;
-            result.rt.bIsVolatile=udt._volatileType;
-            result.rt.sType=udt.sType;
-            result.rt.type=RD_UDT;
-            result.rt.sTypeName=udt._name; // TODO const
+            result.nSize=udt._length;
+            result.bIsConst=udt._constType;
+            result.bIsUnaligned=udt._unalignedType;
+            result.bIsVolatile=udt._volatileType;
+            result.sType=udt.sType;
+            result.type=RD_UDT;
+            result.sTypeName=udt._name; // TODO const
         }
         else if(dwSymTag==SymTagPointerType)
         {
@@ -688,18 +690,18 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             result=_getType(_pType);
             if(pointerType._reference)
             {
-                result.rt.bIsReference=true;
+                result.bIsReference=true;
             }
             else
             {
-                result.rt.bIsPointer=true;
+                result.bIsPointer=true;
             }
 
-            result.rt.nPointerDeep++;
-            result.rt.nSize=pointerType._length;
-            result.rt.bIsConst=pointerType._constType;
-            result.rt.bIsUnaligned=pointerType._unalignedType;
-            result.rt.bIsVolatile=pointerType._volatileType;
+            result.nPointerDeep++;
+            result.nSize=pointerType._length;
+            result.bIsConst=pointerType._constType;
+            result.bIsUnaligned=pointerType._unalignedType;
+            result.bIsVolatile=pointerType._volatileType;
 
             _pType->Release();
         }
@@ -711,12 +713,12 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             pType->get_type(&_pType);
 
             result=_getType(_pType);
-            result.rt.bIsArray=true;
-            result.rt.listArrayCount.append(arrayType._count);
-            result.rt.nSize*=arrayType._count;
-            result.rt.bIsConst=arrayType._constType;
-            result.rt.bIsUnaligned=arrayType._unalignedType;
-            result.rt.bIsVolatile=arrayType._volatileType;
+            result.bIsArray=true;
+            result.listArrayCount.append(arrayType._count);
+            result.nSize*=arrayType._count;
+            result.bIsConst=arrayType._constType;
+            result.bIsUnaligned=arrayType._unalignedType;
+            result.bIsVolatile=arrayType._volatileType;
 
             _pType->Release();
         }
@@ -724,26 +726,24 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
         {
             RECORD_ENUM enumType=_getRecordEnum(pType);
 
-            result.rt.nSize=enumType._length;
-            result.rt.bIsConst=enumType._constType;
-            result.rt.bIsUnaligned=enumType._unalignedType;
-            result.rt.bIsVolatile=enumType._volatileType;
+            result.nSize=enumType._length;
+            result.bIsConst=enumType._constType;
+            result.bIsUnaligned=enumType._unalignedType;
+            result.bIsVolatile=enumType._volatileType;
 
-            result.rt.type=RD_ENUM;
-            result.rt.sTypeName=enumType._name; // TODO const
-            result.rt.sType="enum";
+            result.type=RD_ENUM;
+            result.sTypeName=enumType._name; // TODO const
+            result.sType="enum";
         }
         else if(dwSymTag==SymTagFunctionType)
         {
             RTYPE res_ret=getSymbolType(pType);
 
-            result.rt=res_ret.rt;
-
             RECORD_FUNCTIONTYPE ft=_getRecordFunctionType(pType);
-            result.rt.bIsConst=ft._constType;
-            result.rt.bIsUnaligned=ft._unalignedType;
-            result.rt.bIsVolatile=ft._volatileType;
-            result.rt.type=RD_FUNCTION;
+            result.bIsConst=ft._constType;
+            result.bIsUnaligned=ft._unalignedType;
+            result.bIsVolatile=ft._volatileType;
+            result.type=RD_FUNCTION;
 
             IDiaEnumSymbols *pEnumSymbols;
             if(pType->findChildren(SymTagNull, nullptr, nsNone, &pEnumSymbols)==S_OK)
@@ -784,6 +784,36 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
 
 
     return result;
+}
+
+QString QWinPDB::getSymbolTypeString(IDiaSymbol *pSymbol)
+{
+    QString sResult;
+
+    IDiaSymbol *pType=0;
+    pSymbol->get_type(&pType);
+
+    if(pType)
+    {
+        sResult=_getTypeString(pType);
+    }
+    else
+    {
+        qDebug("No type"); // TODO Check
+    }
+
+    pType->Release();
+
+    return sResult;
+}
+
+QString QWinPDB::_getTypeString(IDiaSymbol *pType)
+{
+    QString sResult;
+
+    // TODO
+
+    return sResult;
 }
 
 DWORD QWinPDB::_getSymTag(IDiaSymbol *pSymbol)
@@ -1908,6 +1938,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
         sResult+="\r\n";
         sResult+=_getTab(nLevel)+"{\r\n";
 
+        // TODO typedefs
         for(int i=0;i<nChildrenCount;i++)
         {
             if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
@@ -1935,7 +1966,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     }
     else if(pElem->elemType==ELEM_TYPE_FUNCTION)
     {
-        sResult+=_getTab(nLevel)+"FUNCTION "+pElem->_function._name;
+        sResult+=_getTab(nLevel)+"!!!FUNCTION "+pElem->_function._name;
         // TODO function start,end
     }
     else // TODO Check typedef

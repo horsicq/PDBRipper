@@ -76,7 +76,7 @@ public:
         RD_FUNCTION
     };
 
-    struct _RTYPE
+    struct RTYPE
     {
         RD type;
         int nBaseType;
@@ -94,12 +94,7 @@ public:
         int nPointerDeep;
         bool bIsArray;
         QList<int> listArrayCount;
-    };
-
-    struct RTYPE
-    {
-        _RTYPE rt;
-        QList<_RTYPE> listArgs;
+        QString sArg;
     };
 
     enum ELEMENT_TYPE
@@ -614,6 +609,9 @@ private:
 
     RTYPE getSymbolType(IDiaSymbol *pSymbol);
     RTYPE _getType(IDiaSymbol *pType);
+
+    QString getSymbolTypeString(IDiaSymbol *pSymbol);
+    QString _getTypeString(IDiaSymbol *pType);
 
     DWORD _getSymTag(IDiaSymbol *pSymbol);
     bool getSymbolByID(DWORD dwID,IDiaSymbol **ppSymbol);
