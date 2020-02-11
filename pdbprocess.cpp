@@ -36,6 +36,7 @@ void PDBProcess::getStats()
 {
     if(pStats)
     {
+        // TODO Progress bar
         *pStats=pWinPDB->getStats();
 
         emit completed();
@@ -44,5 +45,5 @@ void PDBProcess::getStats()
 
 void PDBProcess::stop()
 {
-
+    // TODO
 }
