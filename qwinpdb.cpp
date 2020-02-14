@@ -739,6 +739,8 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
         }
         else if(dwSymTag==SymTagFunctionType)
         {
+            // TODO !!!
+            // TODO signature as string
             RTYPE res_ret=getSymbolType(pType);
 
             RECORD_FUNCTIONTYPE ft=_getRecordFunctionType(pType);
