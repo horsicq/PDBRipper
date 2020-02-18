@@ -80,7 +80,7 @@ public:
     {
         RD type;
         int nBaseType;
-        QString sType;
+//        QString sType;
         QString sTypeName;
         QString sName;
         int nSize;
@@ -95,6 +95,8 @@ public:
         bool bIsArray;
         QList<int> listArrayCount;
         QString sArg;
+        QString sFunctionRet;
+        QList<QString> listFunctionArgs;
     };
 
     enum ELEMENT_TYPE
@@ -189,6 +191,8 @@ public:
         ULONGLONG _virtualAddress;
         DWORD _virtualBaseOffset;
         BOOL _volatileType;
+
+        RTYPE rtype;
     };
 
     struct RECORD_UDT
@@ -618,7 +622,7 @@ private:
     QString _handle(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt); // TODO return struct
     ELEMENT getElement(IDiaSymbol *pParent);
     QString elementToString(ELEMENT *pElement,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt);
-    static QString rtypeToString(RTYPE rtype,HANDLE_OPTIONS *pHandleOptions, bool bIsStruct);
+    static QString rtypeToString(RTYPE rtype, bool bIsStruct);
     static QString getAccessString(int nAccess);
 
     static QString _getTab(int nLevel);

@@ -255,7 +255,9 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol)
     pSymbol->get_virtualBaseOffset(&result._virtualBaseOffset);
     pSymbol->get_volatileType(&result._volatileType);
 
-    RTYPE rtype=getSymbolType(pSymbol);
+    result.rtype=getSymbolType(pSymbol);
+    result.rtype.sName=result._name;
+    result.rtype.nAccess=result._access;
 
     return result;
 }
@@ -670,6 +672,44 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
 
             result.type=RD_BASETYPE;
             result.nBaseType=baseType._baseType; // TODO const
+
+            switch(result.nBaseType)
+            {
+                case 0:     result.sTypeName="<btNoType>";          break;
+                case 1:     result.sTypeName="void";                break;
+                case 2:     result.sTypeName="char";                break;
+                case 3:     result.sTypeName="wchar_t";             break;
+                case 4:     result.sTypeName="signed char";         break;
+                case 5:     result.sTypeName="unsigned char";       break;
+                case 6:     result.sTypeName="int";                 break;
+                case 7:     result.sTypeName="unsigned int";        break;
+                case 8:     result.sTypeName="float";               break;
+                case 9:     result.sTypeName="BCD";                 break;
+                case 10:    result.sTypeName="bool";                break;
+                case 11:    result.sTypeName="short";               break;
+                case 12:    result.sTypeName="unsigned short";      break;
+                case 13:    result.sTypeName="long";                break;
+                case 14:    result.sTypeName="unsigned long";       break;
+                case 15:    result.sTypeName="__int8";              break;
+                case 16:    result.sTypeName="__int16";             break;
+                case 17:    result.sTypeName="__int32";             break;
+                case 18:    result.sTypeName="__int64";             break;
+                case 19:    result.sTypeName="__int128";            break;
+                case 20:    result.sTypeName="unsigned __int8";     break;
+                case 21:    result.sTypeName="unsigned __int16";    break;
+                case 22:    result.sTypeName="unsigned __int32";    break;
+                case 23:    result.sTypeName="unsigned __int64";    break;
+                case 24:    result.sTypeName="unsigned __int128";   break;
+                case 25:    result.sTypeName="CURRENCY";            break;
+                case 26:    result.sTypeName="DATE";                break;
+                case 27:    result.sTypeName="VARIANT";             break;
+                case 28:    result.sTypeName="COMPLEX";             break;
+                case 29:    result.sTypeName="BIT";                 break;
+                case 30:    result.sTypeName="BSTR";                break;
+                case 31:    result.sTypeName="HRESULT";             break;
+                case 32:    result.sTypeName="char16_t";            break;
+                case 33:    result.sTypeName="char32_t";            break;
+            }
         }
         else if(dwSymTag==SymTagUDT)
         {
@@ -678,9 +718,8 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             result.bIsConst=udt._constType;
             result.bIsUnaligned=udt._unalignedType;
             result.bIsVolatile=udt._volatileType;
-            result.sType=udt.sType;
             result.type=RD_UDT;
-            result.sTypeName=udt._name; // TODO const
+            result.sTypeName=QString("%1 %2").arg(udt.sType).arg(udt._name); // TODO const
         }
         else if(dwSymTag==SymTagPointerType)
         {
@@ -734,14 +773,14 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             result.bIsVolatile=enumType._volatileType;
 
             result.type=RD_ENUM;
-            result.sTypeName=enumType._name; // TODO const
-            result.sType="enum";
+            result.sTypeName=QString("enum %1").arg(enumType._name); // TODO const
         }
         else if(dwSymTag==SymTagFunctionType)
         {
             // TODO !!!
             // TODO signature as string
             RTYPE res_ret=getSymbolType(pType);
+            result.sFunctionRet=rtypeToString(res_ret,false);
 
             RECORD_FUNCTIONTYPE ft=_getRecordFunctionType(pType);
             result.bIsConst=ft._constType;
@@ -762,7 +801,9 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
 
                         while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
                         {
-                            RTYPE rtype=_getType(pSymbol);
+                            RTYPE rtype=getSymbolType(pSymbol);
+
+                            result.listFunctionArgs.append(rtypeToString(rtype,false));
 
                             pSymbol->Release();
                         }
@@ -1309,7 +1350,7 @@ QString QWinPDB::elementToString(QWinPDB::ELEMENT *pElement,HANDLE_OPTIONS *pHan
     return sResult;
 }
 
-QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, QWinPDB::HANDLE_OPTIONS *pHandleOptions, bool bIsStruct)
+QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsStruct)
 {
     QString sResult;
 
@@ -1330,58 +1371,22 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, QWinPDB::HANDLE_OPTIONS *pH
 
     if(rtype.type==RD_UDT)
     {
-        sResult+=QString("%1 %2").arg(rtype.sType).arg(rtype.sTypeName);
+        sResult+=rtype.sTypeName;
     }
     else if(rtype.type==RD_ENUM)
     {
-        sResult+=QString("%1 %2").arg(rtype.sType).arg(rtype.sTypeName);
+        sResult+=rtype.sTypeName;
     }
     else if(rtype.type==RD_FUNCTION)
     {
-        sResult+="FUNCTION: TODO";
+        sResult+=rtype.sFunctionRet;
     }
     else if(rtype.type==RD_BASETYPE)
     {
-        switch(rtype.nBaseType)
-        {
-            case 0: sResult+="<btNoType>"; break;
-            case 1: sResult+="void"; break;
-            case 2: sResult+="char"; break;
-            case 3: sResult+="wchar_t"; break;
-            case 4: sResult+="signed char"; break;
-            case 5: sResult+="unsigned char"; break;
-            case 6: sResult+="int"; break;
-            case 7: sResult+="unsigned int"; break;
-            case 8: sResult+="float"; break;
-            case 9: sResult+="BCD"; break;
-            case 10: sResult+="bool"; break;
-            case 11: sResult+="short"; break;
-            case 12: sResult+="unsigned short"; break;
-            case 13: sResult+="long"; break;
-            case 14: sResult+="unsigned long"; break;
-            case 15: sResult+="__int8"; break;
-            case 16: sResult+="__int16"; break;
-            case 17: sResult+="__int32"; break;
-            case 18: sResult+="__int64"; break;
-            case 19: sResult+="__int128"; break;
-            case 20: sResult+="unsigned __int8"; break;
-            case 21: sResult+="unsigned __int16"; break;
-            case 22: sResult+="unsigned __int32"; break;
-            case 23: sResult+="unsigned __int64"; break;
-            case 24: sResult+="unsigned __int128"; break;
-            case 25: sResult+="CURRENCY"; break;
-            case 26: sResult+="DATE"; break;
-            case 27: sResult+="VARIANT"; break;
-            case 28: sResult+="COMPLEX"; break;
-            case 29: sResult+="BIT"; break;
-            case 30: sResult+="BSTR"; break;
-            case 31: sResult+="HRESULT"; break;
-            case 32: sResult+="char16_t"; break;
-            case 33: sResult+="char32_t"; break;
-        }
+        sResult+=rtype.sTypeName;
     }
 
-    sResult+=" ";
+    sResult+=" "; // TODO !!!
 
     if(rtype.bIsReference)
     {
@@ -1395,6 +1400,7 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, QWinPDB::HANDLE_OPTIONS *pH
             sResult+="*";
         }
     }
+
     sResult+=rtype.sName;
 
     if(rtype.bIsArray)
@@ -1403,6 +1409,25 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, QWinPDB::HANDLE_OPTIONS *pH
         {
             sResult+=QString("[%1]").arg(rtype.listArrayCount.at(i));
         }
+    }
+
+    else if(rtype.type==RD_FUNCTION)
+    {
+        sResult+="(";
+
+        int nCount=rtype.listFunctionArgs.count();
+
+        for(int i=0;i<nCount;i++)
+        {
+            sResult+=rtype.listFunctionArgs.at(i);
+
+            if(i!=(nCount-1))
+            {
+                sResult+=",";
+            }
+        }
+
+        sResult+=")";
     }
 
     return sResult;
@@ -1885,6 +1910,8 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
 {
     QString sResult;
 
+    // TODO TYPEDEFS !!!
+
     if(pElem->elemType==ELEM_TYPE_ENUM)
     {
         sResult+=_getTab(nLevel)+QString("enum %1\r\n").arg(pElem->_enum._name);
@@ -1961,7 +1988,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     }
     else if(pElem->elemType==ELEM_TYPE_DATA)
     {
-        sResult+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,pHandleOptions,bIsStruct);
+        sResult+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,bIsStruct);
 
         if(pElem->_data.value.bIsValid) // TODO Check
         {
@@ -1970,7 +1997,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     }
     else if(pElem->elemType==ELEM_TYPE_FUNCTION)
     {
-        sResult+=_getTab(nLevel)+"!!!FUNCTION "+pElem->_function._name;
+        sResult+=_getTab(nLevel)+rtypeToString(pElem->_function.rtype,bIsStruct);
         // TODO function start,end
     }
     else // TODO Check typedef
