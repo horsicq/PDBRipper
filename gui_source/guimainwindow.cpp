@@ -62,28 +62,28 @@ void GuiMainWindow::on_actionOpen_triggered()
 
             // TODO clear
 
-            ui->comboBoxType->clear();
+//            ui->comboBoxType->clear();
 
-            if(stats.listClasses.count())
-            {
-                ui->comboBoxType->addItem(tr("Classes"),CBT_CLASSES);
-            }
-            if(stats.listStructs.count())
-            {
-                ui->comboBoxType->addItem(tr("Structs"),CBT_STRUCTS);
-            }
-            if(stats.listUnions.count())
-            {
-                ui->comboBoxType->addItem(tr("Unions"),CBT_UNIONS);
-            }
-            if(stats.listInterfaces.count())
-            {
-                ui->comboBoxType->addItem(tr("Interfaces"),CBT_INTERFACES);
-            }
-            if(stats.listEnums.count())
-            {
-                ui->comboBoxType->addItem(tr("Enums"),CBT_ENUMS);
-            }
+//            if(stats.listClasses.count())
+//            {
+//                ui->comboBoxType->addItem(tr("Classes"),CBT_CLASSES);
+//            }
+//            if(stats.listStructs.count())
+//            {
+//                ui->comboBoxType->addItem(tr("Structs"),CBT_STRUCTS);
+//            }
+//            if(stats.listUnions.count())
+//            {
+//                ui->comboBoxType->addItem(tr("Unions"),CBT_UNIONS);
+//            }
+//            if(stats.listInterfaces.count())
+//            {
+//                ui->comboBoxType->addItem(tr("Interfaces"),CBT_INTERFACES);
+//            }
+//            if(stats.listEnums.count())
+//            {
+//                ui->comboBoxType->addItem(tr("Enums"),CBT_ENUMS);
+//            }
         }
         else
         {
@@ -123,52 +123,52 @@ void GuiMainWindow::on_actionC_C_triggered()
 
 void GuiMainWindow::on_comboBoxType_currentIndexChanged(int index)
 {
-    if(index!=-1)
-    {
-        int nType=ui->comboBoxType->currentData().toInt();
-        QList<QWinPDB::PDB_RECORD> listRecords;
+//    if(index!=-1)
+//    {
+//        int nType=ui->comboBoxType->currentData().toInt();
+//        QList<QWinPDB::SYMBOL_RECORD> listRecords;
 
-        if(nType==CBT_CLASSES)              listRecords=stats.listClasses;
-        else if(nType==CBT_STRUCTS)         listRecords=stats.listStructs;
-        else if(nType==CBT_UNIONS)          listRecords=stats.listUnions;
-        else if(nType==CBT_INTERFACES)      listRecords=stats.listInterfaces;
-        else if(nType==CBT_ENUMS)           listRecords=stats.listEnums;
+//        if(nType==CBT_CLASSES)              listRecords=stats.listClasses;
+//        else if(nType==CBT_STRUCTS)         listRecords=stats.listStructs;
+//        else if(nType==CBT_UNIONS)          listRecords=stats.listUnions;
+//        else if(nType==CBT_INTERFACES)      listRecords=stats.listInterfaces;
+//        else if(nType==CBT_ENUMS)           listRecords=stats.listEnums;
 
-        ui->listWidgetSymTags->clear();
+//        ui->listWidgetSymTags->clear();
 
-        int nCount=listRecords.count();
-        for(int i=0;i<nCount;i++)
-        {
-            QListWidgetItem *item=new QListWidgetItem(ui->listWidgetSymTags);
-            item->setText(listRecords.at(i).sName);
-            item->setData(Qt::UserRole,(int)listRecords.at(i).dwID);
+//        int nCount=listRecords.count();
+//        for(int i=0;i<nCount;i++)
+//        {
+//            QListWidgetItem *item=new QListWidgetItem(ui->listWidgetSymTags);
+//            item->setText(listRecords.at(i).sName);
+//            item->setData(Qt::UserRole,(int)listRecords.at(i).dwID);
 
-            ui->listWidgetSymTags->addItem(item);
-        }
-    }
+//            ui->listWidgetSymTags->addItem(item);
+//        }
+//    }
 }
 
 void GuiMainWindow::handle()
 {
-    int currentRow=ui->listWidgetSymTags->currentRow();
+//    int currentRow=ui->listWidgetSymTags->currentRow();
 
-    if(currentRow!=-1)
-    {
-        int nID=ui->listWidgetSymTags->currentItem()->data(Qt::UserRole).toInt();
-        QWinPDB::HANDLE_OPTIONS handleOptions={0};
+//    if(currentRow!=-1)
+//    {
+//        int nID=ui->listWidgetSymTags->currentItem()->data(Qt::UserRole).toInt();
+//        QWinPDB::HANDLE_OPTIONS handleOptions={0};
 
-//        handleOptions.bOffsets=ui->checkBoxOffsets->isChecked();
-//        handleOptions.bSizes=ui->checkBoxSizes->isChecked();
+////        handleOptions.bOffsets=ui->checkBoxOffsets->isChecked();
+////        handleOptions.bSizes=ui->checkBoxSizes->isChecked();
 
-//        QString sResult=pWinPDB->handle(nID,&handleOptions);
+////        QString sResult=pWinPDB->handle(nID,&handleOptions);
 
-//        ui->textBrowserResult->setText(sResult);
-        QWinPDB::ELEM elem=pWinPDB->getElem(nID);
+////        ui->textBrowserResult->setText(sResult);
+//        QWinPDB::ELEM elem=pWinPDB->getElem(nID);
 
-        QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
+//        QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
 
-        ui->textBrowserResult->setText(sText);
-    }
+//        ui->textBrowserResult->setText(sText);
+//    }
 }
 
 //void MainWindow::on_checkBoxOffsets_toggled(bool checked)

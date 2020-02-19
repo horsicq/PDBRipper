@@ -27,17 +27,20 @@
 class PDBProcess : public QObject
 {
     Q_OBJECT
+
 public:
     explicit PDBProcess(QObject *parent,QWinPDB *pWinPDB);
     void setData(QWinPDB::STATS *pStats);
-
     void stop();
+
 signals:
     void completed();
     void setProgressMaximum(int);
     void setProgressValue(int);
+
 public slots:
     void getStats();
+
 private:
     QWinPDB *pWinPDB;
     QWinPDB::STATS *pStats;

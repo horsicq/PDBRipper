@@ -27,6 +27,7 @@
 #include "diacreate.h"
 #include "cvconst.h"
 
+#define QWINPDB_UNKNOWN "<Unknown>"
 
 typedef struct MapIa64Reg
 {

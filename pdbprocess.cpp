@@ -39,6 +39,8 @@ void PDBProcess::getStats()
         // TODO Progress bar
         *pStats=pWinPDB->getStats();
 
+//        pWinPDB->getAllTags();
+
         emit completed();
     }
 }

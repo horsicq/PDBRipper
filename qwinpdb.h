@@ -42,7 +42,7 @@
 
 class QWinPDB : public QObject
 {
-#define QWINPDB_UNKNOWN "<Unknown>"
+
     Q_OBJECT
 public:
 
@@ -104,6 +104,7 @@ public:
         ELEMENT_TYPE_UNKNOWN=0,
         ELEMENT_TYPE_STRUCT,
         ELEMENT_TYPE_CLASS,
+        ELEMENT_TYPE_INTERFACE,
         ELEMENT_TYPE_UNION,
         ELEMENT_TYPE_DATA
     };
@@ -501,19 +502,26 @@ public:
         QMap<quint32,RECORD_BASETYPE> mapBaseType;
     };
 
-    struct PDB_RECORD
+    enum SYMBOL_TYPE
+    {
+        SYMBOL_TYPE_UNKNOWN=0,
+        SYMBOL_TYPE_STRUCT,
+        SYMBOL_TYPE_CLASS,
+        SYMBOL_TYPE_INTERFACE,
+        SYMBOL_TYPE_UNION,
+        SYMBOL_TYPE_ENUM
+    };
+
+    struct SYMBOL_RECORD
     {
         DWORD dwID;
         QString sName;
+        SYMBOL_TYPE type;
     };
 
     struct STATS
     {
-        QList<PDB_RECORD> listStructs;
-        QList<PDB_RECORD> listClasses;
-        QList<PDB_RECORD> listUnions;
-        QList<PDB_RECORD> listInterfaces;
-        QList<PDB_RECORD> listEnums;
+        QList<SYMBOL_RECORD> listSymbols;
     };
 
     struct HANDLE_OPTIONS
@@ -529,8 +537,8 @@ public:
     ~QWinPDB();
 
     PDB_INFO getAllTags();
-    QList<PDB_RECORD> getUDTList(DWORD dwKind);
-    QList<PDB_RECORD> getClasses(); // TODO remove
+    QList<SYMBOL_RECORD> getUDTList(DWORD dwKind);
+    QList<SYMBOL_RECORD> getClasses(); // TODO remove
 
     STATS getStats();
     QString handle(quint32 nID,HANDLE_OPTIONS *pHandleOptions); // TODO remove

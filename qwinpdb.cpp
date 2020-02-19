@@ -21,9 +21,9 @@
 
 #include "qwinpdb.h"
 
-bool sortLessThan(const QWinPDB::PDB_RECORD &v1, const QWinPDB::PDB_RECORD &v2)
+bool sortLessThan(const QWinPDB::SYMBOL_RECORD &v1, const QWinPDB::SYMBOL_RECORD &v2)
 {
-    return v1.sName<v2.sName;
+    return v1.sName<v2.sName; // TODO id sort
 }
 
 
@@ -1607,9 +1607,9 @@ QWinPDB::PDB_INFO QWinPDB::getAllTags()
     return result;
 }
 
-QList<QWinPDB::PDB_RECORD> QWinPDB::getUDTList(DWORD dwKind)
+QList<QWinPDB::SYMBOL_RECORD> QWinPDB::getUDTList(DWORD dwKind)
 {
-    QList<PDB_RECORD> listResult;
+    QList<SYMBOL_RECORD> listResult;
 
     IDiaEnumSymbols *pEnumSymbols;
     LONG nCount;
@@ -1633,7 +1633,7 @@ QList<QWinPDB::PDB_RECORD> QWinPDB::getUDTList(DWORD dwKind)
                     if(dwKind==_dwKind)
                     {
                         BSTR bstring;
-                        PDB_RECORD record={};
+                        SYMBOL_RECORD record={};
 
                         pSymbol->get_symIndexId(&record.dwID);
                         if(pSymbol->get_name(&bstring)==S_OK) {record.sName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
@@ -1651,7 +1651,7 @@ QList<QWinPDB::PDB_RECORD> QWinPDB::getUDTList(DWORD dwKind)
 
     return listResult;
 }
-QList<QWinPDB::PDB_RECORD> QWinPDB::getClasses()
+QList<QWinPDB::SYMBOL_RECORD> QWinPDB::getClasses()
 {
     return getUDTList(1);
 }
@@ -1679,7 +1679,7 @@ QWinPDB::STATS QWinPDB::getStats()
 
                 while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
                 {
-                    PDB_RECORD record={};
+                    SYMBOL_RECORD record={};
                     BSTR bstring;
                     DWORD dwSymTag=0;
                     pSymbol->get_symTag(&dwSymTag);
@@ -1708,22 +1708,22 @@ QWinPDB::STATS QWinPDB::getStats()
 
                                 if(_dwKind==0)
                                 {
-                                    result.listStructs.append(record);
+                                    record.type=SYMBOL_TYPE_STRUCT;
                                 }
                                 else if(_dwKind==1)
                                 {
-                                    result.listClasses.append(record);
+                                    record.type=SYMBOL_TYPE_CLASS;
                                 }
                                 else if(_dwKind==2)
                                 {
-                                    result.listUnions.append(record);
+                                    record.type=SYMBOL_TYPE_UNION;
                                 }
                                 else if(_dwKind==3)
                                 {
-                                    result.listInterfaces.append(record);
+                                    record.type=SYMBOL_TYPE_INTERFACE;
                                 }
 
-                                mapUDT.insert(record.sName,nLen);
+                                result.listSymbols.append(record);
                             }
                         }
 
@@ -1742,8 +1742,9 @@ QWinPDB::STATS QWinPDB::getStats()
                                 SysFreeString(bstring);
                             }
                             pSymbol->get_symIndexId(&record.dwID);
+                            record.type=SYMBOL_TYPE_ENUM;
 
-                            result.listEnums.append(record);
+                            result.listSymbols.append(record);
                         }
                     }
 
@@ -1755,11 +1756,7 @@ QWinPDB::STATS QWinPDB::getStats()
         pEnumSymbols->Release();
     }
 
-    qSort(result.listClasses.begin(),result.listClasses.end(),sortLessThan);
-    qSort(result.listInterfaces.begin(),result.listInterfaces.end(),sortLessThan);
-    qSort(result.listStructs.begin(),result.listStructs.end(),sortLessThan);
-    qSort(result.listUnions.begin(),result.listUnions.end(),sortLessThan);
-    qSort(result.listEnums.begin(),result.listEnums.end(),sortLessThan);
+    qSort(result.listSymbols.begin(),result.listSymbols.end(),sortLessThan);
 
     return result;
 }

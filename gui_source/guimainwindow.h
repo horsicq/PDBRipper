@@ -56,7 +56,7 @@ private slots:
     void adjustWindow();
 
 private:
-    enum
+    enum CBT
     {
         CBT_CLASSES=0,
         CBT_STRUCTS,
