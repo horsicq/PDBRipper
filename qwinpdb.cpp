@@ -23,7 +23,8 @@
 
 bool sortLessThan(const QWinPDB::SYMBOL_RECORD &v1, const QWinPDB::SYMBOL_RECORD &v2)
 {
-    return v1.sName<v2.sName; // TODO id sort
+//    return v1.sName<v2.sName; // TODO id sort
+    return v1.dwID<v2.dwID;
 }
 
 
@@ -1889,7 +1890,14 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
 
                     while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
                     {
-                        result.listChildren.append(_getElem(pSymbol));
+                        ELEM elemChild=_getElem(pSymbol);
+                        result.listChildren.append(elemChild);
+
+//                        QString sTest;
+//                        BSTR bstring=nullptr;
+//                        if(pSymbol->get_name(&bstring)==S_OK) {sTest=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
+
+//                        qDebug(sTest.toLatin1().data());
 
                         pSymbol->Release();
                     }

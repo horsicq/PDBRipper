@@ -24,6 +24,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 #include "dialogprocess.h"
 #include "dialogabout.h"
 #include "dialogoptions.h"
@@ -44,16 +46,21 @@ public:
 
 private slots:
     void on_actionOpen_triggered();
-    void on_listWidgetSymTags_currentRowChanged(int currentRow);
     void on_actionC_C_triggered();
 
-    void on_comboBoxType_currentIndexChanged(int index);
-    void handle();
+//    void handle();
 //    void on_checkBoxOffsets_toggled(bool checked);
 //    void on_checkBoxSizes_toggled(bool checked);
     void on_actionOptions_triggered();
     void on_actionAbout_triggered();
     void adjustWindow();
+
+    void on_lineEditSearch_textChanged(const QString &arg1);
+    void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
+
+    void handle();
+
+    void on_tableViewSymbols_clicked(const QModelIndex &index);
 
 private:
     enum CBT
@@ -69,6 +76,7 @@ private:
     QWinPDB *pWinPDB;
     QWinPDB::STATS stats;
     PDBRIPPER::OPTIONS options;
+    QSortFilterProxyModel *pFilter;
 };
 
 #endif // GUIMAINWINDOW_H

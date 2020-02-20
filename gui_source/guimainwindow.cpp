@@ -33,6 +33,8 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
 
     DialogOptions::loadOptions(&options);
     adjustWindow();
+
+    pFilter=new QSortFilterProxyModel(this);
 }
 
 GuiMainWindow::~GuiMainWindow()
@@ -56,9 +58,42 @@ void GuiMainWindow::on_actionOpen_triggered()
 
         if(pWinPDB->loadFromFile(sFileName))
         {
+            ui->lineEditSearch->clear();
+
             DialogProcess dp(this,pWinPDB);
             dp.getStats(&stats);
             dp.exec();
+
+            int nCount=stats.listSymbols.count();
+
+            QStandardItemModel *model=new QStandardItemModel(nCount,2,this);
+
+            model->setHeaderData(0,Qt::Horizontal,tr("ID"));
+            model->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
+
+            for(int i = 0; i<nCount; i++)
+            {
+                QStandardItem *itemID = new QStandardItem;
+                itemID->setData((quint32)(stats.listSymbols.at(i).dwID),Qt::DisplayRole);
+                itemID->setData((quint32)(stats.listSymbols.at(i).type),Qt::UserRole+1);
+                itemID->setTextAlignment(Qt::AlignRight);
+                model->setItem(i,0,itemID);
+
+                QStandardItem *itemSymbol = new QStandardItem;
+                itemSymbol->setText(stats.listSymbols.at(i).sName);
+                model->setItem(i,1,itemSymbol);
+            }
+
+            ui->tableViewSymbols->setModel(model);
+
+            ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
+            ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(1,QHeaderView::Stretch);
+
+            pFilter->setSourceModel(model);
+
+            ui->tableViewSymbols->setModel(pFilter);
+
+            connect(ui->tableViewSymbols->selectionModel(),SIGNAL(currentChanged(QModelIndex const&,QModelIndex const&)),this,SLOT(onCurrentChanged(QModelIndex const&,QModelIndex const&)));
 
             // TODO clear
 
@@ -92,10 +127,10 @@ void GuiMainWindow::on_actionOpen_triggered()
     }
 }
 
-void GuiMainWindow::on_listWidgetSymTags_currentRowChanged(int currentRow)
-{
-    handle();
-}
+//void GuiMainWindow::on_listWidgetSymTags_currentRowChanged(int currentRow)
+//{
+//    handle();
+//}
 
 void GuiMainWindow::on_actionC_C_triggered()
 {
@@ -121,35 +156,35 @@ void GuiMainWindow::on_actionC_C_triggered()
     }
 }
 
-void GuiMainWindow::on_comboBoxType_currentIndexChanged(int index)
-{
-//    if(index!=-1)
-//    {
-//        int nType=ui->comboBoxType->currentData().toInt();
-//        QList<QWinPDB::SYMBOL_RECORD> listRecords;
+//void GuiMainWindow::on_comboBoxType_currentIndexChanged(int index)
+//{
+////    if(index!=-1)
+////    {
+////        int nType=ui->comboBoxType->currentData().toInt();
+////        QList<QWinPDB::SYMBOL_RECORD> listRecords;
 
-//        if(nType==CBT_CLASSES)              listRecords=stats.listClasses;
-//        else if(nType==CBT_STRUCTS)         listRecords=stats.listStructs;
-//        else if(nType==CBT_UNIONS)          listRecords=stats.listUnions;
-//        else if(nType==CBT_INTERFACES)      listRecords=stats.listInterfaces;
-//        else if(nType==CBT_ENUMS)           listRecords=stats.listEnums;
+////        if(nType==CBT_CLASSES)              listRecords=stats.listClasses;
+////        else if(nType==CBT_STRUCTS)         listRecords=stats.listStructs;
+////        else if(nType==CBT_UNIONS)          listRecords=stats.listUnions;
+////        else if(nType==CBT_INTERFACES)      listRecords=stats.listInterfaces;
+////        else if(nType==CBT_ENUMS)           listRecords=stats.listEnums;
 
-//        ui->listWidgetSymTags->clear();
+////        ui->listWidgetSymTags->clear();
 
-//        int nCount=listRecords.count();
-//        for(int i=0;i<nCount;i++)
-//        {
-//            QListWidgetItem *item=new QListWidgetItem(ui->listWidgetSymTags);
-//            item->setText(listRecords.at(i).sName);
-//            item->setData(Qt::UserRole,(int)listRecords.at(i).dwID);
+////        int nCount=listRecords.count();
+////        for(int i=0;i<nCount;i++)
+////        {
+////            QListWidgetItem *item=new QListWidgetItem(ui->listWidgetSymTags);
+////            item->setText(listRecords.at(i).sName);
+////            item->setData(Qt::UserRole,(int)listRecords.at(i).dwID);
 
-//            ui->listWidgetSymTags->addItem(item);
-//        }
-//    }
-}
+////            ui->listWidgetSymTags->addItem(item);
+////        }
+////    }
+//}
 
-void GuiMainWindow::handle()
-{
+//void GuiMainWindow::handle()
+//{
 //    int currentRow=ui->listWidgetSymTags->currentRow();
 
 //    if(currentRow!=-1)
@@ -169,7 +204,7 @@ void GuiMainWindow::handle()
 
 //        ui->textBrowserResult->setText(sText);
 //    }
-}
+//}
 
 //void MainWindow::on_checkBoxOffsets_toggled(bool checked)
 //{
@@ -210,4 +245,45 @@ void GuiMainWindow::adjustWindow()
     setWindowFlags(wf);
 
     show();
+}
+
+void GuiMainWindow::on_lineEditSearch_textChanged(const QString &arg1)
+{
+    pFilter->setFilterRegExp(arg1);
+    pFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    pFilter->setFilterKeyColumn(1);
+}
+
+void GuiMainWindow::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    Q_UNUSED(current)
+    Q_UNUSED(previous)
+
+    handle();
+}
+
+void GuiMainWindow::handle()
+{
+    QModelIndexList list=ui->tableViewSymbols->selectionModel()->selection().indexes();
+
+    if(list.count())
+    {
+        QWinPDB::HANDLE_OPTIONS handleOptions={0};
+
+        quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
+        QWinPDB::SYMBOL_TYPE type=(QWinPDB::SYMBOL_TYPE)list.at(0).data(Qt::UserRole+1).toInt();
+
+        QWinPDB::ELEM elem=pWinPDB->getElem(nID);
+
+        QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
+
+        ui->textBrowserResult->setText(sText);
+    }
+}
+
+void GuiMainWindow::on_tableViewSymbols_clicked(const QModelIndex &index)
+{
+    Q_UNUSED(index)
+
+    handle();
 }
