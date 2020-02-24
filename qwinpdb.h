@@ -526,8 +526,7 @@ public:
 
     struct HANDLE_OPTIONS
     {
-        bool bOffsets;
-        bool bSizes;
+        bool bShowComments;
     };
 
     explicit QWinPDB(QObject *parent = 0);
@@ -562,6 +561,8 @@ public:
 
     struct ELEM
     {
+        DWORD dwOffset;
+        DWORD dwSize;
         ELEM_TYPE elemType;
         RECORD_UDT _udt;
         RECORD_FUNCTION _function;

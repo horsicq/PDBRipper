@@ -62,6 +62,8 @@ private slots:
 
     void on_tableViewSymbols_clicked(const QModelIndex &index);
 
+    void on_checkBoxShowComments_toggled(bool checked);
+
 private:
     enum CBT
     {

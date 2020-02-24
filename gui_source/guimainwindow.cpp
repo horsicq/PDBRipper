@@ -269,6 +269,7 @@ void GuiMainWindow::handle()
     if(list.count())
     {
         QWinPDB::HANDLE_OPTIONS handleOptions={0};
+        handleOptions.bShowComments=ui->checkBoxShowComments->isChecked();
 
         quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
         QWinPDB::SYMBOL_TYPE type=(QWinPDB::SYMBOL_TYPE)list.at(0).data(Qt::UserRole+1).toInt();
@@ -284,6 +285,13 @@ void GuiMainWindow::handle()
 void GuiMainWindow::on_tableViewSymbols_clicked(const QModelIndex &index)
 {
     Q_UNUSED(index)
+
+    handle();
+}
+
+void GuiMainWindow::on_checkBoxShowComments_toggled(bool checked)
+{
+    Q_UNUSED(checked)
 
     handle();
 }

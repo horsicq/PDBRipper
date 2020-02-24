@@ -1045,18 +1045,18 @@ QString QWinPDB::_handle(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOp
         {
             QString sComment;
 
-            if(pHandleOptions->bOffsets||pHandleOptions->bSizes)
-            {
-                sComment+=" //";
-                if(pHandleOptions->bOffsets)
-                {
-                    sComment+=QString(" Offset=%1").arg(nOffset);
-                }
-                if(pHandleOptions->bSizes)
-                {
-                    sComment+=QString(" Size=%1").arg(nSize);
-                }
-            }
+//            if(pHandleOptions->bOffsets||pHandleOptions->bSizes)
+//            {
+//                sComment+=" //";
+//                if(pHandleOptions->bOffsets)
+//                {
+//                    sComment+=QString(" Offset=%1").arg(nOffset);
+//                }
+//                if(pHandleOptions->bSizes)
+//                {
+//                    sComment+=QString(" Size=%1").arg(nSize);
+//                }
+//            }
 
             sResult+=indent(subopt.nIndent)+QString("%1;%2\r\n").arg(sName).arg(sComment);
         }
@@ -1807,11 +1807,13 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
     {
         result.elemType=ELEM_TYPE_UDT;
         result._udt=_getRecordUDT(pParent);
+        result.dwSize=result._udt._length;
     }
     else if(dwSymTag==SymTagFunction)
     {
         result.elemType=ELEM_TYPE_FUNCTION;
         result._function=_getRecordFunction(pParent);
+        result.dwSize=result._function._length; // TODO Check!
     }
     else if(dwSymTag==SymTagTypedef)
     {
@@ -1823,6 +1825,8 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
     {
         result.elemType=ELEM_TYPE_DATA;
         result._data=_getRecordData(pParent);
+        result.dwSize=result._data.rtype.nSize;
+        result.dwOffset=result._data.rtype.nOffset;
 
         if(result._data.rtype.bIsPointer||result._data.rtype.bIsReference)
         {
@@ -1971,6 +1975,11 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
             }
         }
 
+        if(pHandleOptions->bShowComments)
+        {
+            sResult+=QString("// Size=0x%1").arg(pElem->dwSize,0,16);
+        }
+
         sResult+="\r\n";
         sResult+=_getTab(nLevel)+"{\r\n";
 
@@ -1980,6 +1989,11 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
             if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
             {
                 sResult+=_getTab(nLevel)+elemToString(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==0));
+
+                if(pHandleOptions->bShowComments)
+                {
+                    sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                }
 
                 if( (pElem->listChildren.at(i).elemType!=ELEM_TYPE_UDT)&&
                     (pElem->listChildren.at(i).elemType!=ELEM_TYPE_ENUM))
