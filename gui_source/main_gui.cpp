@@ -70,6 +70,8 @@ struct __TEST
     int t2000;
     char t2500[10][20][30];
     int t3000;
+    void  *Callback(void *);
+    void ( *Callback2)(void *);
 };
 
 int main(int argc, char *argv[])

@@ -260,6 +260,8 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol)
     result.rtype.sName=result._name;
     result.rtype.nAccess=result._access;
 
+    // TODO BitFields
+
     return result;
 }
 
@@ -674,6 +676,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             result.type=RD_BASETYPE;
             result.nBaseType=baseType._baseType; // TODO const
 
+            // TODO Check!
             switch(result.nBaseType)
             {
                 case 0:     result.sTypeName="<btNoType>";          break;
@@ -778,8 +781,6 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
         }
         else if(dwSymTag==SymTagFunctionType)
         {
-            // TODO !!!
-            // TODO signature as string
             RTYPE res_ret=getSymbolType(pType);
             result.sFunctionRet=rtypeToString(res_ret,false);
 
@@ -1378,13 +1379,21 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsStruct)
     {
         sResult+=rtype.sTypeName;
     }
-    else if(rtype.type==RD_FUNCTION)
-    {
-        sResult+=rtype.sFunctionRet;
-    }
     else if(rtype.type==RD_BASETYPE)
     {
         sResult+=rtype.sTypeName;
+    }
+
+    bool bFuncPointer=(rtype.type==RD_FUNCTION)&&(rtype.nSize);
+
+    if((rtype.type==RD_FUNCTION)&&(!bFuncPointer))
+    {
+        sResult+=rtype.sFunctionRet;
+    }
+
+    if(bFuncPointer)
+    {
+        sResult+=QString("%1 (").arg(rtype.sFunctionRet);
     }
 
     sResult+=" "; // TODO !!!
@@ -1402,7 +1411,14 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsStruct)
         }
     }
 
-    sResult+=rtype.sName;
+    if(bFuncPointer)
+    {
+        sResult+=QString("%1)").arg(rtype.sName);
+    }
+    else
+    {
+        sResult+=rtype.sName;
+    }
 
     if(rtype.bIsArray)
     {
@@ -1941,7 +1957,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
 
         sResult+=_getTab(nLevel)+"};\r\n";
     }
-    else if(pElem->elemType==ELEM_TYPE_UDT)
+    else if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION))
     {
         sResult+=_getTab(nLevel)+QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
 

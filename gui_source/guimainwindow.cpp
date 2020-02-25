@@ -276,6 +276,9 @@ void GuiMainWindow::handle()
 
         QWinPDB::ELEM elem=pWinPDB->getElem(nID);
 
+        // TODO
+        // Fake unions
+
         QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
 
         ui->textBrowserResult->setText(sText);

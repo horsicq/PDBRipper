@@ -557,6 +557,7 @@ public:
         ELEM_TYPE_CALLSITE,
         ELEM_TYPE_LABEL,
         ELEM_TYPE_BLOCK,
+        ELEM_TYPE_FAKEUNION
     };
 
     struct ELEM
