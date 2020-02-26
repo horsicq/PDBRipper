@@ -85,6 +85,8 @@ public:
         QString sName;
         int nSize;
         int nOffset;
+        int nBitOffset;
+        int nBitSize;
         int nAccess;
         bool bIsConst;
         bool bIsVolatile;
@@ -557,7 +559,8 @@ public:
         ELEM_TYPE_CALLSITE,
         ELEM_TYPE_LABEL,
         ELEM_TYPE_BLOCK,
-        ELEM_TYPE_FAKEUNION
+        ELEM_TYPE_FAKEUNION,
+        ELEM_TYPE_FAKESTRUCT
     };
 
     struct ELEM

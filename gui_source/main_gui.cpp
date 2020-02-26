@@ -24,6 +24,10 @@
 
 struct __TEST
 {
+    int nBit0_0:2;
+    int nBit0_1:2;
+    int nBit0_2:1;
+    char nBit1:1;
     char t1;
     union
     {
@@ -72,6 +76,9 @@ struct __TEST
     int t3000;
     void  *Callback(void *);
     void ( *Callback2)(void *);
+
+    int nTest;
+    int nBit:2;
 };
 
 int main(int argc, char *argv[])

@@ -305,6 +305,8 @@ QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol)
     result.rtype.sName=result._name;
     result.rtype.nOffset=result._offset;
     result.rtype.nAccess=result._access;
+    result.rtype.nBitOffset=result._bitPosition;
+    result.rtype.nBitSize=result._length;
 
     return result;
 }
@@ -1447,6 +1449,11 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsStruct)
         sResult+=")";
     }
 
+    if(rtype.nBitSize)
+    {
+        sResult+=QString(":%1").arg(rtype.nBitSize);
+    }
+
     return sResult;
 }
 
@@ -2008,7 +2015,15 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
 
                 if(pHandleOptions->bShowComments)
                 {
-                    sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                    if(pElem->listChildren.at(i).dwSize)
+                    {
+                        sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                    }
+
+                    if(pElem->listChildren.at(i)._data.rtype.nBitSize)
+                    {
+                        sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i)._data.rtype.nBitOffset).arg(pElem->listChildren.at(i)._data.rtype.nBitSize);
+                    }
                 }
 
                 if( (pElem->listChildren.at(i).elemType!=ELEM_TYPE_UDT)&&
@@ -2035,10 +2050,14 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
         sResult+=_getTab(nLevel)+rtypeToString(pElem->_function.rtype,bIsStruct);
         // TODO function start,end
     }
-    else // TODO Check typedef
+    else if(pElem->elemType==ELEM_TYPE_TYPEDEF)
     {
-        int z=0;
-        z++;
+        // TODO Check typedef
+        qDebug("TYPEDEF");
+    }
+    else
+    {
+        qDebug("Unknown ELEM_TYPE");
     }
 
     // TODO if struct has basic class -> interface
