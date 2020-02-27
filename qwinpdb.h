@@ -36,6 +36,7 @@
 #include <QSqlTableModel>
 #include <QUuid>
 #include <QMap>
+#include <QStack>
 #include <QDebug>
 
 #include "qwinpdb_def.h"
@@ -567,6 +568,8 @@ public:
     {
         DWORD dwOffset;
         DWORD dwSize;
+        DWORD dwBitOffset;
+        DWORD dwBitSize;
         ELEM_TYPE elemType;
         RECORD_UDT _udt;
         RECORD_FUNCTION _function;
@@ -587,13 +590,16 @@ public:
     ELEM getElem(quint32 nID);
     ELEM _getElem(IDiaSymbol *pParent);
 
+    void fixElem(QWinPDB::ELEM *pElem);
+    void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
+
     struct SUBOPT
     {
         int nIndent;
         bool bNoFunctions;
     };
 
-    static QString elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsStruct);
+    static QString elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
 
 private:
     void cleanup();
@@ -635,7 +641,7 @@ private:
     QString _handle(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt); // TODO return struct
     ELEMENT getElement(IDiaSymbol *pParent);
     QString elementToString(ELEMENT *pElement,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt);
-    static QString rtypeToString(RTYPE rtype, bool bIsStruct);
+    static QString rtypeToString(RTYPE rtype, bool bIsClass);
     static QString getAccessString(int nAccess);
 
     static QString _getTab(int nLevel);

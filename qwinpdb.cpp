@@ -1354,11 +1354,11 @@ QString QWinPDB::elementToString(QWinPDB::ELEMENT *pElement,HANDLE_OPTIONS *pHan
     return sResult;
 }
 
-QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsStruct)
+QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsClass)
 {
     QString sResult;
 
-    if(!bIsStruct)
+    if(bIsClass)
     {
         QString sAccess=getAccessString(rtype.nAccess);
 
@@ -1850,6 +1850,8 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
         result._data=_getRecordData(pParent);
         result.dwSize=result._data.rtype.nSize;
         result.dwOffset=result._data.rtype.nOffset;
+        result.dwBitOffset=result._data.rtype.nBitOffset;
+        result.dwBitSize=result._data.rtype.nBitSize;
 
         if(result._data.rtype.bIsPointer||result._data.rtype.bIsReference)
         {
@@ -1938,7 +1940,156 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
     return result;
 }
 
-QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsStruct)
+void QWinPDB::fixElem(QWinPDB::ELEM *pElem) // TODO Options
+{
+    // TODO
+    QWinPDB::ELEM elem=*pElem;
+
+    elem.listChildren.clear();
+
+    int nCount=pElem->listChildren.count();
+
+    _appendElem(&elem,&(pElem->listChildren),0,nCount);
+
+    *pElem=elem;
+}
+
+void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChildren, int nStartPosition, int nEndPosition)
+{
+    for(int i=nStartPosition;i<nEndPosition;i++)
+    {
+        if(pListChildren->at(i).dwSize)
+        {
+            quint32 dwOffset=pListChildren->at(i).dwOffset;
+            quint32 dwBitOffset=pListChildren->at(i).dwBitOffset;
+            quint32 dwSize=pListChildren->at(i).dwSize;
+
+            quint32 _dwSize=dwSize;
+            quint32 _nCount=1;
+            quint32 _nPosition=i;
+
+            QList<quint32> listSizes;
+            QList<quint32> listCounts;
+            QList<quint32> listPositions;
+            // Find unions TODO if parent not Union
+            for(int j=i+1;j<nEndPosition;j++)
+            {
+                if( (pListChildren->at(j).dwOffset==dwOffset)&&
+                    (pListChildren->at(j).dwBitOffset==dwBitOffset)&&
+                    (pListChildren->at(j).dwSize))
+                {
+                    listSizes.append(_dwSize);
+                    listCounts.append(_nCount);
+                    listPositions.append(_nPosition);
+
+                    _dwSize=0;
+                    _nCount=0;
+                    _nPosition=j;
+                }
+
+                _dwSize+=pListChildren->at(j).dwSize;
+                _nCount++;
+            }
+
+            int nCount=listSizes.count();
+
+            if(nCount)
+            {
+                // The last position
+                quint32 _dwMaxSize=0;
+
+                for(int j=0;j<nCount;j++)
+                {
+                    _dwMaxSize=qMax(_dwMaxSize,listSizes.at(j));
+                }
+
+                _dwSize=0;
+                _nCount=0;
+
+                for(int j=_nPosition;j<nEndPosition;j++)
+                {
+                    if((_dwSize>=_dwMaxSize))
+                    {
+                        break;
+                    }
+
+                    _dwSize+=pListChildren->at(j).dwSize;
+                    _nCount++;
+                }
+
+                listSizes.append(_dwSize);
+                listCounts.append(_nCount);
+                listPositions.append(_nPosition);
+
+                nCount++;
+
+                bool bNewUnion=true;
+
+                if((pElem->_udt.sType=="union")&&(pElem->dwSize==_dwSize))
+                {
+                    bNewUnion=false;
+                }
+
+                QWinPDB::ELEM *pElemUnion=0;
+
+                if(bNewUnion)
+                {
+                    pElemUnion=new QWinPDB::ELEM();
+                    *pElemUnion={};
+                    pElemUnion->elemType=ELEM_TYPE_FAKEUNION;
+                    pElemUnion->dwSize=_dwSize;
+                    pElemUnion->_udt.sType="union";
+                }
+                else
+                {
+                    pElemUnion=pElem;
+                }
+
+                for(int j=0;j<nCount;j++)
+                {
+                    if(listCounts.at(j)>1)
+                    {
+                        QWinPDB::ELEM *pElemStruct=new QWinPDB::ELEM();
+                        *pElemStruct={};
+                        pElemStruct->elemType=ELEM_TYPE_FAKESTRUCT;
+                        pElemStruct->dwSize=listSizes.at(j);
+                        pElemStruct->_udt.sType="struct";
+
+                        _appendElem(pElemStruct,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
+
+                        pElemUnion->listChildren.append(*pElemStruct);
+
+                        delete pElemStruct;
+                    }
+                    else
+                    {
+                        _appendElem(pElemUnion,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
+                    }
+
+                    i+=listCounts.at(j);
+                }
+
+                i--;
+
+                if(bNewUnion)
+                {
+                    pElem->listChildren.append(*pElemUnion);
+                    delete pElemUnion;
+                }
+            }
+            else
+            {
+                pElem->listChildren.append(pListChildren->at(i));
+            }
+        }
+        else
+        {
+            pElem->listChildren.append(pListChildren->at(i));
+        }
+    }
+}
+
+QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass)
 {
     QString sResult;
 
@@ -1962,9 +2113,9 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
             sResult+="\r\n";
         }
 
-        sResult+=_getTab(nLevel)+"};\r\n";
+        sResult+=_getTab(nLevel)+"}";
     }
-    else if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION))
+    else if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION)||(pElem->elemType==ELEM_TYPE_FAKESTRUCT))
     {
         sResult+=_getTab(nLevel)+QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
 
@@ -2011,34 +2162,32 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
         {
             if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
             {
-                sResult+=_getTab(nLevel)+elemToString(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==0));
+                sResult+=elemToString(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==1));
 
-                if(pHandleOptions->bShowComments)
+                sResult+=";";
+
+                if((pHandleOptions->bShowComments)&&(pElem->listChildren.at(i).elemType==ELEM_TYPE_DATA))
                 {
                     if(pElem->listChildren.at(i).dwSize)
                     {
                         sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
                     }
 
-                    if(pElem->listChildren.at(i)._data.rtype.nBitSize)
+                    if(pElem->listChildren.at(i).dwBitSize)
                     {
-                        sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i)._data.rtype.nBitOffset).arg(pElem->listChildren.at(i)._data.rtype.nBitSize);
+                        sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset).arg(pElem->listChildren.at(i).dwBitSize);
                     }
                 }
 
-                if( (pElem->listChildren.at(i).elemType!=ELEM_TYPE_UDT)&&
-                    (pElem->listChildren.at(i).elemType!=ELEM_TYPE_ENUM))
-                {
-                    sResult+=";\r\n";
-                }
+                sResult+="\r\n";
             }
         }
 
-        sResult+=_getTab(nLevel)+"};\r\n";
+        sResult+=_getTab(nLevel)+"}";
     }
     else if(pElem->elemType==ELEM_TYPE_DATA)
     {
-        sResult+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,bIsStruct);
+        sResult+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,bIsClass);
 
         if(pElem->_data.value.bIsValid) // TODO Check
         {
@@ -2047,7 +2196,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     }
     else if(pElem->elemType==ELEM_TYPE_FUNCTION)
     {
-        sResult+=_getTab(nLevel)+rtypeToString(pElem->_function.rtype,bIsStruct);
+        sResult+=_getTab(nLevel)+rtypeToString(pElem->_function.rtype,bIsClass);
         // TODO function start,end
     }
     else if(pElem->elemType==ELEM_TYPE_TYPEDEF)
@@ -2058,6 +2207,11 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     else
     {
         qDebug("Unknown ELEM_TYPE");
+    }
+
+    if(nLevel==0)
+    {
+        sResult+=";";
     }
 
     // TODO if struct has basic class -> interface

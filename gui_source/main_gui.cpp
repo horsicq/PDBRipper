@@ -22,6 +22,29 @@
 #include <QApplication>
 #include <QStyleFactory>
 
+
+union __TST3
+{
+    union
+    {
+        int n1;
+        struct
+        {
+            char tq;
+            char tt;
+        };
+    };
+    int t1;
+    int t2;
+};
+
+struct __TST2
+{
+    int t1;
+    int t2;
+    __TST3 tst3;
+};
+
 struct __TEST
 {
     int nBit0_0:2;
@@ -48,6 +71,8 @@ struct __TEST
         int t11;
       };
 
+      __TST2 tst2;
+
       struct
       {
           char t12;
@@ -58,9 +83,7 @@ struct __TEST
           };
           int t15;
       };
-
       int t16;
-
       struct
       {
           int t17;
@@ -76,7 +99,6 @@ struct __TEST
     int t3000;
     void  *Callback(void *);
     void ( *Callback2)(void *);
-
     int nTest;
     int nBit:2;
 };

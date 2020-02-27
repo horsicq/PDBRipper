@@ -276,6 +276,8 @@ void GuiMainWindow::handle()
 
         QWinPDB::ELEM elem=pWinPDB->getElem(nID);
 
+        pWinPDB->fixElem(&elem);
+
         // TODO
         // Fake unions
 
