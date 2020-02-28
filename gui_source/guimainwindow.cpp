@@ -35,6 +35,16 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
     adjustWindow();
 
     pFilter=new QSortFilterProxyModel(this);
+
+    QSignalBlocker blocker(ui->comboBoxFixOffsets);
+
+    ui->comboBoxFixOffsets->addItem(tr("No"),QWinPDB::FO_NO);
+    ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
+    ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
+
+    QWinPDB::HANDLE_OPTIONS handleOptions=QWinPDB::getDefaultHandleOptions();
+
+    setHandleOptions(&handleOptions);
 }
 
 GuiMainWindow::~GuiMainWindow()
@@ -268,20 +278,10 @@ void GuiMainWindow::handle()
 
     if(list.count())
     {
-        QWinPDB::HANDLE_OPTIONS handleOptions={0};
-        handleOptions.bShowComments=ui->checkBoxShowComments->isChecked();
-
+        QWinPDB::HANDLE_OPTIONS handleOptions=getHandleOptions();
         quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
-        QWinPDB::SYMBOL_TYPE type=(QWinPDB::SYMBOL_TYPE)list.at(0).data(Qt::UserRole+1).toInt();
 
-        QWinPDB::ELEM elem=pWinPDB->getElem(nID);
-
-        pWinPDB->fixElem(&elem);
-
-        // TODO
-        // Fake unions
-
-        QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
+        QString sText=pWinPDB->handleElement(nID,&handleOptions);
 
         ui->textBrowserResult->setText(sText);
     }
@@ -297,6 +297,40 @@ void GuiMainWindow::on_tableViewSymbols_clicked(const QModelIndex &index)
 void GuiMainWindow::on_checkBoxShowComments_toggled(bool checked)
 {
     Q_UNUSED(checked)
+
+    handle();
+}
+
+void GuiMainWindow::setHandleOptions(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
+{
+    ui->checkBoxShowComments->setChecked(pHandleOptions->bShowComments);
+
+    int nCount=ui->comboBoxFixOffsets->count();
+
+    for(int i=0;i<nCount;i++)
+    {
+        if(ui->comboBoxFixOffsets->itemData(i).toUInt()==pHandleOptions->fixOffsets)
+        {
+            ui->comboBoxFixOffsets->setCurrentIndex(i);
+
+            break;
+        }
+    }
+}
+
+QWinPDB::HANDLE_OPTIONS GuiMainWindow::getHandleOptions()
+{
+    QWinPDB::HANDLE_OPTIONS result={};
+
+    result.bShowComments=ui->checkBoxShowComments->isChecked();
+    result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
+
+    return result;
+}
+
+void GuiMainWindow::on_comboBoxFixOffsets_currentIndexChanged(int index)
+{
+    Q_UNUSED(index);
 
     handle();
 }

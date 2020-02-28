@@ -59,10 +59,13 @@ private slots:
     void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
     void handle();
-
     void on_tableViewSymbols_clicked(const QModelIndex &index);
-
     void on_checkBoxShowComments_toggled(bool checked);
+
+    void setHandleOptions(QWinPDB::HANDLE_OPTIONS *pHandleOptions);
+    QWinPDB::HANDLE_OPTIONS getHandleOptions();
+
+    void on_comboBoxFixOffsets_currentIndexChanged(int index);
 
 private:
     enum CBT

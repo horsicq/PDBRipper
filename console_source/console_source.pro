@@ -1,32 +1,21 @@
 QT -= gui
-QT += network
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
-TARGET = x64plgmnrc
+TARGET = pdbripperc
 
 include(../build.pri)
 
 SOURCES += \
-    ../createmoduleprocess.cpp \
-    ../getfilefromserverprocess.cpp \
-    ../installmoduleprocess.cpp \
-    ../removemoduleprocess.cpp \
-    ../utils.cpp \
     main_console.cpp \
     consoleoutput.cpp
 
 HEADERS += \
-    ../createmoduleprocess.h \
-    ../getfilefromserverprocess.h \
-    ../global.h \
-    ../installmoduleprocess.h \
-    ../removemoduleprocess.h \
-    ../utils.h \
     consoleoutput.h
 
-!contains(XCONFIG, xarchive) {
-    XCONFIG += xarchive
-    include(../../_mylibs/XArchive/xarchive.pri)
-}
+VC_PATH = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
+LIBS += $$VC_PATH"\DIA SDK\lib\diaguids.lib"
+
+INCLUDEPATH += $$VC_PATH"\DIA SDK\include"
+DEPENDPATH += $$VC_PATH"\DIA SDK\include"

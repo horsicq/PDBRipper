@@ -35,6 +35,15 @@ QWinPDB::QWinPDB(QObject *parent) : QObject(parent)
     pDiaSession=nullptr;
 }
 
+QWinPDB::HANDLE_OPTIONS QWinPDB::getDefaultHandleOptions()
+{
+    HANDLE_OPTIONS result={};
+
+    result.bShowComments=false;
+    result.fixOffsets=FO_STRUCTSANDUNIONS;
+
+    return result;
+}
 
 bool QWinPDB::loadFromFile(QString sFileName)
 {
@@ -913,216 +922,6 @@ bool QWinPDB::getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol)
     return bResult;
 }
 
-QString QWinPDB::_handle(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions, SUBOPT subopt)
-{
-    QString sResult;
-
-    // TODO classes with 2 publics
-    bool bClass=false;
-    bool bFunction=false;
-    bool bTypedef=false;
-    bool bData=false;
-    bool bStruct=false;
-    bool bUnion=false;
-    bool bInterface=false;
-    bool bEnum=false;
-    int nOffset=0;
-    int nSize=0;
-
-    QString sName;
-
-    DWORD dwSymTag=_getSymTag(pParent);
-    if(dwSymTag==SymTagUDT)
-    {
-        RECORD_UDT record=_getRecordUDT(pParent);
-
-        if(record._udtKind==0) // Struct
-        {
-            sName=record._name;
-            bStruct=true;
-        }
-        else if(record._udtKind==1) // Class
-        {
-            sName=record._name;
-            bClass=true;
-        }
-        else if(record._udtKind==2) // Union
-        {
-            sName=record._name;
-            bUnion=true;
-        }
-        else if(record._udtKind==3) // Interface
-        {
-            sName=record._name;
-            bInterface=true;
-        }
-    }
-    else if(dwSymTag==SymTagFunction)
-    {
-        bFunction=true;
-
-        RECORD_FUNCTION record=_getRecordFunction(pParent);
-
-        if(record._undecoratedName!="")// TODO options
-        {
-            sName=record._undecoratedName;
-        }
-        else
-        {
-            sName=record._name;
-        }
-    }
-    else if(dwSymTag==SymTagTypedef)
-    {
-        bTypedef=true;
-        sResult+=indent(subopt.nIndent)+QString("%1\r\n").arg(rgTags[dwSymTag]);
-    }
-    else if(dwSymTag==SymTagData)
-    {
-        RECORD_DATA record=_getRecordData(pParent);
-
-        sName=record._name;
-        nOffset=record._offset;
-        nSize=record.rtype.nSize;
-
-        bData=true;
-    }
-    else if(dwSymTag==SymTagEnum)
-    {
-        RECORD_ENUM record=_getRecordEnum(pParent);
-
-        sName=record._name;
-        bEnum=true;
-    }
-    else if(dwSymTag==SymTagBaseClass)
-    {
-        RECORD_BASECLASS record=_getRecordBaseClass(pParent);
-
-        sName=record._name;
-        sResult+=indent(subopt.nIndent)+QString("Base class: %1\r\n").arg(record._name);
-    }
-    else
-    {
-        qFatal("Unknown type!!!");
-        sResult+=indent(subopt.nIndent)+QString("%1\r\n").arg(rgTags[dwSymTag]);
-    }
-
-    // TODO if flags return
-
-    bool bProcess=true;
-
-    if(subopt.bNoFunctions&&bFunction)
-    {
-        bProcess=false;
-    }
-
-    if(bProcess)
-    {
-        if(bStruct)
-        {
-            sResult+=indent(subopt.nIndent)+QString("struct %1\r\n").arg(sName);
-            sResult+=indent(subopt.nIndent)+QString("{\r\n");
-        }
-        if(bInterface)
-        {
-            sResult+=indent(subopt.nIndent)+QString("interface %1\r\n").arg(sName);
-            sResult+=indent(subopt.nIndent)+QString("{\r\n");
-        }
-        if(bUnion)
-        {
-            sResult+=indent(subopt.nIndent)+QString("union %1\r\n").arg(sName);
-            sResult+=indent(subopt.nIndent)+QString("{\r\n");
-        }
-        if(bEnum)
-        {
-            sResult+=indent(subopt.nIndent)+QString("enum %1\r\n").arg(sName);
-            sResult+=indent(subopt.nIndent)+QString("{\r\n");
-        }
-
-        if(bFunction)
-        {
-            sResult+=indent(subopt.nIndent)+QString("%1;\r\n").arg(sName);
-        }
-
-        if(bData)
-        {
-            QString sComment;
-
-//            if(pHandleOptions->bOffsets||pHandleOptions->bSizes)
-//            {
-//                sComment+=" //";
-//                if(pHandleOptions->bOffsets)
-//                {
-//                    sComment+=QString(" Offset=%1").arg(nOffset);
-//                }
-//                if(pHandleOptions->bSizes)
-//                {
-//                    sComment+=QString(" Size=%1").arg(nSize);
-//                }
-//            }
-
-            sResult+=indent(subopt.nIndent)+QString("%1;%2\r\n").arg(sName).arg(sComment);
-        }
-
-        if(bStruct||bUnion||bClass)
-        {
-            ELEMENT element=getElement(pParent);
-            sResult+=elementToString(&element,pHandleOptions,subopt);
-        }
-        else if(!bTypedef) // TODO without enums
-        {
-            IDiaEnumSymbols *pEnumSymbols;
-            if(pParent->findChildren(SymTagNull, nullptr, nsNone, &pEnumSymbols)==S_OK)
-            {
-                LONG nCount;
-                if(pEnumSymbols->get_Count(&nCount)==S_OK)
-                {
-                    if(nCount)
-                    {
-                        IDiaSymbol *pSymbol;
-                        ULONG celt = 0;
-
-                        while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
-                        {
-                            SUBOPT _subopt={};
-                            _subopt.nIndent=subopt.nIndent+1;
-
-                            if(bStruct)
-                            {
-                                _subopt.bNoFunctions=true;
-                            }
-
-                            sResult+=_handle(pSymbol,pHandleOptions,_subopt);
-
-                            pSymbol->Release();
-                        }
-                    }
-                }
-
-                pEnumSymbols->Release();
-            }
-        }
-        if(bStruct)
-        {
-            sResult+=indent(subopt.nIndent)+QString("};\r\n");
-        }
-        if(bUnion)
-        {
-            sResult+=indent(subopt.nIndent)+QString("};\r\n");
-        }
-        if(bInterface)
-        {
-            sResult+=indent(subopt.nIndent)+QString("};\r\n");
-        }
-        if(bEnum)
-        {
-            sResult+=indent(subopt.nIndent)+QString("};\r\n");
-        }
-    }
-
-    return sResult;
-}
-
 QWinPDB::ELEMENT QWinPDB::getElement(IDiaSymbol *pParent)
 {
     ELEMENT result={};
@@ -1281,77 +1080,6 @@ QWinPDB::ELEMENT QWinPDB::getElement(IDiaSymbol *pParent)
     }
 
     return result;
-}
-
-QString QWinPDB::elementToString(QWinPDB::ELEMENT *pElement,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt)
-{
-    QString sResult;
-
-//    if((pElement->elementType==ELEMENT_TYPE_STRUCT)||(pElement->elementType==ELEMENT_TYPE_CLASS)||(pElement->elementType==ELEMENT_TYPE_UNION))
-//    {
-//        QString sComment;
-//        if(pHandleOptions->bSizes)
-//        {
-//            sComment=QString(" // Size=%1").arg(pElement->rtype.nSize);
-//        }
-
-//        if(pElement->elementType==ELEMENT_TYPE_STRUCT)
-//        {
-//            sResult+=indent(subopt.nIndent)+QString("struct %1%2\r\n").arg(pElement->rtype.sName).arg(sComment);
-//        }
-//        else if(pElement->elementType==ELEMENT_TYPE_CLASS)
-//        {
-//            sResult+=indent(subopt.nIndent)+QString("class %1%2\r\n").arg(pElement->rtype.sName).arg(sComment);
-//        }
-//        else if(pElement->elementType==ELEMENT_TYPE_UNION)
-//        {
-//            sResult+=indent(subopt.nIndent)+QString("union %1%2\r\n").arg(pElement->rtype.sName).arg(sComment);
-//        }
-//    }
-//    else if(pElement->elementType==ELEMENT_TYPE_DATA)
-//    {
-//        QString sComment;
-//        if(pHandleOptions->bSizes||pHandleOptions->bOffsets)
-//        {
-//            sComment+=QString(" //");
-
-//            if(pHandleOptions->bSizes)
-//            {
-//                sComment+=QString(" Size=%1").arg(pElement->rtype.nSize);
-//            }
-//            if(pHandleOptions->bOffsets)
-//            {
-//                sComment+=QString(" Offset=%1").arg(pElement->rtype.nOffset);
-//            }
-//        }
-
-//        QString sName=rtypeToString(pElement->rtype,pHandleOptions,b);
-
-//        sResult+=indent(subopt.nIndent)+QString("%1;%2\r\n").arg(sName).arg(sComment);
-//    }
-
-
-//    if((pElement->elementType==ELEMENT_TYPE_STRUCT)||(pElement->elementType==ELEMENT_TYPE_CLASS)||(pElement->elementType==ELEMENT_TYPE_UNION))
-//    {
-//        sResult+=indent(subopt.nIndent)+QString("{\r\n");
-//    }
-
-//    for(int i=0;i<pElement->listChildren.count();i++)
-//    {
-//        SUBOPT _subopt;
-//        _subopt.nIndent=subopt.nIndent+1;
-
-//        QWinPDB::ELEMENT elChild=pElement->listChildren.at(i);
-//        sResult+=elementToString(&elChild,pHandleOptions,_subopt);
-//    }
-
-//    if((pElement->elementType==ELEMENT_TYPE_STRUCT)||(pElement->elementType==ELEMENT_TYPE_CLASS)||(pElement->elementType==ELEMENT_TYPE_UNION))
-//    {
-//        sResult+=indent(subopt.nIndent)+QString("};\r\n");
-//    }
-
-
-    return sResult;
 }
 
 QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsClass)
@@ -1785,24 +1513,6 @@ QWinPDB::STATS QWinPDB::getStats()
     return result;
 }
 
-QString QWinPDB::handle(quint32 nID, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
-{
-    QString sResult;
-
-    IDiaSymbol *pParent=nullptr;
-
-    if(getSymbolByID(nID,&pParent))
-    {
-        SUBOPT subopt={};
-        subopt.nIndent=0;
-        sResult+=_handle(pParent,pHandleOptions,subopt);
-
-        pParent->Release();
-    }
-
-    return sResult;
-}
-
 QWinPDB::ELEM QWinPDB::getElem(quint32 nID)
 {
     ELEM result={};
@@ -1940,7 +1650,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
     return result;
 }
 
-void QWinPDB::fixElem(QWinPDB::ELEM *pElem) // TODO Options
+void QWinPDB::fixOffsets(QWinPDB::ELEM *pElem) // TODO Options
 {
     // TODO
     QWinPDB::ELEM elem=*pElem;
@@ -1958,7 +1668,7 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
 {
     for(int i=nStartPosition;i<nEndPosition;i++)
     {
-        if(pListChildren->at(i).dwSize)
+        if((pListChildren->at(i).dwSize)&&(pElem->elemType!=ELEM_TYPE_ENUM))
         {
             quint32 dwOffset=pListChildren->at(i).dwOffset;
             quint32 dwBitOffset=pListChildren->at(i).dwBitOffset;
@@ -1971,7 +1681,7 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
             QList<quint32> listSizes;
             QList<quint32> listCounts;
             QList<quint32> listPositions;
-            // Find unions TODO if parent not Union
+
             for(int j=i+1;j<nEndPosition;j++)
             {
                 if( (pListChildren->at(j).dwOffset==dwOffset)&&
@@ -2037,7 +1747,7 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
                     pElemUnion=new QWinPDB::ELEM();
                     *pElemUnion={};
                     pElemUnion->elemType=ELEM_TYPE_FAKEUNION;
-                    pElemUnion->dwSize=_dwSize;
+                    pElemUnion->dwSize=_dwMaxSize;
                     pElemUnion->_udt.sType="union";
                 }
                 else
@@ -2166,16 +1876,28 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
 
                 sResult+=";";
 
-                if((pHandleOptions->bShowComments)&&(pElem->listChildren.at(i).elemType==ELEM_TYPE_DATA))
+                if(pHandleOptions->bShowComments)
                 {
-                    if(pElem->listChildren.at(i).dwSize)
+                    bool bShowComments=false;
+
+                    if(pElem->listChildren.at(i).listChildren.count()==0)
                     {
-                        sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                        bShowComments=true;
                     }
 
-                    if(pElem->listChildren.at(i).dwBitSize)
+                    if(pElem->listChildren.at(i).elemType==ELEM_TYPE_FUNCTION)
                     {
-                        sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset).arg(pElem->listChildren.at(i).dwBitSize);
+                        bShowComments=true;
+                    }
+
+                    if(bShowComments)
+                    {
+                        sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+
+                        if(pElem->listChildren.at(i).dwBitSize)
+                        {
+                            sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset).arg(pElem->listChildren.at(i).dwBitSize);
+                        }
                     }
                 }
 
@@ -2217,6 +1939,20 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     // TODO if struct has basic class -> interface
 
     return sResult;
+}
+
+QString QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
+{
+    QWinPDB::ELEM elem=getElem(nID);
+
+    if( (pHandleOptions->fixOffsets==FO_ALL)||
+        ((pHandleOptions->fixOffsets==FO_STRUCTSANDUNIONS)&&
+        ((elem._udt._udtKind==0)||(elem._udt._udtKind==2))))
+    {
+        fixOffsets(&elem);
+    }
+
+    return QWinPDB::elemToString(&elem,pHandleOptions,0,false);
 }
 
 void QWinPDB::cleanup()

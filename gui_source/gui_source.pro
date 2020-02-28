@@ -8,10 +8,9 @@ QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = PDBRipper
+TARGET = pdbripper
 TEMPLATE = app
 
-VC_PATH = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
 
 
 SOURCES +=\
@@ -41,6 +40,7 @@ FORMS    += \
 
 #LIBS += \
 #    ../../../cpp/_lib/DIA_SDK/lib/diaguids.lib
+VC_PATH = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
 LIBS += $$VC_PATH"\DIA SDK\lib\diaguids.lib"
 
 INCLUDEPATH += $$VC_PATH"\DIA SDK\include"

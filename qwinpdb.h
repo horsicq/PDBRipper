@@ -527,12 +527,22 @@ public:
         QList<SYMBOL_RECORD> listSymbols;
     };
 
+    enum FO
+    {
+        FO_NO=0,
+        FO_STRUCTSANDUNIONS,
+        FO_ALL
+    };
+
     struct HANDLE_OPTIONS
     {
         bool bShowComments;
+        FO fixOffsets;
     };
 
     explicit QWinPDB(QObject *parent = 0);
+
+    static HANDLE_OPTIONS getDefaultHandleOptions();
 
     bool loadFromFile(QString sFileName);
 
@@ -543,7 +553,6 @@ public:
     QList<SYMBOL_RECORD> getClasses(); // TODO remove
 
     STATS getStats();
-    QString handle(quint32 nID,HANDLE_OPTIONS *pHandleOptions); // TODO remove
 
     enum ELEM_TYPE
     {
@@ -590,16 +599,12 @@ public:
     ELEM getElem(quint32 nID);
     ELEM _getElem(IDiaSymbol *pParent);
 
-    void fixElem(QWinPDB::ELEM *pElem);
+    void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
 
-    struct SUBOPT
-    {
-        int nIndent;
-        bool bNoFunctions;
-    };
-
     static QString elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
+
+    QString handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
 
 private:
     void cleanup();
@@ -638,9 +643,7 @@ private:
 
     DWORD _getSymTag(IDiaSymbol *pSymbol);
     bool getSymbolByID(DWORD dwID,IDiaSymbol **ppSymbol);
-    QString _handle(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt); // TODO return struct
     ELEMENT getElement(IDiaSymbol *pParent);
-    QString elementToString(ELEMENT *pElement,HANDLE_OPTIONS *pHandleOptions,SUBOPT subopt);
     static QString rtypeToString(RTYPE rtype, bool bIsClass);
     static QString getAccessString(int nAccess);
 
