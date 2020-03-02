@@ -43,8 +43,8 @@
 
 class QWinPDB : public QObject
 {
-
     Q_OBJECT
+
 public:
 
     struct VALUE
@@ -553,6 +553,7 @@ public:
     QList<SYMBOL_RECORD> getClasses(); // TODO remove
 
     STATS getStats();
+    void stop();
 
     enum ELEM_TYPE
     {

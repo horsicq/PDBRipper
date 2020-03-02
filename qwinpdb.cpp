@@ -1417,7 +1417,7 @@ QWinPDB::STATS QWinPDB::getStats()
     IDiaEnumSymbols *pEnumSymbols;
     LONG nCount;
 //    if(pGlobal->findChildren(SymTagUDT, nullptr, nsNone, &pEnumSymbols)==S_OK)
-    if(pGlobal->findChildren(SymTagNull, nullptr, nsNone, &pEnumSymbols)==S_OK)
+    if(pGlobal->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
     {
         if(pEnumSymbols->get_Count(&nCount)==S_OK)
         {
@@ -1429,7 +1429,7 @@ QWinPDB::STATS QWinPDB::getStats()
 
                 QMap<QString,int> mapTypes;
 
-                while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
+                while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
                 {
                     SYMBOL_RECORD record={};
                     BSTR bstring;
@@ -1511,6 +1511,11 @@ QWinPDB::STATS QWinPDB::getStats()
     qSort(result.listSymbols.begin(),result.listSymbols.end(),sortLessThan);
 
     return result;
+}
+
+void QWinPDB::stop()
+{
+    // TODO
 }
 
 QWinPDB::ELEM QWinPDB::getElem(quint32 nID)

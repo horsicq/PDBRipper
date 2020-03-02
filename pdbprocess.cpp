@@ -25,6 +25,8 @@ PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB) : QObject(parent)
     this->pWinPDB=pWinPDB;
 
     pStats=0;
+
+    // TODO connect progress bars
 }
 
 void PDBProcess::setData(QWinPDB::STATS *pStats)
@@ -47,5 +49,5 @@ void PDBProcess::getStats()
 
 void PDBProcess::stop()
 {
-    // TODO
+    pWinPDB->stop();
 }
