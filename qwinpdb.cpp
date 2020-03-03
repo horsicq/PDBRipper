@@ -40,7 +40,8 @@ QWinPDB::HANDLE_OPTIONS QWinPDB::getDefaultHandleOptions()
     HANDLE_OPTIONS result={};
 
     result.bShowComments=false;
-    result.fixOffsets=FO_STRUCTSANDUNIONS;
+//    result.fixOffsets=FO_STRUCTSANDUNIONS;
+    result.fixOffsets=FO_NO;
 
     return result;
 }
@@ -1635,8 +1636,11 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
                     while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
                     {
                         ELEM elemChild=_getElem(pSymbol);
-                        result.listChildren.append(elemChild);
 
+                        if(elemChild.elemType!=ELEM_TYPE_TYPEDEF)
+                        {
+                            result.listChildren.append(elemChild);
+                        }
 //                        QString sTest;
 //                        BSTR bstring=nullptr;
 //                        if(pSymbol->get_name(&bstring)==S_OK) {sTest=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
