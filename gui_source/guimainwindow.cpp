@@ -142,30 +142,6 @@ void GuiMainWindow::on_actionOpen_triggered()
 //    handle();
 //}
 
-void GuiMainWindow::on_actionC_C_triggered()
-{
-    QString sFileName=QFileDialog::getSaveFileName(this, tr("Save File..."),"export.h", tr("h-Files (*.h);;All Files (*)"));
-
-    if(!sFileName.isEmpty())
-    {
-        QString sString; // TODO
-        QFile file;
-        file.setFileName(sFileName);
-
-        if(file.open(QIODevice::ReadWrite))
-        {
-            file.resize(0);
-            file.write(sString.toLatin1().data(),sString.length());
-            file.close();
-            QMessageBox::information(0, "Informational", QString("File saved: %1").arg(sFileName));
-        }
-        else
-        {
-            QMessageBox::critical(0, "Critical",QString("Cannot save file: %1").arg(sFileName));
-        }
-    }
-}
-
 //void GuiMainWindow::on_comboBoxType_currentIndexChanged(int index)
 //{
 ////    if(index!=-1)
@@ -304,6 +280,8 @@ void GuiMainWindow::on_checkBoxShowComments_toggled(bool checked)
 void GuiMainWindow::setHandleOptions(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     ui->checkBoxShowComments->setChecked(pHandleOptions->bShowComments);
+    ui->checkBoxFixTypes->setChecked(pHandleOptions->bFixTypes);
+    ui->checkBoxAddAlignment->setChecked(pHandleOptions->bAddAlignment);
 
     int nCount=ui->comboBoxFixOffsets->count();
 
@@ -323,6 +301,8 @@ QWinPDB::HANDLE_OPTIONS GuiMainWindow::getHandleOptions()
     QWinPDB::HANDLE_OPTIONS result={};
 
     result.bShowComments=ui->checkBoxShowComments->isChecked();
+    result.bFixTypes=ui->checkBoxFixTypes->isChecked();
+    result.bAddAlignment=ui->checkBoxAddAlignment->isChecked();
     result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
 
     return result;
@@ -333,4 +313,43 @@ void GuiMainWindow::on_comboBoxFixOffsets_currentIndexChanged(int index)
     Q_UNUSED(index);
 
     handle();
+}
+
+void GuiMainWindow::on_checkBoxShowFixTypes_toggled(bool checked)
+{
+    Q_UNUSED(checked)
+
+    handle();
+}
+
+void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
+{
+    Q_UNUSED(checked)
+
+    handle();
+}
+
+void GuiMainWindow::on_actionCPP_triggered()
+{
+    // TODO
+    QString sFileName=QFileDialog::getSaveFileName(this, tr("Save File..."),"export.h", tr("h-Files (*.h);;All Files (*)"));
+
+    if(!sFileName.isEmpty())
+    {
+        QString sString; // TODO
+        QFile file;
+        file.setFileName(sFileName);
+
+        if(file.open(QIODevice::ReadWrite))
+        {
+            file.resize(0);
+            file.write(sString.toLatin1().data(),sString.length());
+            file.close();
+            QMessageBox::information(0, tr("Information"), QString("%1: %2").arg(tr("File saved")).arg(sFileName));
+        }
+        else
+        {
+            QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
+        }
+    }
 }

@@ -537,6 +537,8 @@ public:
     struct HANDLE_OPTIONS
     {
         bool bShowComments;
+        bool bFixTypes;
+        bool bAddAlignment;
         FO fixOffsets;
     };
 
@@ -597,8 +599,8 @@ public:
     };
 
 
-    ELEM getElem(quint32 nID);
-    ELEM _getElem(IDiaSymbol *pParent);
+    ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
+    ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions);
 
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);

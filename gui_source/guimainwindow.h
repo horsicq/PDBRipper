@@ -46,8 +46,6 @@ public:
 
 private slots:
     void on_actionOpen_triggered();
-    void on_actionC_C_triggered();
-
 //    void handle();
 //    void on_checkBoxOffsets_toggled(bool checked);
 //    void on_checkBoxSizes_toggled(bool checked);
@@ -66,6 +64,9 @@ private slots:
     QWinPDB::HANDLE_OPTIONS getHandleOptions();
 
     void on_comboBoxFixOffsets_currentIndexChanged(int index);
+    void on_checkBoxShowFixTypes_toggled(bool checked);
+    void on_checkBoxAddAlignment_toggled(bool checked);
+    void on_actionCPP_triggered();
 
 private:
     enum CBT

@@ -21,6 +21,10 @@
 
 #include "qwinpdb.h"
 
+// TODO Fix types(size)
+// TODO add alignment bytes
+// TODO mb add typedefs
+
 bool sortLessThan(const QWinPDB::SYMBOL_RECORD &v1, const QWinPDB::SYMBOL_RECORD &v2)
 {
 //    return v1.sName<v2.sName; // TODO id sort
@@ -1519,7 +1523,7 @@ void QWinPDB::stop()
     // TODO
 }
 
-QWinPDB::ELEM QWinPDB::getElem(quint32 nID)
+QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     ELEM result={};
 
@@ -1527,7 +1531,7 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID)
 
     if(getSymbolByID(nID,&pParent))
     {
-        result=_getElem(pParent);
+        result=_getElem(pParent,pHandleOptions);
 
         pParent->Release();
     }
@@ -1535,7 +1539,7 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID)
     return result;
 }
 
-QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
+QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOptions)
 {
     ELEM result={};
 
@@ -1635,10 +1639,11 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent)
 
                     while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
                     {
-                        ELEM elemChild=_getElem(pSymbol);
+                        ELEM elemChild=_getElem(pSymbol,pHandleOptions);
 
                         if(elemChild.elemType!=ELEM_TYPE_TYPEDEF)
                         {
+                            // TODO Alignment
                             result.listChildren.append(elemChild);
                         }
 //                        QString sTest;
@@ -1899,13 +1904,18 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
                         bShowComments=true;
                     }
 
+                    // TODO Functions start end
+
                     if(bShowComments)
                     {
-                        sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                        if(pElem->listChildren.at(i).dwSize)
+                        {
+                            sResult+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                        }
 
                         if(pElem->listChildren.at(i).dwBitSize)
                         {
-                            sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset).arg(pElem->listChildren.at(i).dwBitSize);
+                            sResult+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset,0,16).arg(pElem->listChildren.at(i).dwBitSize,0,16);
                         }
                     }
                 }
@@ -1952,7 +1962,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
 
 QString QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
-    QWinPDB::ELEM elem=getElem(nID);
+    QWinPDB::ELEM elem=getElem(nID,pHandleOptions);
 
     if( (pHandleOptions->fixOffsets==FO_ALL)||
         ((pHandleOptions->fixOffsets==FO_STRUCTSANDUNIONS)&&

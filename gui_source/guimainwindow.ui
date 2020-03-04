@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
-    <height>568</height>
+    <width>801</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,6 +153,33 @@
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="checkBoxFixTypes">
+                 <property name="text">
+                  <string>Fix types</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxAddAlignment">
+                 <property name="text">
+                  <string>Add alignment</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>198</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QGroupBox" name="groupBoxFixOffsets">
                  <property name="minimumSize">
                   <size>
@@ -181,19 +208,6 @@
                   </item>
                  </layout>
                 </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>198</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </widget>
@@ -226,8 +240,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>758</width>
-     <height>22</height>
+     <width>801</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -240,7 +254,13 @@
     <property name="title">
      <string>Action</string>
     </property>
-    <addaction name="actionC_C"/>
+    <widget class="QMenu" name="menuExport_2">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionCPP"/>
+    </widget>
+    <addaction name="menuExport_2"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
@@ -273,11 +293,6 @@
     <string>Open</string>
    </property>
   </action>
-  <action name="actionC_C">
-   <property name="text">
-    <string>C/C++</string>
-   </property>
-  </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
@@ -286,6 +301,11 @@
   <action name="actionOptions">
    <property name="text">
     <string>Options</string>
+   </property>
+  </action>
+  <action name="actionCPP">
+   <property name="text">
+    <string>C++</string>
    </property>
   </action>
  </widget>
