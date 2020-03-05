@@ -315,13 +315,6 @@ void GuiMainWindow::on_comboBoxFixOffsets_currentIndexChanged(int index)
     handle();
 }
 
-void GuiMainWindow::on_checkBoxShowFixTypes_toggled(bool checked)
-{
-    Q_UNUSED(checked)
-
-    handle();
-}
-
 void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
 {
     Q_UNUSED(checked)
@@ -352,4 +345,11 @@ void GuiMainWindow::on_actionCPP_triggered()
             QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
         }
     }
+}
+
+void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
+{
+    Q_UNUSED(checked)
+
+    handle();
 }

@@ -26,7 +26,9 @@ PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB) : QObject(parent)
 
     pStats=0;
 
-    // TODO connect progress bars
+    connect(pWinPDB, SIGNAL(completed()), this, SIGNAL(completed()));
+    connect(pWinPDB, SIGNAL(setProgressMaximum(int)), this, SIGNAL(setProgressMaximum(int)));
+    connect(pWinPDB, SIGNAL(setProgressValue(int)), this, SIGNAL(setProgressValue(int)));
 }
 
 void PDBProcess::setData(QWinPDB::STATS *pStats)
@@ -43,7 +45,7 @@ void PDBProcess::getStats()
 
 //        pWinPDB->getAllTags();
 
-        emit completed();
+//        emit completed();
     }
 }
 

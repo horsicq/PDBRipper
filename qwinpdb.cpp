@@ -222,7 +222,7 @@ QWinPDB::RECORD_UDT QWinPDB::_getRecordUDT(IDiaSymbol *pSymbol)
     return result;
 }
 
-QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol)
+QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     RECORD_FUNCTION result={};
 
@@ -270,7 +270,7 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol)
     pSymbol->get_virtualBaseOffset(&result._virtualBaseOffset);
     pSymbol->get_volatileType(&result._volatileType);
 
-    result.rtype=getSymbolType(pSymbol);
+    result.rtype=getSymbolType(pSymbol,pHandleOptions);
     result.rtype.sName=result._name;
     result.rtype.nAccess=result._access;
 
@@ -279,7 +279,7 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol)
     return result;
 }
 
-QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol)
+QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     RECORD_DATA result={};
 
@@ -315,7 +315,7 @@ QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol)
 
     // TODO extra options
 
-    result.rtype=getSymbolType(pSymbol);
+    result.rtype=getSymbolType(pSymbol,pHandleOptions);
     result.rtype.sName=result._name;
     result.rtype.nOffset=result._offset;
     result.rtype.nAccess=result._access;
@@ -603,6 +603,36 @@ QWinPDB::RECORD_FUNCDEBUGEND QWinPDB::_getRecordFuncDebugEnd(IDiaSymbol *pSymbol
     return result;
 }
 
+QWinPDB::RECORD_CALLSITE QWinPDB::_getRecordCallSite(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions)
+{
+    RECORD_CALLSITE result={};
+
+    // TODO Check
+
+    pSymbol->get_addressOffset(&result._addressOffset);
+    pSymbol->get_addressSection(&result._addressSection);
+    pSymbol->get_customCallingConvention(&result._customCallingConvention);
+    pSymbol->get_farReturn(&result._farReturn);
+    pSymbol->get_interruptReturn(&result._interruptReturn);
+    pSymbol->get_isStatic(&result._isStatic);
+    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+    pSymbol->get_locationType(&result._locationType);
+    pSymbol->get_noInline(&result._noInline);
+    pSymbol->get_noReturn(&result._noReturn);
+    pSymbol->get_notReached(&result._notReached);
+    pSymbol->get_offset(&result._offset);
+    pSymbol->get_optimizedCodeDebugInfo(&result._optimizedCodeDebugInfo);
+    pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
+    pSymbol->get_symIndexId(&result._symIndexId);
+    pSymbol->get_symTag(&result._symTag);
+    pSymbol->get_virtualAddress(&result._virtualAddress);
+
+    result.rtype=getSymbolType(pSymbol,pHandleOptions);
+    result.rtype.nOffset=result._offset;
+
+    return result;
+}
+
 QWinPDB::RECORD_LABEL QWinPDB::_getRecordLabel(IDiaSymbol *pSymbol)
 {
     RECORD_LABEL result={};
@@ -650,7 +680,749 @@ QWinPDB::RECORD_BLOCK QWinPDB::_getRecordBlock(IDiaSymbol *pSymbol)
     return result;
 }
 
-QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol)
+void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
+{
+    DWORD dwTest=0;
+    BSTR bstrTest=nullptr;
+    IDiaSymbol *diaSimbol=nullptr;
+
+    if(pSymbol->get_symIndexId(&dwTest)==S_OK) qDebug("get_symIndexId");
+    if(pSymbol->get_symTag(&dwTest)==S_OK) qDebug("get_symTag");
+    if(pSymbol->get_name(&bstrTest)==S_OK) qDebug("get_name");
+    if(pSymbol->get_lexicalParent(&diaSimbol)==S_OK) qDebug("get_lexicalParent");
+    if(pSymbol->get_classParent(&diaSimbol)==S_OK) qDebug("get_classParent");
+    if(pSymbol->get_type(&diaSimbol)==S_OK) qDebug("get_type");
+
+    if(pSymbol->get_dataKind(&dwTest)==S_OK) qDebug("get_dataKind");
+    if(pSymbol->get_locationType(&dwTest)==S_OK) qDebug("get_locationType");
+    if(pSymbol->get_addressSection(&dwTest)==S_OK) qDebug("get_addressSection");
+    if(pSymbol->get_addressOffset(&dwTest)==S_OK) qDebug("get_addressOffset");
+    if(pSymbol->get_relativeVirtualAddress(&dwTest)==S_OK) qDebug("get_relativeVirtualAddress");
+
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualAddress(
+//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_registerId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_offset(
+//        /* [retval][out] */ LONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_length(
+//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_slot(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_volatileType(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_constType(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unalignedType(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_access(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_libraryName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_platform(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_language(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_editAndContinueEnabled(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndMajor(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndMinor(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndBuild(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndMajor(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndMinor(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndBuild(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_sourceFileName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unused(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_thunkOrdinal(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_thisAdjust(
+//        /* [retval][out] */ LONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseOffset(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtual(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_intro(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_pure(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_callingConvention(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_value(
+//        /* [retval][out] */ VARIANT *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseType(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_token(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_timeStamp(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_guid(
+//        /* [retval][out] */ GUID *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_symbolsFileName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_reference(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_count(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bitPosition(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_arrayIndexType(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_packed(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_constructor(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_overloadedOperator(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_nested(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasNestedTypes(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasAssignmentOperator(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasCastOperator(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_scoped(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseClass(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_indirectVirtualBaseClass(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBasePointerOffset(
+//        /* [retval][out] */ LONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualTableShape(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_lexicalParentId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_classParentId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_typeId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_arrayIndexTypeId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualTableShapeId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_code(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_function(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_managed(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_msil(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseDispIndex(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_undecoratedName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_age(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_signature(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_compilerGenerated(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_addressTaken(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_rank(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_lowerBound(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_upperBound(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_lowerBoundId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_upperBoundId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_dataBytes(
+//        /* [in] */ DWORD cbData,
+//        /* [out] */ DWORD *pcbData,
+//        /* [size_is][out] */ BYTE *pbData) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findChildren(
+//        /* [in] */ enum SymTagEnum symtag,
+//        /* [in] */ LPCOLESTR name,
+//        /* [in] */ DWORD compareFlags,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findChildrenEx(
+//        /* [in] */ enum SymTagEnum symtag,
+//        /* [in] */ LPCOLESTR name,
+//        /* [in] */ DWORD compareFlags,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findChildrenExByAddr(
+//        /* [in] */ enum SymTagEnum symtag,
+//        /* [in] */ LPCOLESTR name,
+//        /* [in] */ DWORD compareFlags,
+//        /* [in] */ DWORD isect,
+//        /* [in] */ DWORD offset,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findChildrenExByVA(
+//        /* [in] */ enum SymTagEnum symtag,
+//        /* [in] */ LPCOLESTR name,
+//        /* [in] */ DWORD compareFlags,
+//        /* [in] */ ULONGLONG va,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findChildrenExByRVA(
+//        /* [in] */ enum SymTagEnum symtag,
+//        /* [in] */ LPCOLESTR name,
+//        /* [in] */ DWORD compareFlags,
+//        /* [in] */ DWORD rva,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetSection(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetOffset(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetRelativeVirtualAddress(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetVirtualAddress(
+//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_machineType(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_oemId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_oemSymbolId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_types(
+//        /* [in] */ DWORD cTypes,
+//        /* [out] */ DWORD *pcTypes,
+//        /* [size_is][size_is][out] */ IDiaSymbol **pTypes) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_typeIds(
+//        /* [in] */ DWORD cTypeIds,
+//        /* [out] */ DWORD *pcTypeIds,
+//        /* [size_is][out] */ DWORD *pdwTypeIds) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_objectPointerType(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_udtKind(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_undecoratedNameEx(
+//        /* [in] */ DWORD undecorateOptions,
+//        /* [out] */ BSTR *name) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noReturn(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_customCallingConvention(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noInline(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_optimizedCodeDebugInfo(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_notReached(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_interruptReturn(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_farReturn(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isStatic(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasDebugInfo(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isLTCG(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isDataAligned(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasSecurityChecks(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_compilerName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasAlloca(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasSetJump(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasLongJump(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasInlAsm(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasEH(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasSEH(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasEHa(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isNaked(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAggregated(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSplitted(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_container(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_inlSpec(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noStackOrdering(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseTableType(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasManagedCode(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isHotpatchable(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isCVTCIL(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMSILNetmodule(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isCTypes(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isStripped(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndQFE(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndQFE(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_wasInlined(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_strictGSCheck(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isCxxReturnUdt(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isConstructorVirtualBase(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_RValueReference(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unmodifiedType(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_framePointerPresent(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSafeBuffers(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_intrinsic(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_sealed(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hfaFloat(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hfaDouble(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeStartAddressSection(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeStartAddressOffset(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeStartRelativeVirtualAddress(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_countLiveRanges(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeLength(
+//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_offsetInUdt(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_paramBasePointerRegisterId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_localBasePointerRegisterId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isLocationControlFlowDependent(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_stride(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfRows(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfColumns(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMatrixRowMajor(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_numericProperties(
+//        /* [in] */ DWORD cnt,
+//        /* [out] */ DWORD *pcnt,
+//        /* [size_is][out] */ DWORD *pProperties) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_modifierValues(
+//        /* [in] */ DWORD cnt,
+//        /* [out] */ DWORD *pcnt,
+//        /* [size_is][out] */ WORD *pModifiers) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isReturnValue(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isOptimizedAway(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_builtInKind(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_registerType(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseDataSlot(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseDataOffset(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_textureSlot(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_samplerSlot(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_uavSlot(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_sizeInUdt(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_memorySpaceKind(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unmodifiedTypeId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_subTypeId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_subType(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfModifiers(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfRegisterIndices(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isHLSLData(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPointerToDataMember(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPointerToMemberFunction(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSingleInheritance(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMultipleInheritance(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isVirtualInheritance(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_restrictedType(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPointerBasedOnSymbolValue(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseSymbol(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseSymbolId(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_objectFileName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAcceleratorGroupSharedLocal(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAcceleratorPointerTagLiveRange(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAcceleratorStubFunction(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfAcceleratorPointerTags(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSdl(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isWinRTPointer(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isRefUdt(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isValueUdt(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isInterfaceUdt(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineFramesByAddr(
+//        /* [in] */ DWORD isect,
+//        /* [in] */ DWORD offset,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineFramesByRVA(
+//        /* [in] */ DWORD rva,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineFramesByVA(
+//        /* [in] */ ULONGLONG va,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineeLines(
+//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineeLinesByAddr(
+//        /* [in] */ DWORD isect,
+//        /* [in] */ DWORD offset,
+//        /* [in] */ DWORD length,
+//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineeLinesByRVA(
+//        /* [in] */ DWORD rva,
+//        /* [in] */ DWORD length,
+//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInlineeLinesByVA(
+//        /* [in] */ ULONGLONG va,
+//        /* [in] */ DWORD length,
+//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findSymbolsForAcceleratorPointerTag(
+//        /* [in] */ DWORD tagValue,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findSymbolsByRVAForAcceleratorPointerTag(
+//        /* [in] */ DWORD tagValue,
+//        /* [in] */ DWORD rva,
+//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE get_acceleratorPointerTags(
+//        /* [in] */ DWORD cnt,
+//        /* [out] */ DWORD *pcnt,
+//        /* [size_is][out] */ DWORD *pPointerTags) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE getSrcLineOnTypeDefn(
+//        /* [out] */ IDiaLineNumber **ppResult) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPGO(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasValidPGOCounts(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isOptimizedForSpeed(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_PGOEntryCount(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_PGOEdgeCount(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_PGODynamicInstructionCount(
+//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_staticSize(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_finalLiveStaticSize(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_phaseName(
+//        /* [retval][out] */ BSTR *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasControlFlowCheck(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_constantExport(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_dataExport(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_privateExport(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noNameExport(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exportHasExplicitlyAssignedOrdinal(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exportIsForwarder(
+//        /* [retval][out] */ BOOL *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_ordinal(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frameSize(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerAddressSection(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerAddressOffset(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerRelativeVirtualAddress(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerVirtualAddress(
+//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
+
+//    virtual HRESULT STDMETHODCALLTYPE findInputAssemblyFile(
+//        /* [out] */ IDiaInputAssemblyFile **ppResult) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_characteristics(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_coffGroup(
+//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bindID(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bindSpace(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+
+//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bindSlot(
+//        /* [retval][out] */ DWORD *pRetVal) = 0;
+}
+
+QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     RTYPE result={};
 
@@ -659,7 +1431,7 @@ QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol)
 
     if(pType)
     {
-        result=_getType(pType);
+        result=_getType(pType,pHandleOptions);
     }
     else
     {
@@ -671,7 +1443,7 @@ QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol)
     return result;
 }
 
-QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
+QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     RTYPE result={};
 
@@ -730,6 +1502,20 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
                 case 32:    result.sTypeName="char16_t";            break;
                 case 33:    result.sTypeName="char32_t";            break;
             }
+
+            if(pHandleOptions->bFixTypes)
+            {
+                if((result.nBaseType==7)&&(result.nSize!=4)) // "unsigned int"
+                {
+                    switch(result.nSize)
+                    {
+                        case 1:     result.sTypeName="unsigned char";   break;
+                        case 2:     result.sTypeName="unsigned short";  break;
+                        case 4:     result.sTypeName="unsigned int";    break;
+                        case 8:     result.sTypeName="unsigned long";   break;
+                    }
+                }
+            }
         }
         else if(dwSymTag==SymTagUDT)
         {
@@ -748,7 +1534,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             IDiaSymbol *_pType=0;
             pType->get_type(&_pType);
 
-            result=_getType(_pType);
+            result=_getType(_pType,pHandleOptions);
             if(pointerType._reference)
             {
                 result.bIsReference=true;
@@ -773,7 +1559,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
             IDiaSymbol *_pType=0;
             pType->get_type(&_pType);
 
-            result=_getType(_pType);
+            result=_getType(_pType,pHandleOptions);
             result.bIsArray=true;
             result.listArrayCount.append(arrayType._count);
             result.nSize*=arrayType._count;
@@ -797,7 +1583,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
         }
         else if(dwSymTag==SymTagFunctionType)
         {
-            RTYPE res_ret=getSymbolType(pType);
+            RTYPE res_ret=getSymbolType(pType,pHandleOptions);
             result.sFunctionRet=rtypeToString(res_ret,false);
 
             RECORD_FUNCTIONTYPE ft=_getRecordFunctionType(pType);
@@ -819,7 +1605,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
 
                         while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
                         {
-                            RTYPE rtype=getSymbolType(pSymbol);
+                            RTYPE rtype=getSymbolType(pSymbol,pHandleOptions);
 
                             result.listFunctionArgs.append(rtypeToString(rtype,false));
 
@@ -833,7 +1619,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType)
         }
         else if(dwSymTag==SymTagFunctionArgType)
         {
-            result=getSymbolType(pType); // TODO
+            result=getSymbolType(pType,pHandleOptions); // TODO
         }
         else
         {
@@ -925,166 +1711,6 @@ bool QWinPDB::getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol)
     }
 
     return bResult;
-}
-
-QWinPDB::ELEMENT QWinPDB::getElement(IDiaSymbol *pParent)
-{
-    ELEMENT result={};
-
-    DWORD dwSymTag=_getSymTag(pParent);
-    if(dwSymTag==SymTagUDT)
-    {
-        RECORD_UDT record=_getRecordUDT(pParent);
-
-        result.rtype.sName=record._name;
-        result.rtype.nSize=record._length;
-
-        if(record._udtKind==0)
-        {
-            result.elementType=ELEMENT_TYPE_STRUCT;
-        }
-        if(record._udtKind==1)
-        {
-            result.elementType=ELEMENT_TYPE_CLASS;
-        }
-        else if(record._udtKind==2)
-        {
-            result.elementType=ELEMENT_TYPE_UNION;
-        }
-
-        if((result.elementType==ELEMENT_TYPE_STRUCT)||(result.elementType==ELEMENT_TYPE_CLASS)||(result.elementType==ELEMENT_TYPE_UNION))
-        {
-            IDiaEnumSymbols *pEnumSymbols;
-            LONG nCount;
-            if(pParent->findChildren(SymTagNull, NULL, nsNone, &pEnumSymbols)==S_OK)
-            {
-                if(pEnumSymbols->get_Count(&nCount)==S_OK)
-                {
-                    if(nCount)
-                    {
-                        IDiaSymbol *pSymbol;
-                        ULONG celt = 0;
-
-                        int nCurrentOffset=0;
-                        QList<QList<ELEMENT>> lstElements;
-                        QList<ELEMENT> listCurrent;
-
-                        while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
-                        {
-                            DWORD dwSymTag=0;
-                            if(SUCCEEDED(pSymbol->get_symTag(&dwSymTag)))
-                            {
-                                if(dwSymTag==SymTagData)
-                                {
-                                    ELEMENT record={};
-                                    RECORD_DATA rd=_getRecordData(pSymbol);
-                                    record.elementType=ELEMENT_TYPE_DATA;
-                                    record.rtype=rd.rtype;
-
-                                    if(nCurrentOffset==record.rtype.nOffset)
-                                    {
-
-                                    }
-                                    else if(ALIGN_UP(nCurrentOffset,4)==record.rtype.nOffset)
-                                    {
-                                        // TODO alignments
-                                    }
-                                    else
-                                    {
-                                        lstElements.append(listCurrent);
-                                        listCurrent.clear();
-                                    }
-
-                                    nCurrentOffset=record.rtype.nOffset+record.rtype.nSize;
-
-                                    listCurrent.append(record);
-                                }
-                                else
-                                {
-                                    qDebug("Unknown member");
-                                    qDebug(rgTags[dwSymTag]);
-                                }
-                            }
-                            pSymbol->Release();
-                        }
-
-                        if(listCurrent.size())
-                        {
-                            lstElements.append(listCurrent);
-                        }
-
-                        if(lstElements.size()==1)
-                        {
-                            result.listChildren.append(lstElements.at(0));
-                        }
-                        else
-                        {
-                            int nCount=lstElements.size();
-                            for(int i=0;i<nCount;i++)
-                            {
-                                result.listChildren.append(lstElements.at(i));
-                            }
-//                            int nCount=lstElements.size();
-//                            for(int i=0;i<nCount;i++)
-//                            {
-//                                if(i) // Without the first element
-//                                {
-//                                    if(lstElements.at(i).count())
-//                                    {
-//                                        int nCurrentOffset=lstElements.at(i).at(0).nOffset;
-//                                        // Find
-//                                        for(int j=i-1;j<=nCount-j;j--)
-//                                        {
-//                                            int nPrevOffset=lstElements.at(j).at(0).nOffset;
-//                                            if(nCurrentOffset>nPrevOffset) // mb TODO more checks
-//                                            {
-//                                                // 2 parts
-//                                                QList<ELEMENT> listElems1;
-//                                                QList<ELEMENT> listElems2;
-
-//                                                for(int k=0;k<lstElements.at(j).count();k++)
-//                                                {
-//                                                    if(lstElements.at(j).at(k).nOffset<nCurrentOffset)
-//                                                    {
-//                                                        listElems1.append(lstElements.at(j).at(k));
-//                                                    }
-//                                                    else
-//                                                    {
-//                                                        listElems2.append(lstElements.at(j).at(k));
-//                                                    }
-//                                                }
-
-//                                                lstElements.removeAt(j);
-
-//                                                lstElements.insert(j,listElems1);
-
-//                                                if(listElems2.count())
-//                                                {
-//                                                    lstElements.insert(j+1,listElems2);
-
-//                                                    i++;
-//                                                    nCount++;
-//                                                }
-
-//                                                break;
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-
-                        }
-
-                        int z=0;
-                        z++;
-                    }
-                }
-                pEnumSymbols->Release();
-            }
-        }
-    }
-
-    return result;
 }
 
 QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsClass)
@@ -1223,7 +1849,7 @@ QWinPDB::~QWinPDB()
     cleanup();
 }
 
-QWinPDB::PDB_INFO QWinPDB::getAllTags()
+QWinPDB::PDB_INFO QWinPDB::getAllTags(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     PDB_INFO result={};
 
@@ -1254,13 +1880,13 @@ QWinPDB::PDB_INFO QWinPDB::getAllTags()
                         }
                         else if(dwSymTag==SymTagData)
                         {
-                            RECORD_DATA record=_getRecordData(pSymbol);
+                            RECORD_DATA record=_getRecordData(pSymbol,pHandleOptions);
 
                             result.mapData.insert(record._symIndexId,record);
                         }
                         else if(dwSymTag==SymTagFunction)
                         {
-                            RECORD_FUNCTION record=_getRecordFunction(pSymbol);
+                            RECORD_FUNCTION record=_getRecordFunction(pSymbol,pHandleOptions);
 
                             result.mapFunction.insert(record._symIndexId,record);
                         }
@@ -1415,6 +2041,7 @@ QList<QWinPDB::SYMBOL_RECORD> QWinPDB::getClasses()
 
 QWinPDB::STATS QWinPDB::getStats()
 {
+    // TODO ProgressBar
     STATS result={};
 
     QMap<QString,qint64> mapUDT;
@@ -1515,6 +2142,8 @@ QWinPDB::STATS QWinPDB::getStats()
 
     qSort(result.listSymbols.begin(),result.listSymbols.end(),sortLessThan);
 
+    emit completed();
+
     return result;
 }
 
@@ -1555,7 +2184,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
     else if(dwSymTag==SymTagFunction)
     {
         result.elemType=ELEM_TYPE_FUNCTION;
-        result._function=_getRecordFunction(pParent);
+        result._function=_getRecordFunction(pParent,pHandleOptions);
         result.dwSize=result._function._length; // TODO Check!
     }
     else if(dwSymTag==SymTagTypedef)
@@ -1567,7 +2196,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
     else if(dwSymTag==SymTagData)
     {
         result.elemType=ELEM_TYPE_DATA;
-        result._data=_getRecordData(pParent);
+        result._data=_getRecordData(pParent,pHandleOptions);
         result.dwSize=result._data.rtype.nSize;
         result.dwOffset=result._data.rtype.nOffset;
         result.dwBitOffset=result._data.rtype.nBitOffset;
@@ -1606,8 +2235,10 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
     }
     else if(dwSymTag==SymTagCallSite)
     {
+        _checkSymbol(pParent);
+
         result.elemType=ELEM_TYPE_CALLSITE;
-        qDebug("SymTagCallSite");
+        result._callsite=_getRecordCallSite(pParent,pHandleOptions);
     }
     else if(dwSymTag==SymTagLabel)
     {
@@ -1641,7 +2272,19 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
                     {
                         ELEM elemChild=_getElem(pSymbol,pHandleOptions);
 
-                        if(elemChild.elemType!=ELEM_TYPE_TYPEDEF)
+                        bool bAdd=true;
+
+                        if(elemChild.elemType==ELEM_TYPE_VTABLE)
+                        {
+                            bAdd=false;
+                        }
+
+                        if(elemChild.elemType==ELEM_TYPE_TYPEDEF)
+                        {
+                            bAdd=false;
+                        }
+
+                        if(bAdd)
                         {
                             // TODO Alignment
                             result.listChildren.append(elemChild);
@@ -1944,6 +2587,11 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
     {
         // TODO Check typedef
         qDebug("TYPEDEF");
+    }
+    else if(pElem->elemType==ELEM_TYPE_VTABLE)
+    {
+        // TODO Check typedef
+        qDebug("VTABLE");
     }
     else
     {

@@ -447,6 +447,8 @@ public:
         DWORD _symIndexId;
         DWORD _symTag;
         ULONGLONG _virtualAddress;
+
+        RTYPE rtype;
     };
 
     struct RECORD_LABEL
@@ -550,7 +552,7 @@ public:
 
     ~QWinPDB();
 
-    PDB_INFO getAllTags();
+    PDB_INFO getAllTags(HANDLE_OPTIONS *pHandleOptions);
     QList<SYMBOL_RECORD> getUDTList(DWORD dwKind);
     QList<SYMBOL_RECORD> getClasses(); // TODO remove
 
@@ -594,6 +596,7 @@ public:
         RECORD_VTABLE _vtable;
         RECORD_FUNCDEBUGSTART _funcdebugstart;
         RECORD_FUNCDEBUGEND _funcdebugend;
+        RECORD_CALLSITE _callsite;
 
         QList<ELEM> listChildren;
     };
@@ -620,8 +623,8 @@ private:
     QString indent(int nLevel);
 
     RECORD_UDT _getRecordUDT(IDiaSymbol *pSymbol);
-    RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol);
-    RECORD_DATA _getRecordData(IDiaSymbol *pSymbol);
+    RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
+    RECORD_DATA _getRecordData(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_BASETYPE _getRecordBaseType(IDiaSymbol *pSymbol);
     RECORD_FUNCTIONARGTYPE _getRecordFunctionArgType(IDiaSymbol *pSymbol);
     RECORD_VTABLE _getRecordVTable(IDiaSymbol *pSymbol);
@@ -635,22 +638,29 @@ private:
     RECORD_ARRAYTYPE _getRecordArrayType(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGSTART _getRecordFuncDebugStart(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGEND _getRecordFuncDebugEnd(IDiaSymbol *pSymbol);
+    RECORD_CALLSITE _getRecordCallSite(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_LABEL _getRecordLabel(IDiaSymbol *pSymbol);
     RECORD_BLOCK _getRecordBlock(IDiaSymbol *pSymbol);
 
-    RTYPE getSymbolType(IDiaSymbol *pSymbol);
-    RTYPE _getType(IDiaSymbol *pType);
+    void _checkSymbol(IDiaSymbol *pSymbol);
+
+    RTYPE getSymbolType(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
+    RTYPE _getType(IDiaSymbol *pType, HANDLE_OPTIONS *pHandleOptions);
 
     QString getSymbolTypeString(IDiaSymbol *pSymbol);
     QString _getTypeString(IDiaSymbol *pType);
 
     DWORD _getSymTag(IDiaSymbol *pSymbol);
     bool getSymbolByID(DWORD dwID,IDiaSymbol **ppSymbol);
-    ELEMENT getElement(IDiaSymbol *pParent);
     static QString rtypeToString(RTYPE rtype, bool bIsClass);
     static QString getAccessString(int nAccess);
 
     static QString _getTab(int nLevel);
+
+signals:
+    void completed();
+    void setProgressMaximum(int);
+    void setProgressValue(int);
 
 private:
     IDiaDataSource *pDiaDataSource;
