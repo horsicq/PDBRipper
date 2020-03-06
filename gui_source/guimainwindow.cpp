@@ -250,16 +250,21 @@ void GuiMainWindow::onCurrentChanged(const QModelIndex &current, const QModelInd
 
 void GuiMainWindow::handle()
 {
-    QModelIndexList list=ui->tableViewSymbols->selectionModel()->selection().indexes();
+    QItemSelectionModel *pSelectionModel=ui->tableViewSymbols->selectionModel();
 
-    if(list.count())
+    if(pSelectionModel)
     {
-        QWinPDB::HANDLE_OPTIONS handleOptions=getHandleOptions();
-        quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
+        QModelIndexList list=pSelectionModel->selection().indexes();
 
-        QString sText=pWinPDB->handleElement(nID,&handleOptions);
+        if(list.count())
+        {
+            QWinPDB::HANDLE_OPTIONS handleOptions=getHandleOptions();
+            quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
 
-        ui->textBrowserResult->setText(sText);
+            QString sText=pWinPDB->handleElement(nID,&handleOptions);
+
+            ui->textBrowserResult->setText(sText);
+        }
     }
 }
 
@@ -352,4 +357,9 @@ void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
     Q_UNUSED(checked)
 
     handle();
+}
+
+void GuiMainWindow::on_actionQuit_triggered()
+{
+    this->close();
 }

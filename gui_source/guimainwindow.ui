@@ -249,6 +249,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
@@ -306,6 +307,14 @@
   <action name="actionCPP">
    <property name="text">
     <string>C++</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Q</string>
    </property>
   </action>
  </widget>

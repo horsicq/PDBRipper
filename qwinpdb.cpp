@@ -685,6 +685,11 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     DWORD dwTest=0;
     BSTR bstrTest=nullptr;
     IDiaSymbol *diaSimbol=nullptr;
+    ULONGLONG llTest=0;
+    LONG lTest=0;
+    BOOL bTest=0;
+    VARIANT vTest;
+    GUID gTest;
 
     if(pSymbol->get_symIndexId(&dwTest)==S_OK) qDebug("get_symIndexId");
     if(pSymbol->get_symTag(&dwTest)==S_OK) qDebug("get_symTag");
@@ -692,321 +697,99 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_lexicalParent(&diaSimbol)==S_OK) qDebug("get_lexicalParent");
     if(pSymbol->get_classParent(&diaSimbol)==S_OK) qDebug("get_classParent");
     if(pSymbol->get_type(&diaSimbol)==S_OK) qDebug("get_type");
-
     if(pSymbol->get_dataKind(&dwTest)==S_OK) qDebug("get_dataKind");
     if(pSymbol->get_locationType(&dwTest)==S_OK) qDebug("get_locationType");
     if(pSymbol->get_addressSection(&dwTest)==S_OK) qDebug("get_addressSection");
     if(pSymbol->get_addressOffset(&dwTest)==S_OK) qDebug("get_addressOffset");
     if(pSymbol->get_relativeVirtualAddress(&dwTest)==S_OK) qDebug("get_relativeVirtualAddress");
+    if(pSymbol->get_virtualAddress(&llTest)==S_OK) qDebug("get_virtualAddress");
+    if(pSymbol->get_registerId(&dwTest)==S_OK) qDebug("get_registerId");
+    if(pSymbol->get_offset(&lTest)==S_OK) qDebug("get_offset");
+    if(pSymbol->get_length(&llTest)==S_OK) qDebug("get_length");
+    if(pSymbol->get_slot(&dwTest)==S_OK) qDebug("get_slot");
+    if(pSymbol->get_volatileType(&bTest)==S_OK) qDebug("get_volatileType");
+    if(pSymbol->get_constType(&bTest)==S_OK) qDebug("get_constType");
+    if(pSymbol->get_unalignedType(&bTest)==S_OK) qDebug("get_unalignedType");
+    if(pSymbol->get_access(&dwTest)==S_OK) qDebug("get_access");
+    if(pSymbol->get_libraryName(&bstrTest)==S_OK) qDebug("get_libraryName");
+    if(pSymbol->get_platform(&dwTest)==S_OK) qDebug("get_platform");
+    if(pSymbol->get_language(&dwTest)==S_OK) qDebug("get_language");
+    if(pSymbol->get_editAndContinueEnabled(&bTest)==S_OK) qDebug("get_editAndContinueEnabled");
+    if(pSymbol->get_frontEndMajor(&dwTest)==S_OK) qDebug("get_frontEndMajor");
+    if(pSymbol->get_frontEndMinor(&dwTest)==S_OK) qDebug("get_frontEndMinor");
+    if(pSymbol->get_frontEndBuild(&dwTest)==S_OK) qDebug("get_frontEndBuild");
+    if(pSymbol->get_backEndMajor(&dwTest)==S_OK) qDebug("get_backEndMajor");
+    if(pSymbol->get_backEndMinor(&dwTest)==S_OK) qDebug("get_backEndMinor");
+    if(pSymbol->get_backEndBuild(&dwTest)==S_OK) qDebug("get_backEndBuild");
+    if(pSymbol->get_sourceFileName(&bstrTest)==S_OK) qDebug("get_sourceFileName");
+    if(pSymbol->get_unused(&bstrTest)==S_OK) qDebug("get_unused");
+    if(pSymbol->get_thunkOrdinal(&dwTest)==S_OK) qDebug("get_thunkOrdinal");
+    if(pSymbol->get_thisAdjust(&lTest)==S_OK) qDebug("get_thisAdjust");
+    if(pSymbol->get_virtualBaseOffset(&dwTest)==S_OK) qDebug("get_virtualBaseOffset");
+    if(pSymbol->get_virtual(&bTest)==S_OK) qDebug("get_virtual");
+    if(pSymbol->get_intro(&bTest)==S_OK) qDebug("get_intro");
+    if(pSymbol->get_pure(&bTest)==S_OK) qDebug("get_pure");
+    if(pSymbol->get_callingConvention(&dwTest)==S_OK) qDebug("get_callingConvention");
+    if(pSymbol->get_value(&vTest)==S_OK) qDebug("get_value");
+    if(pSymbol->get_baseType(&dwTest)==S_OK) qDebug("get_baseType");
+    if(pSymbol->get_token(&dwTest)==S_OK) qDebug("get_token");
+    if(pSymbol->get_timeStamp(&dwTest)==S_OK) qDebug("get_timeStamp");
+    if(pSymbol->get_guid(&gTest)==S_OK) qDebug("get_guid");
+    if(pSymbol->get_symbolsFileName(&bstrTest)==S_OK) qDebug("get_symbolsFileName");
+    if(pSymbol->get_reference(&bTest)==S_OK) qDebug("get_reference");
+    if(pSymbol->get_count(&dwTest)==S_OK) qDebug("get_count");
+    if(pSymbol->get_bitPosition(&dwTest)==S_OK) qDebug("get_bitPosition");
+    if(pSymbol->get_arrayIndexType(&diaSimbol)==S_OK) qDebug("get_arrayIndexType");
+    if(pSymbol->get_packed(&bTest)==S_OK) qDebug("get_packed");
+    if(pSymbol->get_constructor(&bTest)==S_OK) qDebug("get_constructor");
+    if(pSymbol->get_overloadedOperator(&bTest)==S_OK) qDebug("get_overloadedOperator");
+    if(pSymbol->get_nested(&bTest)==S_OK) qDebug("get_nested");
+    if(pSymbol->get_hasNestedTypes(&bTest)==S_OK) qDebug("get_hasNestedTypes");
+    if(pSymbol->get_hasAssignmentOperator(&bTest)==S_OK) qDebug("get_hasAssignmentOperator");
+    if(pSymbol->get_hasCastOperator(&bTest)==S_OK) qDebug("get_hasCastOperator");
+    if(pSymbol->get_scoped(&bTest)==S_OK) qDebug("get_scoped");
+    if(pSymbol->get_virtualBaseClass(&bTest)==S_OK) qDebug("get_virtualBaseClass");
+    if(pSymbol->get_indirectVirtualBaseClass(&bTest)==S_OK) qDebug("get_indirectVirtualBaseClass");
+    if(pSymbol->get_virtualBasePointerOffset(&lTest)==S_OK) qDebug("get_virtualBasePointerOffset");
+    if(pSymbol->get_virtualTableShape(&diaSimbol)==S_OK) qDebug("get_virtualTableShape");
+    if(pSymbol->get_lexicalParentId(&dwTest)==S_OK) qDebug("get_lexicalParentId");
+    if(pSymbol->get_classParentId(&dwTest)==S_OK) qDebug("get_classParentId");
+    if(pSymbol->get_typeId(&dwTest)==S_OK) qDebug("get_typeId");
+    if(pSymbol->get_arrayIndexTypeId(&dwTest)==S_OK) qDebug("get_arrayIndexTypeId");
+    if(pSymbol->get_virtualTableShapeId(&dwTest)==S_OK) qDebug("get_virtualTableShapeId");
+    if(pSymbol->get_code(&bTest)==S_OK) qDebug("get_code");
+    if(pSymbol->get_function(&bTest)==S_OK) qDebug("get_function");
+    if(pSymbol->get_managed(&bTest)==S_OK) qDebug("get_managed");
+    if(pSymbol->get_msil(&bTest)==S_OK) qDebug("get_msil");
+    if(pSymbol->get_virtualBaseDispIndex(&dwTest)==S_OK) qDebug("get_virtualBaseDispIndex");
+    if(pSymbol->get_undecoratedName(&bstrTest)==S_OK) qDebug("get_undecoratedName");
+    if(pSymbol->get_age(&dwTest)==S_OK) qDebug("get_age");
+    if(pSymbol->get_signature(&dwTest)==S_OK) qDebug("get_signature");
+    if(pSymbol->get_compilerGenerated(&bTest)==S_OK) qDebug("get_compilerGenerated");
+    if(pSymbol->get_addressTaken(&bTest)==S_OK) qDebug("get_addressTaken");
+    if(pSymbol->get_rank(&dwTest)==S_OK) qDebug("get_rank");
+    if(pSymbol->get_lowerBound(&diaSimbol)==S_OK) qDebug("get_lowerBound");
+
+    if(pSymbol->get_upperBound(&diaSimbol)==S_OK) qDebug("get_upperBound");
+    if(pSymbol->get_lowerBoundId(&dwTest)==S_OK) qDebug("get_lowerBoundId");
+    if(pSymbol->get_upperBoundId(&dwTest)==S_OK) qDebug("get_upperBoundId");
+    if(pSymbol->get_targetSection(&dwTest)==S_OK) qDebug("get_targetSection");
+    if(pSymbol->get_targetOffset(&dwTest)==S_OK) qDebug("get_targetOffset");
+    if(pSymbol->get_targetRelativeVirtualAddress(&dwTest)==S_OK) qDebug("get_targetRelativeVirtualAddress");
+    if(pSymbol->get_targetVirtualAddress(&llTest)==S_OK) qDebug("get_targetVirtualAddress");
+    if(pSymbol->get_machineType(&dwTest)==S_OK) qDebug("get_machineType");
+    if(pSymbol->get_oemId(&dwTest)==S_OK) qDebug("get_oemId");
+    if(pSymbol->get_oemSymbolId(&dwTest)==S_OK) qDebug("get_oemSymbolId");
+    if(pSymbol->get_objectPointerType(&diaSimbol)==S_OK) qDebug("get_objectPointerType");
+    if(pSymbol->get_udtKind(&dwTest)==S_OK) qDebug("get_udtKind");
+    if(pSymbol->get_noReturn(&bTest)==S_OK) qDebug("get_noReturn");
+    if(pSymbol->get_customCallingConvention(&bTest)==S_OK) qDebug("get_customCallingConvention");
+    if(pSymbol->get_noInline(&bTest)==S_OK) qDebug("get_noInline");
+    if(pSymbol->get_optimizedCodeDebugInfo(&bTest)==S_OK) qDebug("get_optimizedCodeDebugInfo");
+    if(pSymbol->get_notReached(&bTest)==S_OK) qDebug("get_notReached");
+    if(pSymbol->get_interruptReturn(&bTest)==S_OK) qDebug("get_interruptReturn");
+//    if(pSymbol->XXX(&dwTest)==S_OK) qDebug("XXX");
 
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualAddress(
-//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_registerId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_offset(
-//        /* [retval][out] */ LONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_length(
-//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_slot(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_volatileType(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_constType(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unalignedType(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_access(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_libraryName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_platform(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_language(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_editAndContinueEnabled(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndMajor(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndMinor(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndBuild(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndMajor(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndMinor(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndBuild(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_sourceFileName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unused(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_thunkOrdinal(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_thisAdjust(
-//        /* [retval][out] */ LONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseOffset(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtual(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_intro(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_pure(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_callingConvention(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_value(
-//        /* [retval][out] */ VARIANT *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseType(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_token(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_timeStamp(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_guid(
-//        /* [retval][out] */ GUID *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_symbolsFileName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_reference(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_count(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bitPosition(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_arrayIndexType(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_packed(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_constructor(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_overloadedOperator(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_nested(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasNestedTypes(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasAssignmentOperator(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasCastOperator(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_scoped(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseClass(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_indirectVirtualBaseClass(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBasePointerOffset(
-//        /* [retval][out] */ LONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualTableShape(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_lexicalParentId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_classParentId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_typeId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_arrayIndexTypeId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualTableShapeId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_code(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_function(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_managed(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_msil(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseDispIndex(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_undecoratedName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_age(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_signature(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_compilerGenerated(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_addressTaken(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_rank(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_lowerBound(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_upperBound(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_lowerBoundId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_upperBoundId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE get_dataBytes(
-//        /* [in] */ DWORD cbData,
-//        /* [out] */ DWORD *pcbData,
-//        /* [size_is][out] */ BYTE *pbData) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findChildren(
-//        /* [in] */ enum SymTagEnum symtag,
-//        /* [in] */ LPCOLESTR name,
-//        /* [in] */ DWORD compareFlags,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findChildrenEx(
-//        /* [in] */ enum SymTagEnum symtag,
-//        /* [in] */ LPCOLESTR name,
-//        /* [in] */ DWORD compareFlags,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findChildrenExByAddr(
-//        /* [in] */ enum SymTagEnum symtag,
-//        /* [in] */ LPCOLESTR name,
-//        /* [in] */ DWORD compareFlags,
-//        /* [in] */ DWORD isect,
-//        /* [in] */ DWORD offset,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findChildrenExByVA(
-//        /* [in] */ enum SymTagEnum symtag,
-//        /* [in] */ LPCOLESTR name,
-//        /* [in] */ DWORD compareFlags,
-//        /* [in] */ ULONGLONG va,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findChildrenExByRVA(
-//        /* [in] */ enum SymTagEnum symtag,
-//        /* [in] */ LPCOLESTR name,
-//        /* [in] */ DWORD compareFlags,
-//        /* [in] */ DWORD rva,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetSection(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetOffset(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetRelativeVirtualAddress(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_targetVirtualAddress(
-//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_machineType(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_oemId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_oemSymbolId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE get_types(
-//        /* [in] */ DWORD cTypes,
-//        /* [out] */ DWORD *pcTypes,
-//        /* [size_is][size_is][out] */ IDiaSymbol **pTypes) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE get_typeIds(
-//        /* [in] */ DWORD cTypeIds,
-//        /* [out] */ DWORD *pcTypeIds,
-//        /* [size_is][out] */ DWORD *pdwTypeIds) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_objectPointerType(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_udtKind(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE get_undecoratedNameEx(
-//        /* [in] */ DWORD undecorateOptions,
-//        /* [out] */ BSTR *name) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noReturn(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_customCallingConvention(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noInline(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_optimizedCodeDebugInfo(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_notReached(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_interruptReturn(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
 
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_farReturn(
 //        /* [retval][out] */ BOOL *pRetVal) = 0;
@@ -1170,16 +953,6 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMatrixRowMajor(
 //        /* [retval][out] */ BOOL *pRetVal) = 0;
 
-//    virtual HRESULT STDMETHODCALLTYPE get_numericProperties(
-//        /* [in] */ DWORD cnt,
-//        /* [out] */ DWORD *pcnt,
-//        /* [size_is][out] */ DWORD *pProperties) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE get_modifierValues(
-//        /* [in] */ DWORD cnt,
-//        /* [out] */ DWORD *pcnt,
-//        /* [size_is][out] */ WORD *pModifiers) = 0;
-
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isReturnValue(
 //        /* [retval][out] */ BOOL *pRetVal) = 0;
 
@@ -1288,51 +1061,9 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isInterfaceUdt(
 //        /* [retval][out] */ BOOL *pRetVal) = 0;
 
-//    virtual HRESULT STDMETHODCALLTYPE findInlineFramesByAddr(
-//        /* [in] */ DWORD isect,
-//        /* [in] */ DWORD offset,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findInlineFramesByRVA(
-//        /* [in] */ DWORD rva,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findInlineFramesByVA(
-//        /* [in] */ ULONGLONG va,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
 
 //    virtual HRESULT STDMETHODCALLTYPE findInlineeLines(
 //        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findInlineeLinesByAddr(
-//        /* [in] */ DWORD isect,
-//        /* [in] */ DWORD offset,
-//        /* [in] */ DWORD length,
-//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findInlineeLinesByRVA(
-//        /* [in] */ DWORD rva,
-//        /* [in] */ DWORD length,
-//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findInlineeLinesByVA(
-//        /* [in] */ ULONGLONG va,
-//        /* [in] */ DWORD length,
-//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findSymbolsForAcceleratorPointerTag(
-//        /* [in] */ DWORD tagValue,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findSymbolsByRVAForAcceleratorPointerTag(
-//        /* [in] */ DWORD tagValue,
-//        /* [in] */ DWORD rva,
-//        /* [out] */ IDiaEnumSymbols **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE get_acceleratorPointerTags(
-//        /* [in] */ DWORD cnt,
-//        /* [out] */ DWORD *pcnt,
-//        /* [size_is][out] */ DWORD *pPointerTags) = 0;
 
 //    virtual HRESULT STDMETHODCALLTYPE getSrcLineOnTypeDefn(
 //        /* [out] */ IDiaLineNumber **ppResult) = 0;

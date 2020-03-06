@@ -69,6 +69,8 @@ private slots:
 
     void on_checkBoxFixTypes_toggled(bool checked);
 
+    void on_actionQuit_triggered();
+
 private:
     enum CBT
     {
