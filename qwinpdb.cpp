@@ -769,7 +769,6 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_addressTaken(&bTest)==S_OK) qDebug("get_addressTaken");
     if(pSymbol->get_rank(&dwTest)==S_OK) qDebug("get_rank");
     if(pSymbol->get_lowerBound(&diaSimbol)==S_OK) qDebug("get_lowerBound");
-
     if(pSymbol->get_upperBound(&diaSimbol)==S_OK) qDebug("get_upperBound");
     if(pSymbol->get_lowerBoundId(&dwTest)==S_OK) qDebug("get_lowerBoundId");
     if(pSymbol->get_upperBoundId(&dwTest)==S_OK) qDebug("get_upperBoundId");
@@ -788,59 +787,25 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_optimizedCodeDebugInfo(&bTest)==S_OK) qDebug("get_optimizedCodeDebugInfo");
     if(pSymbol->get_notReached(&bTest)==S_OK) qDebug("get_notReached");
     if(pSymbol->get_interruptReturn(&bTest)==S_OK) qDebug("get_interruptReturn");
+    if(pSymbol->get_farReturn(&bTest)==S_OK) qDebug("get_farReturn");
+    if(pSymbol->get_isStatic(&bTest)==S_OK) qDebug("get_isStatic");
+    if(pSymbol->get_hasDebugInfo(&bTest)==S_OK) qDebug("get_hasDebugInfo");
+    if(pSymbol->get_isLTCG(&bTest)==S_OK) qDebug("get_isLTCG");
+    if(pSymbol->get_isDataAligned(&bTest)==S_OK) qDebug("get_isDataAligned");
+    if(pSymbol->get_hasSecurityChecks(&bTest)==S_OK) qDebug("get_hasSecurityChecks");
+    if(pSymbol->get_compilerName(&bstrTest)==S_OK) qDebug("get_compilerName");
+    if(pSymbol->get_hasAlloca(&bTest)==S_OK) qDebug("get_hasAlloca");
+    if(pSymbol->get_hasSetJump(&bTest)==S_OK) qDebug("get_hasSetJump");
+    if(pSymbol->get_hasLongJump(&bTest)==S_OK) qDebug("get_hasLongJump");
+    if(pSymbol->get_hasInlAsm(&bTest)==S_OK) qDebug("get_hasInlAsm");
+    if(pSymbol->get_hasEH(&bTest)==S_OK) qDebug("get_hasEH");
+    if(pSymbol->get_hasSEH(&bTest)==S_OK) qDebug("get_hasSEH");
+    if(pSymbol->get_hasEHa(&bTest)==S_OK) qDebug("get_hasEHa");
+    if(pSymbol->get_isNaked(&bTest)==S_OK) qDebug("get_isNaked");
+    if(pSymbol->get_isAggregated(&bTest)==S_OK) qDebug("get_isAggregated");
+    if(pSymbol->get_isSplitted(&bTest)==S_OK) qDebug("get_isSplitted");
 //    if(pSymbol->XXX(&dwTest)==S_OK) qDebug("XXX");
 
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_farReturn(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isStatic(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasDebugInfo(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isLTCG(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isDataAligned(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasSecurityChecks(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_compilerName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasAlloca(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasSetJump(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasLongJump(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasInlAsm(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasEH(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasSEH(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasEHa(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isNaked(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAggregated(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSplitted(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
 
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_container(
 //        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
