@@ -804,98 +804,39 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_isNaked(&bTest)==S_OK) qDebug("get_isNaked");
     if(pSymbol->get_isAggregated(&bTest)==S_OK) qDebug("get_isAggregated");
     if(pSymbol->get_isSplitted(&bTest)==S_OK) qDebug("get_isSplitted");
+
+    if(pSymbol->get_container(&diaSimbol)==S_OK) qDebug("get_container");
+    if(pSymbol->get_inlSpec(&bTest)==S_OK) qDebug("get_inlSpec");
+    if(pSymbol->get_noStackOrdering(&bTest)==S_OK) qDebug("get_noStackOrdering");
+    if(pSymbol->get_virtualBaseTableType(&diaSimbol)==S_OK) qDebug("get_virtualBaseTableType");
+    if(pSymbol->get_hasManagedCode(&bTest)==S_OK) qDebug("get_hasManagedCode");
+    if(pSymbol->get_isHotpatchable(&bTest)==S_OK) qDebug("get_isHotpatchable");
+    if(pSymbol->get_isCVTCIL(&bTest)==S_OK) qDebug("get_isCVTCIL");
+    if(pSymbol->get_isMSILNetmodule(&bTest)==S_OK) qDebug("get_isMSILNetmodule");
+    if(pSymbol->get_isCTypes(&bTest)==S_OK) qDebug("get_isCTypes");
+    if(pSymbol->get_isStripped(&bTest)==S_OK) qDebug("get_isStripped");
+    if(pSymbol->get_frontEndQFE(&dwTest)==S_OK) qDebug("get_frontEndQFE");
+    if(pSymbol->get_backEndQFE(&dwTest)==S_OK) qDebug("get_backEndQFE");
+    if(pSymbol->get_wasInlined(&bTest)==S_OK) qDebug("get_wasInlined");
+    if(pSymbol->get_strictGSCheck(&bTest)==S_OK) qDebug("get_strictGSCheck");
+    if(pSymbol->get_isCxxReturnUdt(&bTest)==S_OK) qDebug("get_isCxxReturnUdt");
+    if(pSymbol->get_isConstructorVirtualBase(&bTest)==S_OK) qDebug("get_isConstructorVirtualBase");
+    if(pSymbol->get_RValueReference(&bTest)==S_OK) qDebug("get_RValueReference");
+    if(pSymbol->get_unmodifiedType(&diaSimbol)==S_OK) qDebug("get_unmodifiedType");
+    if(pSymbol->get_framePointerPresent(&bTest)==S_OK) qDebug("get_framePointerPresent");
+    if(pSymbol->get_isSafeBuffers(&bTest)==S_OK) qDebug("get_isSafeBuffers");
+    if(pSymbol->get_intrinsic(&bTest)==S_OK) qDebug("get_intrinsic");
+    if(pSymbol->get_sealed(&bTest)==S_OK) qDebug("get_sealed");
+    if(pSymbol->get_hfaFloat(&bTest)==S_OK) qDebug("get_hfaFloat");
+    if(pSymbol->get_hfaDouble(&bTest)==S_OK) qDebug("get_hfaDouble");
+    if(pSymbol->get_liveRangeStartAddressSection(&dwTest)==S_OK) qDebug("get_liveRangeStartAddressSection");
+    if(pSymbol->get_liveRangeStartAddressOffset(&dwTest)==S_OK) qDebug("get_liveRangeStartAddressOffset");
+    if(pSymbol->get_liveRangeStartRelativeVirtualAddress(&dwTest)==S_OK) qDebug("get_liveRangeStartRelativeVirtualAddress");
+    if(pSymbol->get_countLiveRanges(&dwTest)==S_OK) qDebug("get_countLiveRanges");
+    if(pSymbol->get_liveRangeLength(&llTest)==S_OK) qDebug("get_liveRangeLength");
+    if(pSymbol->get_offsetInUdt(&dwTest)==S_OK) qDebug("get_offsetInUdt");
 //    if(pSymbol->XXX(&dwTest)==S_OK) qDebug("XXX");
 
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_container(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_inlSpec(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noStackOrdering(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_virtualBaseTableType(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasManagedCode(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isHotpatchable(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isCVTCIL(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMSILNetmodule(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isCTypes(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isStripped(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frontEndQFE(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_backEndQFE(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_wasInlined(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_strictGSCheck(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isCxxReturnUdt(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isConstructorVirtualBase(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_RValueReference(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unmodifiedType(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_framePointerPresent(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSafeBuffers(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_intrinsic(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_sealed(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hfaFloat(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hfaDouble(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeStartAddressSection(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeStartAddressOffset(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeStartRelativeVirtualAddress(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_countLiveRanges(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_liveRangeLength(
-//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_offsetInUdt(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
 
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_paramBasePointerRegisterId(
 //        /* [retval][out] */ DWORD *pRetVal) = 0;
