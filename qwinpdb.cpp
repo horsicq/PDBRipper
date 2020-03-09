@@ -607,28 +607,14 @@ QWinPDB::RECORD_CALLSITE QWinPDB::_getRecordCallSite(IDiaSymbol *pSymbol, HANDLE
 {
     RECORD_CALLSITE result={};
 
-    // TODO Check
-
     pSymbol->get_addressOffset(&result._addressOffset);
     pSymbol->get_addressSection(&result._addressSection);
-    pSymbol->get_customCallingConvention(&result._customCallingConvention);
-    pSymbol->get_farReturn(&result._farReturn);
-    pSymbol->get_interruptReturn(&result._interruptReturn);
-    pSymbol->get_isStatic(&result._isStatic);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
-    pSymbol->get_locationType(&result._locationType);
-    pSymbol->get_noInline(&result._noInline);
-    pSymbol->get_noReturn(&result._noReturn);
-    pSymbol->get_notReached(&result._notReached);
-    pSymbol->get_offset(&result._offset);
-    pSymbol->get_optimizedCodeDebugInfo(&result._optimizedCodeDebugInfo);
     pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
     pSymbol->get_symIndexId(&result._symIndexId);
     pSymbol->get_symTag(&result._symTag);
-    pSymbol->get_virtualAddress(&result._virtualAddress);
 
     result.rtype=getSymbolType(pSymbol,pHandleOptions);
-    result.rtype.nOffset=result._offset;
 
     return result;
 }
@@ -684,7 +670,8 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
 {
     DWORD dwTest=0;
     BSTR bstrTest=nullptr;
-    IDiaSymbol *diaSimbol=nullptr;
+    IDiaSymbol *diaSymbol=nullptr;
+    IDiaLineNumber *diaLineNumber=nullptr;
     ULONGLONG llTest=0;
     LONG lTest=0;
     BOOL bTest=0;
@@ -694,9 +681,9 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_symIndexId(&dwTest)==S_OK) qDebug("get_symIndexId");
     if(pSymbol->get_symTag(&dwTest)==S_OK) qDebug("get_symTag");
     if(pSymbol->get_name(&bstrTest)==S_OK) qDebug("get_name");
-    if(pSymbol->get_lexicalParent(&diaSimbol)==S_OK) qDebug("get_lexicalParent");
-    if(pSymbol->get_classParent(&diaSimbol)==S_OK) qDebug("get_classParent");
-    if(pSymbol->get_type(&diaSimbol)==S_OK) qDebug("get_type");
+    if(pSymbol->get_lexicalParent(&diaSymbol)==S_OK) qDebug("get_lexicalParent");
+    if(pSymbol->get_classParent(&diaSymbol)==S_OK) qDebug("get_classParent");
+    if(pSymbol->get_type(&diaSymbol)==S_OK) qDebug("get_type");
     if(pSymbol->get_dataKind(&dwTest)==S_OK) qDebug("get_dataKind");
     if(pSymbol->get_locationType(&dwTest)==S_OK) qDebug("get_locationType");
     if(pSymbol->get_addressSection(&dwTest)==S_OK) qDebug("get_addressSection");
@@ -739,7 +726,7 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_reference(&bTest)==S_OK) qDebug("get_reference");
     if(pSymbol->get_count(&dwTest)==S_OK) qDebug("get_count");
     if(pSymbol->get_bitPosition(&dwTest)==S_OK) qDebug("get_bitPosition");
-    if(pSymbol->get_arrayIndexType(&diaSimbol)==S_OK) qDebug("get_arrayIndexType");
+    if(pSymbol->get_arrayIndexType(&diaSymbol)==S_OK) qDebug("get_arrayIndexType");
     if(pSymbol->get_packed(&bTest)==S_OK) qDebug("get_packed");
     if(pSymbol->get_constructor(&bTest)==S_OK) qDebug("get_constructor");
     if(pSymbol->get_overloadedOperator(&bTest)==S_OK) qDebug("get_overloadedOperator");
@@ -751,7 +738,7 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_virtualBaseClass(&bTest)==S_OK) qDebug("get_virtualBaseClass");
     if(pSymbol->get_indirectVirtualBaseClass(&bTest)==S_OK) qDebug("get_indirectVirtualBaseClass");
     if(pSymbol->get_virtualBasePointerOffset(&lTest)==S_OK) qDebug("get_virtualBasePointerOffset");
-    if(pSymbol->get_virtualTableShape(&diaSimbol)==S_OK) qDebug("get_virtualTableShape");
+    if(pSymbol->get_virtualTableShape(&diaSymbol)==S_OK) qDebug("get_virtualTableShape");
     if(pSymbol->get_lexicalParentId(&dwTest)==S_OK) qDebug("get_lexicalParentId");
     if(pSymbol->get_classParentId(&dwTest)==S_OK) qDebug("get_classParentId");
     if(pSymbol->get_typeId(&dwTest)==S_OK) qDebug("get_typeId");
@@ -768,8 +755,8 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_compilerGenerated(&bTest)==S_OK) qDebug("get_compilerGenerated");
     if(pSymbol->get_addressTaken(&bTest)==S_OK) qDebug("get_addressTaken");
     if(pSymbol->get_rank(&dwTest)==S_OK) qDebug("get_rank");
-    if(pSymbol->get_lowerBound(&diaSimbol)==S_OK) qDebug("get_lowerBound");
-    if(pSymbol->get_upperBound(&diaSimbol)==S_OK) qDebug("get_upperBound");
+    if(pSymbol->get_lowerBound(&diaSymbol)==S_OK) qDebug("get_lowerBound");
+    if(pSymbol->get_upperBound(&diaSymbol)==S_OK) qDebug("get_upperBound");
     if(pSymbol->get_lowerBoundId(&dwTest)==S_OK) qDebug("get_lowerBoundId");
     if(pSymbol->get_upperBoundId(&dwTest)==S_OK) qDebug("get_upperBoundId");
     if(pSymbol->get_targetSection(&dwTest)==S_OK) qDebug("get_targetSection");
@@ -779,7 +766,7 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_machineType(&dwTest)==S_OK) qDebug("get_machineType");
     if(pSymbol->get_oemId(&dwTest)==S_OK) qDebug("get_oemId");
     if(pSymbol->get_oemSymbolId(&dwTest)==S_OK) qDebug("get_oemSymbolId");
-    if(pSymbol->get_objectPointerType(&diaSimbol)==S_OK) qDebug("get_objectPointerType");
+    if(pSymbol->get_objectPointerType(&diaSymbol)==S_OK) qDebug("get_objectPointerType");
     if(pSymbol->get_udtKind(&dwTest)==S_OK) qDebug("get_udtKind");
     if(pSymbol->get_noReturn(&bTest)==S_OK) qDebug("get_noReturn");
     if(pSymbol->get_customCallingConvention(&bTest)==S_OK) qDebug("get_customCallingConvention");
@@ -804,10 +791,10 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_isNaked(&bTest)==S_OK) qDebug("get_isNaked");
     if(pSymbol->get_isAggregated(&bTest)==S_OK) qDebug("get_isAggregated");
     if(pSymbol->get_isSplitted(&bTest)==S_OK) qDebug("get_isSplitted");
-    if(pSymbol->get_container(&diaSimbol)==S_OK) qDebug("get_container");
+    if(pSymbol->get_container(&diaSymbol)==S_OK) qDebug("get_container");
     if(pSymbol->get_inlSpec(&bTest)==S_OK) qDebug("get_inlSpec");
     if(pSymbol->get_noStackOrdering(&bTest)==S_OK) qDebug("get_noStackOrdering");
-    if(pSymbol->get_virtualBaseTableType(&diaSimbol)==S_OK) qDebug("get_virtualBaseTableType");
+    if(pSymbol->get_virtualBaseTableType(&diaSymbol)==S_OK) qDebug("get_virtualBaseTableType");
     if(pSymbol->get_hasManagedCode(&bTest)==S_OK) qDebug("get_hasManagedCode");
     if(pSymbol->get_isHotpatchable(&bTest)==S_OK) qDebug("get_isHotpatchable");
     if(pSymbol->get_isCVTCIL(&bTest)==S_OK) qDebug("get_isCVTCIL");
@@ -821,7 +808,7 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_isCxxReturnUdt(&bTest)==S_OK) qDebug("get_isCxxReturnUdt");
     if(pSymbol->get_isConstructorVirtualBase(&bTest)==S_OK) qDebug("get_isConstructorVirtualBase");
     if(pSymbol->get_RValueReference(&bTest)==S_OK) qDebug("get_RValueReference");
-    if(pSymbol->get_unmodifiedType(&diaSimbol)==S_OK) qDebug("get_unmodifiedType");
+    if(pSymbol->get_unmodifiedType(&diaSymbol)==S_OK) qDebug("get_unmodifiedType");
     if(pSymbol->get_framePointerPresent(&bTest)==S_OK) qDebug("get_framePointerPresent");
     if(pSymbol->get_isSafeBuffers(&bTest)==S_OK) qDebug("get_isSafeBuffers");
     if(pSymbol->get_intrinsic(&bTest)==S_OK) qDebug("get_intrinsic");
@@ -854,7 +841,7 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_memorySpaceKind(&dwTest)==S_OK) qDebug("get_memorySpaceKind");
     if(pSymbol->get_unmodifiedTypeId(&dwTest)==S_OK) qDebug("get_unmodifiedTypeId");
     if(pSymbol->get_subTypeId(&dwTest)==S_OK) qDebug("get_subTypeId");
-    if(pSymbol->get_subType(&diaSimbol)==S_OK) qDebug("get_subType");
+    if(pSymbol->get_subType(&diaSymbol)==S_OK) qDebug("get_subType");
     if(pSymbol->get_numberOfModifiers(&dwTest)==S_OK) qDebug("get_numberOfModifiers");
     if(pSymbol->get_numberOfRegisterIndices(&dwTest)==S_OK) qDebug("get_numberOfRegisterIndices");
     if(pSymbol->get_isHLSLData(&bTest)==S_OK) qDebug("get_isHLSLData");
@@ -862,144 +849,49 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_isPointerToMemberFunction(&bTest)==S_OK) qDebug("get_isPointerToMemberFunction");
     if(pSymbol->get_isSingleInheritance(&bTest)==S_OK) qDebug("get_isSingleInheritance");
     if(pSymbol->get_isMultipleInheritance(&bTest)==S_OK) qDebug("get_isMultipleInheritance");
-//    if(pSymbol->XXX(&dwTest)==S_OK) qDebug("XXX");
-
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isVirtualInheritance(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_restrictedType(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPointerBasedOnSymbolValue(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseSymbol(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseSymbolId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_objectFileName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAcceleratorGroupSharedLocal(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAcceleratorPointerTagLiveRange(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isAcceleratorStubFunction(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfAcceleratorPointerTags(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSdl(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isWinRTPointer(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isRefUdt(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isValueUdt(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isInterfaceUdt(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-
-//    virtual HRESULT STDMETHODCALLTYPE findInlineeLines(
-//        /* [out] */ IDiaEnumLineNumbers **ppResult) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE getSrcLineOnTypeDefn(
-//        /* [out] */ IDiaLineNumber **ppResult) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPGO(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasValidPGOCounts(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isOptimizedForSpeed(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_PGOEntryCount(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_PGOEdgeCount(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_PGODynamicInstructionCount(
-//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_staticSize(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_finalLiveStaticSize(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_phaseName(
-//        /* [retval][out] */ BSTR *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_hasControlFlowCheck(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_constantExport(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_dataExport(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_privateExport(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_noNameExport(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exportHasExplicitlyAssignedOrdinal(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exportIsForwarder(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_ordinal(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_frameSize(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerAddressSection(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerAddressOffset(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerRelativeVirtualAddress(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_exceptionHandlerVirtualAddress(
-//        /* [retval][out] */ ULONGLONG *pRetVal) = 0;
-
-//    virtual HRESULT STDMETHODCALLTYPE findInputAssemblyFile(
-//        /* [out] */ IDiaInputAssemblyFile **ppResult) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_characteristics(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_coffGroup(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bindID(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bindSpace(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_bindSlot(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
+    if(pSymbol->get_isVirtualInheritance(&bTest)==S_OK) qDebug("get_isVirtualInheritance");
+    if(pSymbol->get_restrictedType(&bTest)==S_OK) qDebug("get_restrictedType");
+    if(pSymbol->get_isPointerBasedOnSymbolValue(&bTest)==S_OK) qDebug("get_isPointerBasedOnSymbolValue");
+    if(pSymbol->get_baseSymbol(&diaSymbol)==S_OK) qDebug("get_baseSymbol");
+    if(pSymbol->get_baseSymbolId(&dwTest)==S_OK) qDebug("get_baseSymbolId");
+    if(pSymbol->get_objectFileName(&bstrTest)==S_OK) qDebug("get_objectFileName");
+    if(pSymbol->get_isAcceleratorGroupSharedLocal(&bTest)==S_OK) qDebug("get_isAcceleratorGroupSharedLocal");
+    if(pSymbol->get_isAcceleratorPointerTagLiveRange(&bTest)==S_OK) qDebug("get_isAcceleratorPointerTagLiveRange");
+    if(pSymbol->get_isAcceleratorStubFunction(&bTest)==S_OK) qDebug("get_isAcceleratorStubFunction");
+    if(pSymbol->get_numberOfAcceleratorPointerTags(&dwTest)==S_OK) qDebug("get_numberOfAcceleratorPointerTags");
+    if(pSymbol->get_isSdl(&bTest)==S_OK) qDebug("get_isSdl");
+    if(pSymbol->get_isWinRTPointer(&bTest)==S_OK) qDebug("get_isWinRTPointer");
+    if(pSymbol->get_isRefUdt(&bTest)==S_OK) qDebug("get_isRefUdt");
+    if(pSymbol->get_isValueUdt(&bTest)==S_OK) qDebug("get_isValueUdt");
+    if(pSymbol->get_isInterfaceUdt(&bTest)==S_OK) qDebug("get_isInterfaceUdt");
+    if(pSymbol->getSrcLineOnTypeDefn(&diaLineNumber)==S_OK) qDebug("getSrcLineOnTypeDefn");
+    if(pSymbol->get_isPGO(&bTest)==S_OK) qDebug("get_isPGO");
+    if(pSymbol->get_hasValidPGOCounts(&bTest)==S_OK) qDebug("get_hasValidPGOCounts");
+    if(pSymbol->get_isOptimizedForSpeed(&bTest)==S_OK) qDebug("get_isOptimizedForSpeed");
+    if(pSymbol->get_PGOEntryCount(&dwTest)==S_OK) qDebug("get_PGOEntryCount");
+    if(pSymbol->get_PGOEdgeCount(&dwTest)==S_OK) qDebug("get_PGOEdgeCount");
+    if(pSymbol->get_PGODynamicInstructionCount(&llTest)==S_OK) qDebug("get_PGODynamicInstructionCount");
+    if(pSymbol->get_staticSize(&dwTest)==S_OK) qDebug("get_staticSize");
+    if(pSymbol->get_finalLiveStaticSize(&dwTest)==S_OK) qDebug("get_finalLiveStaticSize");
+    if(pSymbol->get_phaseName(&bstrTest)==S_OK) qDebug("get_phaseName");
+    if(pSymbol->get_hasControlFlowCheck(&bTest)==S_OK) qDebug("get_hasControlFlowCheck");
+    if(pSymbol->get_constantExport(&bTest)==S_OK) qDebug("get_constantExport");
+    if(pSymbol->get_dataExport(&bTest)==S_OK) qDebug("get_dataExport");
+    if(pSymbol->get_privateExport(&bTest)==S_OK) qDebug("get_privateExport");
+    if(pSymbol->get_noNameExport(&bTest)==S_OK) qDebug("get_noNameExport");
+    if(pSymbol->get_exportHasExplicitlyAssignedOrdinal(&bTest)==S_OK) qDebug("get_exportHasExplicitlyAssignedOrdinal");
+    if(pSymbol->get_exportIsForwarder(&bTest)==S_OK) qDebug("get_exportIsForwarder");
+    if(pSymbol->get_ordinal(&dwTest)==S_OK) qDebug("get_ordinal");
+    if(pSymbol->get_frameSize(&dwTest)==S_OK) qDebug("get_frameSize");
+    if(pSymbol->get_exceptionHandlerAddressSection(&dwTest)==S_OK) qDebug("get_exceptionHandlerAddressSection");
+    if(pSymbol->get_exceptionHandlerAddressOffset(&dwTest)==S_OK) qDebug("get_exceptionHandlerAddressOffset");
+    if(pSymbol->get_exceptionHandlerRelativeVirtualAddress(&dwTest)==S_OK) qDebug("get_exceptionHandlerRelativeVirtualAddress");
+    if(pSymbol->get_exceptionHandlerVirtualAddress(&llTest)==S_OK) qDebug("get_exceptionHandlerVirtualAddress");
+    if(pSymbol->get_characteristics(&dwTest)==S_OK) qDebug("get_characteristics");
+    if(pSymbol->get_coffGroup(&diaSymbol)==S_OK) qDebug("get_coffGroup");
+    if(pSymbol->get_bindID(&dwTest)==S_OK) qDebug("get_bindID");
+    if(pSymbol->get_bindSpace(&dwTest)==S_OK) qDebug("get_bindSpace");
+    if(pSymbol->get_bindSlot(&dwTest)==S_OK) qDebug("get_bindSlot");
 }
 
 QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol,QWinPDB::HANDLE_OPTIONS *pHandleOptions)

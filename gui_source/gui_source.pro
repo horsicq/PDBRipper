@@ -15,6 +15,7 @@ TEMPLATE = app
 
 SOURCES +=\
     dialogabout.cpp \
+    dialogexport.cpp \
     dialogoptions.cpp \
     ../qwinpdb.cpp \
     dialogprocess.cpp \
@@ -27,6 +28,7 @@ HEADERS  += \
     ../qwinpdb.h \
     ../qwinpdb_def.h \
     dialogabout.h \
+    dialogexport.h \
     dialogoptions.h \
     dialogprocess.h \
     ../pdbprocess.h \
@@ -34,6 +36,7 @@ HEADERS  += \
 
 FORMS    += \
         dialogabout.ui \
+        dialogexport.ui \
         dialogoptions.ui \
         dialogprocess.ui \
         guimainwindow.ui

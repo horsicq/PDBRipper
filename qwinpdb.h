@@ -432,21 +432,10 @@ public:
     {
         DWORD _addressOffset;
         DWORD _addressSection;
-        BOOL _customCallingConvention;
-        BOOL _farReturn;
-        BOOL _interruptReturn;
-        BOOL _isStatic;
         DWORD _lexicalParentId;
-        DWORD _locationType;
-        BOOL _noInline;
-        BOOL _noReturn;
-        BOOL _notReached;
-        LONG _offset;
-        BOOL _optimizedCodeDebugInfo;
         DWORD _relativeVirtualAddress;
         DWORD _symIndexId;
         DWORD _symTag;
-        ULONGLONG _virtualAddress;
 
         RTYPE rtype;
     };
