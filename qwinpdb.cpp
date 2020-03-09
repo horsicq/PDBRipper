@@ -804,7 +804,6 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_isNaked(&bTest)==S_OK) qDebug("get_isNaked");
     if(pSymbol->get_isAggregated(&bTest)==S_OK) qDebug("get_isAggregated");
     if(pSymbol->get_isSplitted(&bTest)==S_OK) qDebug("get_isSplitted");
-
     if(pSymbol->get_container(&diaSimbol)==S_OK) qDebug("get_container");
     if(pSymbol->get_inlSpec(&bTest)==S_OK) qDebug("get_inlSpec");
     if(pSymbol->get_noStackOrdering(&bTest)==S_OK) qDebug("get_noStackOrdering");
@@ -835,92 +834,36 @@ void QWinPDB::_checkSymbol(IDiaSymbol *pSymbol)
     if(pSymbol->get_countLiveRanges(&dwTest)==S_OK) qDebug("get_countLiveRanges");
     if(pSymbol->get_liveRangeLength(&llTest)==S_OK) qDebug("get_liveRangeLength");
     if(pSymbol->get_offsetInUdt(&dwTest)==S_OK) qDebug("get_offsetInUdt");
+    if(pSymbol->get_paramBasePointerRegisterId(&dwTest)==S_OK) qDebug("get_paramBasePointerRegisterId");
+    if(pSymbol->get_localBasePointerRegisterId(&dwTest)==S_OK) qDebug("get_localBasePointerRegisterId");
+    if(pSymbol->get_isLocationControlFlowDependent(&bTest)==S_OK) qDebug("get_isLocationControlFlowDependent");
+    if(pSymbol->get_stride(&dwTest)==S_OK) qDebug("get_stride");
+    if(pSymbol->get_numberOfRows(&dwTest)==S_OK) qDebug("get_numberOfRows");
+    if(pSymbol->get_numberOfColumns(&dwTest)==S_OK) qDebug("get_numberOfColumns");
+    if(pSymbol->get_isMatrixRowMajor(&bTest)==S_OK) qDebug("get_isMatrixRowMajor");
+    if(pSymbol->get_isReturnValue(&bTest)==S_OK) qDebug("get_isReturnValue");
+    if(pSymbol->get_isOptimizedAway(&bTest)==S_OK) qDebug("get_isOptimizedAway");
+    if(pSymbol->get_builtInKind(&dwTest)==S_OK) qDebug("get_builtInKind");
+    if(pSymbol->get_registerType(&dwTest)==S_OK) qDebug("get_registerType");
+    if(pSymbol->get_baseDataSlot(&dwTest)==S_OK) qDebug("get_baseDataSlot");
+    if(pSymbol->get_baseDataOffset(&dwTest)==S_OK) qDebug("get_baseDataOffset");
+    if(pSymbol->get_textureSlot(&dwTest)==S_OK) qDebug("get_textureSlot");
+    if(pSymbol->get_samplerSlot(&dwTest)==S_OK) qDebug("get_samplerSlot");
+    if(pSymbol->get_uavSlot(&dwTest)==S_OK) qDebug("get_uavSlot");
+    if(pSymbol->get_sizeInUdt(&dwTest)==S_OK) qDebug("get_sizeInUdt");
+    if(pSymbol->get_memorySpaceKind(&dwTest)==S_OK) qDebug("get_memorySpaceKind");
+    if(pSymbol->get_unmodifiedTypeId(&dwTest)==S_OK) qDebug("get_unmodifiedTypeId");
+    if(pSymbol->get_subTypeId(&dwTest)==S_OK) qDebug("get_subTypeId");
+    if(pSymbol->get_subType(&diaSimbol)==S_OK) qDebug("get_subType");
+    if(pSymbol->get_numberOfModifiers(&dwTest)==S_OK) qDebug("get_numberOfModifiers");
+    if(pSymbol->get_numberOfRegisterIndices(&dwTest)==S_OK) qDebug("get_numberOfRegisterIndices");
+    if(pSymbol->get_isHLSLData(&bTest)==S_OK) qDebug("get_isHLSLData");
+    if(pSymbol->get_isPointerToDataMember(&bTest)==S_OK) qDebug("get_isPointerToDataMember");
+    if(pSymbol->get_isPointerToMemberFunction(&bTest)==S_OK) qDebug("get_isPointerToMemberFunction");
+    if(pSymbol->get_isSingleInheritance(&bTest)==S_OK) qDebug("get_isSingleInheritance");
+    if(pSymbol->get_isMultipleInheritance(&bTest)==S_OK) qDebug("get_isMultipleInheritance");
 //    if(pSymbol->XXX(&dwTest)==S_OK) qDebug("XXX");
 
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_paramBasePointerRegisterId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_localBasePointerRegisterId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isLocationControlFlowDependent(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_stride(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfRows(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfColumns(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMatrixRowMajor(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isReturnValue(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isOptimizedAway(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_builtInKind(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_registerType(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseDataSlot(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_baseDataOffset(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_textureSlot(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_samplerSlot(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_uavSlot(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_sizeInUdt(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_memorySpaceKind(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_unmodifiedTypeId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_subTypeId(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_subType(
-//        /* [retval][out] */ IDiaSymbol **pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfModifiers(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_numberOfRegisterIndices(
-//        /* [retval][out] */ DWORD *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isHLSLData(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPointerToDataMember(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isPointerToMemberFunction(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isSingleInheritance(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
-
-//    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isMultipleInheritance(
-//        /* [retval][out] */ BOOL *pRetVal) = 0;
 
 //    virtual /* [id][helpstring][propget] */ HRESULT STDMETHODCALLTYPE get_isVirtualInheritance(
 //        /* [retval][out] */ BOOL *pRetVal) = 0;
@@ -1905,6 +1848,9 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
                     IDiaSymbol *pSymbol;
                     ULONG celt = 0;
 
+                    qint64 nCurrentOffset=0;
+                    int nAlignCount=0;
+
                     while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
                     {
                         ELEM elemChild=_getElem(pSymbol,pHandleOptions);
@@ -1923,8 +1869,54 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
 
                         if(bAdd)
                         {
+                            if(pHandleOptions->bAddAlignment)
+                            {
+                                bool bAddAlignment=false;
+
+                                if((elemChild.dwOffset)&&(elemChild.dwOffset>nCurrentOffset))
+                                {
+                                    bAddAlignment=true;
+                                }
+
+                                if(result.elemType==ELEM_TYPE_FUNCTION)
+                                {
+                                    bAddAlignment=false;
+                                }
+
+                                if(result.elemType==ELEM_TYPE_BLOCK)
+                                {
+                                    bAddAlignment=false;
+                                }
+
+                                if(bAddAlignment)
+                                {
+                                    qDebug("Alignment");
+                                    ELEM alignElem={};
+
+                                    alignElem.elemType=ELEM_TYPE_FAKEDATA;
+                                    alignElem.dwOffset=nCurrentOffset;
+                                    alignElem.dwSize=elemChild.dwOffset-nCurrentOffset;
+                                    alignElem._data.rtype.bIsArray=true;
+                                    alignElem._data.rtype.sName=QString("__align%1").arg(nAlignCount);
+                                    alignElem._data.rtype.listArrayCount.append(alignElem.dwSize);
+                                    alignElem._data.rtype.type=RD_BASETYPE;
+                                    alignElem._data.rtype.sTypeName="unsigned char";
+                                    alignElem._data.rtype.nBaseType=5; // unsigned char
+                                    alignElem._data.rtype.nAccess=1; // private
+
+                                    result.listChildren.append(alignElem);
+
+                                    nAlignCount++;
+                                }
+                            }
+
                             // TODO Alignment
                             result.listChildren.append(elemChild);
+
+                            if(elemChild.dwSize)
+                            {
+                                nCurrentOffset=elemChild.dwOffset+elemChild.dwSize;
+                            }
                         }
 //                        QString sTest;
 //                        BSTR bstring=nullptr;
@@ -2206,7 +2198,7 @@ QString QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions,
 
         sResult+=_getTab(nLevel)+"}";
     }
-    else if(pElem->elemType==ELEM_TYPE_DATA)
+    else if((pElem->elemType==ELEM_TYPE_DATA)||(pElem->elemType==ELEM_TYPE_FAKEDATA))
     {
         sResult+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,bIsClass);
 
