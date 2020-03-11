@@ -29,6 +29,7 @@
 #include "dialogprocess.h"
 #include "dialogabout.h"
 #include "dialogoptions.h"
+#include "dialogexport.h"
 #include "../global.h"
 
 namespace Ui

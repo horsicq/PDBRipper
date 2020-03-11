@@ -329,27 +329,9 @@ void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
 
 void GuiMainWindow::on_actionCPP_triggered()
 {
-    // TODO
-    QString sFileName=QFileDialog::getSaveFileName(this, tr("Save File..."),"export.h", tr("h-Files (*.h);;All Files (*)"));
+    DialogExport dialogExport(this);
 
-    if(!sFileName.isEmpty())
-    {
-        QString sString; // TODO
-        QFile file;
-        file.setFileName(sFileName);
-
-        if(file.open(QIODevice::ReadWrite))
-        {
-            file.resize(0);
-            file.write(sString.toLatin1().data(),sString.length());
-            file.close();
-            QMessageBox::information(0, tr("Information"), QString("%1: %2").arg(tr("File saved")).arg(sFileName));
-        }
-        else
-        {
-            QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
-        }
-    }
+    dialogExport.exec();
 }
 
 void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
