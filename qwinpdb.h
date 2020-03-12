@@ -547,6 +547,7 @@ public:
 
     STATS getStats();
     void stop();
+    void setProcessEnable(bool bState);
 
     enum ELEM_TYPE
     {
@@ -657,6 +658,7 @@ private:
     IDiaSession *pDiaSession;
     IDiaSymbol *pGlobal;
     DWORD dwMachineType;
+    bool __bIsProcessStop;
 };
 
 #endif // QWINPDB_H

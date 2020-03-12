@@ -24,6 +24,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QFileDialog>
+#include "dialogprocess.h"
 
 namespace Ui {
 class DialogExport;
@@ -34,7 +35,7 @@ class DialogExport : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogExport(QWidget *parent = nullptr);
+    explicit DialogExport(QWidget *parent=nullptr);
     ~DialogExport();
 
 private slots:

@@ -26,6 +26,28 @@ DialogExport::DialogExport(QWidget *parent) :
     ui(new Ui::DialogExport)
 {
     ui->setupUi(this);
+
+    ui->comboBoxFixOffsets->addItem(tr("No"),QWinPDB::FO_NO);
+    ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
+    ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
+
+    QWinPDB::HANDLE_OPTIONS handleOptions=QWinPDB::getDefaultHandleOptions();
+
+    ui->checkBoxShowComments->setChecked(handleOptions.bShowComments);
+    ui->checkBoxFixTypes->setChecked(handleOptions.bFixTypes);
+    ui->checkBoxAddAlignment->setChecked(handleOptions.bAddAlignment);
+
+    int nCount=ui->comboBoxFixOffsets->count();
+
+    for(int i=0;i<nCount;i++)
+    {
+        if(ui->comboBoxFixOffsets->itemData(i).toUInt()==handleOptions.fixOffsets)
+        {
+            ui->comboBoxFixOffsets->setCurrentIndex(i);
+
+            break;
+        }
+    }
 }
 
 DialogExport::~DialogExport()

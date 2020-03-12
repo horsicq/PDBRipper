@@ -37,6 +37,7 @@ QWinPDB::QWinPDB(QObject *parent) : QObject(parent)
     pDiaDataSource=nullptr;
     pGlobal=nullptr;
     pDiaSession=nullptr;
+    setProcessEnable(true);
 }
 
 QWinPDB::HANDLE_OPTIONS QWinPDB::getDefaultHandleOptions()
@@ -65,7 +66,6 @@ bool QWinPDB::loadFromFile(QString sFileName)
         qFatal("Cannot load msdia library!");
     }
 
-
     QByteArray baBuffer; // TODO function
     baBuffer.resize((sFileName.length()+1)*2);
     baBuffer.fill(0);
@@ -93,7 +93,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     BSTR bstrName;
 
-    if(pGlobal->get_name(&bstrName) != S_OK)
+    if(pGlobal->get_name(&bstrName)!=S_OK)
     {
         return false;
     }
@@ -1528,12 +1528,10 @@ QWinPDB::STATS QWinPDB::getStats()
             if(nCount)
             {
                 IDiaSymbol *pSymbol;
-                ULONG celt = 0;
-                ULONG iMod = 1;
+                ULONG celt=0;
+                ULONG iMod=1;
 
-                QMap<QString,int> mapTypes;
-
-                while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
+                while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1)&&(!__bIsProcessStop)) // TODO Stop
                 {
                     SYMBOL_RECORD record={};
                     BSTR bstring;
@@ -1621,7 +1619,12 @@ QWinPDB::STATS QWinPDB::getStats()
 
 void QWinPDB::stop()
 {
-    // TODO
+    setProcessEnable(false);
+}
+
+void QWinPDB::setProcessEnable(bool bState)
+{
+    __bIsProcessStop=!bState;
 }
 
 QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
@@ -1730,7 +1733,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
     if(bChildren)
     {
         IDiaEnumSymbols *pEnumSymbols;
-        if(pParent->findChildren(SymTagNull, nullptr, nsNone, &pEnumSymbols)==S_OK)
+        if(pParent->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
         {
             LONG nCount;
             if(pEnumSymbols->get_Count(&nCount)==S_OK)
@@ -1743,7 +1746,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
                     qint64 nCurrentOffset=0;
                     int nAlignCount=0;
 
-                    while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
+                    while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
                     {
                         ELEM elemChild=_getElem(pSymbol,pHandleOptions);
 
@@ -1830,7 +1833,6 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
 
 void QWinPDB::fixOffsets(QWinPDB::ELEM *pElem) // TODO Options
 {
-    // TODO
     QWinPDB::ELEM elem=*pElem;
 
     elem.listChildren.clear();
