@@ -29,8 +29,13 @@ class PDBProcess : public QObject
     Q_OBJECT
 
 public:
-    explicit PDBProcess(QObject *parent,QWinPDB *pWinPDB);
-    void setData(QWinPDB::STATS *pStats);
+    enum TYPE
+    {
+        TYPE_IMPORT=0,
+        TYPE_EXPORT
+    };
+
+    explicit PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats,TYPE type);
     void stop();
 
 signals:
@@ -39,11 +44,12 @@ signals:
     void setProgressValue(int);
 
 public slots:
-    void getStats();
+    void process();
 
 private:
     QWinPDB *pWinPDB;
     QWinPDB::STATS *pStats;
+    TYPE type;
 };
 
 #endif // PDBPROCESS_H

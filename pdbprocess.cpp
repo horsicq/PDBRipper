@@ -20,9 +20,11 @@
 //
 #include "pdbprocess.h"
 
-PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB) : QObject(parent)
+PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats, TYPE type) : QObject(parent)
 {
     this->pWinPDB=pWinPDB;
+    this->pStats=pStats;
+    this->type=type;
 
     pStats=0;
 
@@ -31,21 +33,15 @@ PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB) : QObject(parent)
     connect(pWinPDB, SIGNAL(setProgressValue(int)), this, SIGNAL(setProgressValue(int)));
 }
 
-void PDBProcess::setData(QWinPDB::STATS *pStats)
+void PDBProcess::process()
 {
-    this->pStats=pStats;
-}
-
-void PDBProcess::getStats()
-{
-    if(pStats)
+    if(type==TYPE_IMPORT)
     {
-        // TODO Progress bar
         *pStats=pWinPDB->getStats();
-
-//        pWinPDB->getAllTags();
-
-//        emit completed();
+    }
+    else if(type==TYPE_EXPORT)
+    {
+        // TODO
     }
 }
 

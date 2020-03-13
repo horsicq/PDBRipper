@@ -70,8 +70,7 @@ void GuiMainWindow::on_actionOpen_triggered()
         {
             ui->lineEditSearch->clear();
 
-            DialogProcess dp(this,pWinPDB);
-            dp.getStats(&stats);
+            DialogProcess dp(this,pWinPDB,&stats,PDBProcess::TYPE_IMPORT);
             dp.exec();
 
             int nCount=stats.listSymbols.count();

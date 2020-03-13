@@ -531,6 +531,7 @@ public:
         bool bFixTypes;
         bool bAddAlignment;
         FO fixOffsets;
+        QString sResultFileName;
     };
 
     explicit QWinPDB(QObject *parent = 0);
