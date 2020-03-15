@@ -41,8 +41,6 @@ FORMS    += \
         dialogprocess.ui \
         guimainwindow.ui
 
-#LIBS += \
-#    ../../../cpp/_lib/DIA_SDK/lib/diaguids.lib
 VC_PATH = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
 LIBS += $$VC_PATH"\DIA SDK\lib\diaguids.lib"
 

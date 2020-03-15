@@ -64,7 +64,7 @@ copy %SOURCE_PATH%\build\release\winloader.exe %SOURCE_PATH%\release\%BUILD_NAME
 copy %SOURCE_PATH%\build\release\pdbripper.exe %SOURCE_PATH%\release\%BUILD_NAME%\base\
 copy %SOURCE_PATH%\build\release\pdbripperc.exe %SOURCE_PATH%\release\%BUILD_NAME%\base\
 
-copy %SOURCE_PATH%\files\msdia140.dll %SOURCE_PATH%\release\%BUILD_NAME%\base\
+copy %VS_PATH%\"DIA SDK\bin\msdia140.dll" %SOURCE_PATH%\release\%BUILD_NAME%\base\
 
 copy %QT_PATH%\bin\Qt5Widgets.dll %SOURCE_PATH%\release\%BUILD_NAME%\base\
 copy %QT_PATH%\bin\Qt5Gui.dll %SOURCE_PATH%\release\%BUILD_NAME%\base\
