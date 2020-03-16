@@ -1527,9 +1527,15 @@ QWinPDB::STATS QWinPDB::getStats()
         {
             if(nCount)
             {
+                emit setProgressMaximum(nCount);
+
                 IDiaSymbol *pSymbol;
                 ULONG celt=0;
                 ULONG iMod=1;
+
+                int nCurrentIndex=0;
+                int nCurrentProcent=0;
+                int nProcent=nCount/100;
 
                 while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1)&&(!__bIsProcessStop)) // TODO Stop
                 {
@@ -1580,7 +1586,6 @@ QWinPDB::STATS QWinPDB::getStats()
                                 result.listSymbols.append(record);
                             }
                         }
-
                     }
                     else if(dwSymTag==SymTagEnum)
                     {
@@ -1603,6 +1608,14 @@ QWinPDB::STATS QWinPDB::getStats()
                     }
 
                     pSymbol->Release();
+
+                    if(nCurrentIndex>nCurrentProcent*nProcent)
+                    {
+                        nCurrentProcent++;
+                        emit setProgressValue(nCurrentIndex);
+                    }
+
+                    nCurrentIndex++;
                 }
             }
         }
