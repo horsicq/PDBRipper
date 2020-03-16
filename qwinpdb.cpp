@@ -44,9 +44,13 @@ QWinPDB::HANDLE_OPTIONS QWinPDB::getDefaultHandleOptions()
 {
     HANDLE_OPTIONS result={};
 
+    result.bFixTypes=false;
+    result.bAddAlignment=false;
     result.bShowComments=false;
 //    result.fixOffsets=FO_STRUCTSANDUNIONS;
     result.fixOffsets=FO_NO;
+    result.sortType=ST_ID;
+    result.exportType=ET_CPLUSPLUS;
 
     return result;
 }
@@ -1317,7 +1321,7 @@ QString QWinPDB::_getTab(int nLevel)
 
 QWinPDB::~QWinPDB()
 {
-    qDebug("QWinPDB::~QWinPDB()");
+//    qDebug("QWinPDB::~QWinPDB()");
     cleanup();
 }
 

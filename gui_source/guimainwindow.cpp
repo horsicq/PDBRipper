@@ -49,6 +49,11 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
 
 GuiMainWindow::~GuiMainWindow()
 {
+    if(pWinPDB)
+    {
+        delete pWinPDB;
+    }
+
     DialogOptions::saveOptions(&options);
     delete ui;
 }
@@ -70,7 +75,7 @@ void GuiMainWindow::on_actionOpen_triggered()
         {
             ui->lineEditSearch->clear();
 
-            DialogProcess dp(this,pWinPDB,&stats,PDBProcess::TYPE_IMPORT);
+            DialogProcess dp(this,pWinPDB,&stats,nullptr,PDBProcess::TYPE_IMPORT);
             dp.exec();
 
             int nCount=stats.listSymbols.count();
@@ -328,7 +333,7 @@ void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
 
 void GuiMainWindow::on_actionCPP_triggered()
 {
-    DialogExport dialogExport(this);
+    DialogExport dialogExport(this,pWinPDB,&stats);
 
     dialogExport.exec();
 }

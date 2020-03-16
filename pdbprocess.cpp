@@ -20,10 +20,11 @@
 //
 #include "pdbprocess.h"
 
-PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats, TYPE type) : QObject(parent)
+PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats, QString *psString, TYPE type) : QObject(parent)
 {
     this->pWinPDB=pWinPDB;
     this->pStats=pStats;
+    this->psString=psString;
     this->type=type;
 
     pStats=0;

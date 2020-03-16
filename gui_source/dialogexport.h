@@ -35,8 +35,11 @@ class DialogExport : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogExport(QWidget *parent=nullptr);
+    explicit DialogExport(QWidget *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats);
     ~DialogExport();
+
+private:
+    QWinPDB::HANDLE_OPTIONS getHandleOptions();
 
 private slots:
     void on_pushButtonOK_clicked();
@@ -44,6 +47,8 @@ private slots:
 
 private:
     Ui::DialogExport *ui;
+    QWinPDB *pWinPDB;
+    QWinPDB::STATS *pStats;
 };
 
 #endif // DIALOGEXPORT_H

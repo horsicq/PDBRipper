@@ -21,11 +21,20 @@
 #include "dialogexport.h"
 #include "ui_dialogexport.h"
 
-DialogExport::DialogExport(QWidget *parent) :
+DialogExport::DialogExport(QWidget *parent,QWinPDB *pWinPDB, QWinPDB::STATS *pStats) :
     QDialog(parent),
     ui(new Ui::DialogExport)
 {
     ui->setupUi(this);
+
+    this->pWinPDB=pWinPDB;
+    this->pStats=pStats;
+
+    ui->comboBoxSortType->addItem(tr("ID"),QWinPDB::ST_ID);
+    ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_ID);
+    ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_ID);
+
+    ui->comboBoxExportType->addItem(QString("C++"),QWinPDB::ET_CPLUSPLUS);
 
     ui->comboBoxFixOffsets->addItem(tr("No"),QWinPDB::FO_NO);
     ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
@@ -37,15 +46,43 @@ DialogExport::DialogExport(QWidget *parent) :
     ui->checkBoxFixTypes->setChecked(handleOptions.bFixTypes);
     ui->checkBoxAddAlignment->setChecked(handleOptions.bAddAlignment);
 
-    int nCount=ui->comboBoxFixOffsets->count();
-
-    for(int i=0;i<nCount;i++)
     {
-        if(ui->comboBoxFixOffsets->itemData(i).toUInt()==handleOptions.fixOffsets)
-        {
-            ui->comboBoxFixOffsets->setCurrentIndex(i);
+        int nCount=ui->comboBoxFixOffsets->count();
 
-            break;
+        for(int i=0;i<nCount;i++)
+        {
+            if(ui->comboBoxFixOffsets->itemData(i).toUInt()==handleOptions.fixOffsets)
+            {
+                ui->comboBoxFixOffsets->setCurrentIndex(i);
+
+                break;
+            }
+        }
+    }
+    {
+        int nCount=ui->comboBoxSortType->count();
+
+        for(int i=0;i<nCount;i++)
+        {
+            if(ui->comboBoxSortType->itemData(i).toUInt()==handleOptions.sortType)
+            {
+                ui->comboBoxSortType->setCurrentIndex(i);
+
+                break;
+            }
+        }
+    }
+    {
+        int nCount=ui->comboBoxExportType->count();
+
+        for(int i=0;i<nCount;i++)
+        {
+            if(ui->comboBoxExportType->itemData(i).toUInt()==handleOptions.exportType)
+            {
+                ui->comboBoxExportType->setCurrentIndex(i);
+
+                break;
+            }
         }
     }
 }
@@ -53,6 +90,20 @@ DialogExport::DialogExport(QWidget *parent) :
 DialogExport::~DialogExport()
 {
     delete ui;
+}
+
+QWinPDB::HANDLE_OPTIONS DialogExport::getHandleOptions()
+{
+    QWinPDB::HANDLE_OPTIONS result={};
+
+    result.bShowComments=ui->checkBoxShowComments->isChecked();
+    result.bFixTypes=ui->checkBoxFixTypes->isChecked();
+    result.bAddAlignment=ui->checkBoxAddAlignment->isChecked();
+    result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
+    result.sortType=(QWinPDB::ST)ui->comboBoxSortType->currentData().toUInt();
+    result.exportType=(QWinPDB::ET)ui->comboBoxExportType->currentData().toUInt();
+
+    return result;
 }
 
 void DialogExport::on_pushButtonOK_clicked()
@@ -63,6 +114,10 @@ void DialogExport::on_pushButtonOK_clicked()
     if(!sFileName.isEmpty())
     {
         QString sString; // TODO
+
+        DialogProcess dp(this,pWinPDB,pStats,&sString,PDBProcess::TYPE_EXPORT);
+        dp.exec(); // TODO Check return
+
         QFile file;
         file.setFileName(sFileName);
 
@@ -77,6 +132,8 @@ void DialogExport::on_pushButtonOK_clicked()
         {
             QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
         }
+
+        this->close();
     }
 }
 

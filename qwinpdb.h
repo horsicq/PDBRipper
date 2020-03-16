@@ -525,12 +525,26 @@ public:
         FO_ALL
     };
 
+    enum ST
+    {
+        ST_ID=0,
+        ST_NAME,
+        ST_DEP
+    };
+
+    enum ET
+    {
+        ET_CPLUSPLUS=0
+    };
+
     struct HANDLE_OPTIONS
     {
         bool bShowComments;
         bool bFixTypes;
         bool bAddAlignment;
         FO fixOffsets;
+        ST sortType;
+        ET exportType;
         QString sResultFileName;
     };
 

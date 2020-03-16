@@ -35,7 +35,7 @@ public:
         TYPE_EXPORT
     };
 
-    explicit PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats,TYPE type);
+    explicit PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats, QString *psString, TYPE type);
     void stop();
 
 signals:
@@ -49,6 +49,7 @@ public slots:
 private:
     QWinPDB *pWinPDB;
     QWinPDB::STATS *pStats;
+    QString *psString;
     TYPE type;
 };
 

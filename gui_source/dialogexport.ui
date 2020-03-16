@@ -23,9 +23,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QGroupBox" name="groupBoxSort">
+      <widget class="QGroupBox" name="groupBoxSortType">
        <property name="title">
-        <string>Sort</string>
+        <string>Sort type</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <property name="leftMargin">
@@ -41,7 +41,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QComboBox" name="comboBoxSort">
+         <widget class="QComboBox" name="comboBoxSortType">
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -67,9 +67,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBoxType">
+      <widget class="QGroupBox" name="groupBoxExportType">
        <property name="title">
-        <string>Type</string>
+        <string>Export type</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="leftMargin">
@@ -85,7 +85,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QComboBox" name="comboBoxType">
+         <widget class="QComboBox" name="comboBoxExportType">
           <property name="minimumSize">
            <size>
             <width>100</width>
