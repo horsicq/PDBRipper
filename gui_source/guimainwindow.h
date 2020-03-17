@@ -26,6 +26,8 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
+#include <QDragEnterEvent>
+#include <QMimeData>
 #include "dialogprocess.h"
 #include "dialogabout.h"
 #include "dialogoptions.h"
@@ -47,12 +49,11 @@ public:
 
 private slots:
     void on_actionOpen_triggered();
-//    void handle();
-//    void on_checkBoxOffsets_toggled(bool checked);
-//    void on_checkBoxSizes_toggled(bool checked);
     void on_actionOptions_triggered();
     void on_actionAbout_triggered();
     void adjustWindow();
+
+    void _openFile(QString sFileName);
 
     void on_lineEditSearch_textChanged(const QString &arg1);
     void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
@@ -69,8 +70,12 @@ private slots:
     void on_actionCPP_triggered();
 
     void on_checkBoxFixTypes_toggled(bool checked);
-
     void on_actionQuit_triggered();
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     enum CBT
@@ -83,8 +88,7 @@ private:
     };
 
     Ui::GuiMainWindow *ui;
-    QWinPDB *pWinPDB;
-    QWinPDB::STATS stats;
+    PDBProcess::PDBDATA pdbData;
     PDBRIPPER::OPTIONS options;
     QSortFilterProxyModel *pFilter;
 };

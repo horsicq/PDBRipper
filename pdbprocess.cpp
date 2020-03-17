@@ -20,33 +20,29 @@
 //
 #include "pdbprocess.h"
 
-PDBProcess::PDBProcess(QObject *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats, QString *psString, TYPE type) : QObject(parent)
+PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(parent)
 {
-    this->pWinPDB=pWinPDB;
-    this->pStats=pStats;
-    this->psString=psString;
+    this->pData=pData;
     this->type=type;
 
-    pStats=0;
-
-    connect(pWinPDB, SIGNAL(completed()), this, SIGNAL(completed()));
-    connect(pWinPDB, SIGNAL(setProgressMaximum(int)), this, SIGNAL(setProgressMaximum(int)));
-    connect(pWinPDB, SIGNAL(setProgressValue(int)), this, SIGNAL(setProgressValue(int)));
+    connect(pData->pWinPDB, SIGNAL(completed()), this, SIGNAL(completed()));
+    connect(pData->pWinPDB, SIGNAL(setProgressMaximum(int)), this, SIGNAL(setProgressMaximum(int)));
+    connect(pData->pWinPDB, SIGNAL(setProgressValue(int)), this, SIGNAL(setProgressValue(int)));
 }
 
 void PDBProcess::process()
 {
     if(type==TYPE_IMPORT)
     {
-        *pStats=pWinPDB->getStats();
+        pData->stats=pData->pWinPDB->getStats();
     }
     else if(type==TYPE_EXPORT)
     {
-        // TODO
+        pData->sString=pData->pWinPDB->exportString(&(pData->stats),&(pData->handleOptions));
     }
 }
 
 void PDBProcess::stop()
 {
-    pWinPDB->stop();
+    pData->pWinPDB->stop();
 }

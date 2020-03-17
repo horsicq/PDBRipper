@@ -21,7 +21,7 @@
 #include "dialogprocess.h"
 #include "ui_dialogprocess.h"
 
-DialogProcess::DialogProcess(QWidget *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats,QString *psString, PDBProcess::TYPE type) :
+DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBProcess::TYPE type) :
     QDialog(parent),
     ui(new Ui::DialogProcess)
 {
@@ -29,7 +29,7 @@ DialogProcess::DialogProcess(QWidget *parent, QWinPDB *pWinPDB, QWinPDB::STATS *
 
     thread=new QThread;
 
-    pPDBProcess=new PDBProcess(0,pWinPDB,pStats,psString,type);
+    pPDBProcess=new PDBProcess(0,pData,type);
     pPDBProcess->moveToThread(thread);
 
     connect(pPDBProcess, SIGNAL(completed()), this, SLOT(onCompleted()));

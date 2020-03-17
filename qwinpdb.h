@@ -618,6 +618,8 @@ public:
 
     QString handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
 
+    QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
+
 private:
     void cleanup();
 

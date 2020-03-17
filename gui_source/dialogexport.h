@@ -35,7 +35,7 @@ class DialogExport : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogExport(QWidget *parent, QWinPDB *pWinPDB, QWinPDB::STATS *pStats);
+    explicit DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData);
     ~DialogExport();
 
 private:
@@ -47,8 +47,7 @@ private slots:
 
 private:
     Ui::DialogExport *ui;
-    QWinPDB *pWinPDB;
-    QWinPDB::STATS *pStats;
+    PDBProcess::PDBDATA *pData;
 };
 
 #endif // DIALOGEXPORT_H

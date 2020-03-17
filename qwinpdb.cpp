@@ -1517,7 +1517,8 @@ QList<QWinPDB::SYMBOL_RECORD> QWinPDB::getClasses()
 
 QWinPDB::STATS QWinPDB::getStats()
 {
-    // TODO ProgressBar
+    setProcessEnable(true);
+
     STATS result={};
 
     QMap<QString,qint64> mapUDT;
@@ -1629,6 +1630,8 @@ QWinPDB::STATS QWinPDB::getStats()
 
     qSort(result.listSymbols.begin(),result.listSymbols.end(),sortLessThan);
 
+    setProcessEnable(true);
+
     emit completed();
 
     return result;
@@ -1727,7 +1730,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
     }
     else if(dwSymTag==SymTagCallSite)
     {
-        _checkSymbol(pParent);
+//        _checkSymbol(pParent);
 
         result.elemType=ELEM_TYPE_CALLSITE;
         result._callsite=_getRecordCallSite(pParent,pHandleOptions);
@@ -2160,6 +2163,21 @@ QString QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTIONS *pHandleOpti
     }
 
     return QWinPDB::elemToString(&elem,pHandleOptions,0,false);
+}
+
+QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
+{
+    QString sResult;
+
+    setProcessEnable(true);
+
+    sResult="123";
+
+    setProcessEnable(true);
+
+    emit completed();
+
+    return sResult;
 }
 
 void QWinPDB::cleanup()

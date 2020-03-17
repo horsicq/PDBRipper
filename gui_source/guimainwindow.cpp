@@ -29,12 +29,15 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
 
     setWindowTitle(QString("%1 v%2").arg(X_APPLICATIONNAME).arg(X_APPLICATIONVERSION));
 
-    pWinPDB=0;
+    setAcceptDrops(true);
+
+    pdbData.pWinPDB=0;
 
     DialogOptions::loadOptions(&options);
     adjustWindow();
 
     pFilter=new QSortFilterProxyModel(this);
+    ui->tableViewSymbols->setModel(pFilter);
 
     QSignalBlocker blocker(ui->comboBoxFixOffsets);
 
@@ -42,16 +45,21 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
     ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
     ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
 
-    QWinPDB::HANDLE_OPTIONS handleOptions=QWinPDB::getDefaultHandleOptions();
+    pdbData.handleOptions=QWinPDB::getDefaultHandleOptions();
 
-    setHandleOptions(&handleOptions);
+    setHandleOptions(&(pdbData.handleOptions));
+
+    if(QCoreApplication::arguments().count()>1)
+    {
+        _openFile(QCoreApplication::arguments().at(1));
+    }
 }
 
 GuiMainWindow::~GuiMainWindow()
 {
-    if(pWinPDB)
+    if(pdbData.pWinPDB)
     {
-        delete pWinPDB;
+        delete pdbData.pWinPDB;
     }
 
     DialogOptions::saveOptions(&options);
@@ -62,149 +70,8 @@ void GuiMainWindow::on_actionOpen_triggered()
 {
     QString sFileName=QFileDialog::getOpenFileName(this, tr("Open File..."),QString(), tr("PDB-Files (*.pdb);;All Files (*)"));
 
-    if(!sFileName.isEmpty())
-    {
-        if(pWinPDB)
-        {
-            delete pWinPDB;
-        }
-
-        pWinPDB =new QWinPDB;
-
-        if(pWinPDB->loadFromFile(sFileName))
-        {
-            ui->lineEditSearch->clear();
-
-            DialogProcess dp(this,pWinPDB,&stats,nullptr,PDBProcess::TYPE_IMPORT);
-            dp.exec();
-
-            int nCount=stats.listSymbols.count();
-
-            QStandardItemModel *model=new QStandardItemModel(nCount,2,this);
-
-            model->setHeaderData(0,Qt::Horizontal,tr("ID"));
-            model->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
-
-            for(int i = 0; i<nCount; i++)
-            {
-                QStandardItem *itemID = new QStandardItem;
-                itemID->setData((quint32)(stats.listSymbols.at(i).dwID),Qt::DisplayRole);
-                itemID->setData((quint32)(stats.listSymbols.at(i).type),Qt::UserRole+1);
-                itemID->setTextAlignment(Qt::AlignRight);
-                model->setItem(i,0,itemID);
-
-                QStandardItem *itemSymbol = new QStandardItem;
-                itemSymbol->setText(stats.listSymbols.at(i).sName);
-                model->setItem(i,1,itemSymbol);
-            }
-
-            ui->tableViewSymbols->setModel(model);
-
-            ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
-            ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(1,QHeaderView::Stretch);
-
-            pFilter->setSourceModel(model);
-
-            ui->tableViewSymbols->setModel(pFilter);
-
-            connect(ui->tableViewSymbols->selectionModel(),SIGNAL(currentChanged(QModelIndex const&,QModelIndex const&)),this,SLOT(onCurrentChanged(QModelIndex const&,QModelIndex const&)));
-
-            // TODO clear
-
-//            ui->comboBoxType->clear();
-
-//            if(stats.listClasses.count())
-//            {
-//                ui->comboBoxType->addItem(tr("Classes"),CBT_CLASSES);
-//            }
-//            if(stats.listStructs.count())
-//            {
-//                ui->comboBoxType->addItem(tr("Structs"),CBT_STRUCTS);
-//            }
-//            if(stats.listUnions.count())
-//            {
-//                ui->comboBoxType->addItem(tr("Unions"),CBT_UNIONS);
-//            }
-//            if(stats.listInterfaces.count())
-//            {
-//                ui->comboBoxType->addItem(tr("Interfaces"),CBT_INTERFACES);
-//            }
-//            if(stats.listEnums.count())
-//            {
-//                ui->comboBoxType->addItem(tr("Enums"),CBT_ENUMS);
-//            }
-        }
-        else
-        {
-            // TODO
-        }
-    }
+    _openFile(sFileName);
 }
-
-//void GuiMainWindow::on_listWidgetSymTags_currentRowChanged(int currentRow)
-//{
-//    handle();
-//}
-
-//void GuiMainWindow::on_comboBoxType_currentIndexChanged(int index)
-//{
-////    if(index!=-1)
-////    {
-////        int nType=ui->comboBoxType->currentData().toInt();
-////        QList<QWinPDB::SYMBOL_RECORD> listRecords;
-
-////        if(nType==CBT_CLASSES)              listRecords=stats.listClasses;
-////        else if(nType==CBT_STRUCTS)         listRecords=stats.listStructs;
-////        else if(nType==CBT_UNIONS)          listRecords=stats.listUnions;
-////        else if(nType==CBT_INTERFACES)      listRecords=stats.listInterfaces;
-////        else if(nType==CBT_ENUMS)           listRecords=stats.listEnums;
-
-////        ui->listWidgetSymTags->clear();
-
-////        int nCount=listRecords.count();
-////        for(int i=0;i<nCount;i++)
-////        {
-////            QListWidgetItem *item=new QListWidgetItem(ui->listWidgetSymTags);
-////            item->setText(listRecords.at(i).sName);
-////            item->setData(Qt::UserRole,(int)listRecords.at(i).dwID);
-
-////            ui->listWidgetSymTags->addItem(item);
-////        }
-////    }
-//}
-
-//void GuiMainWindow::handle()
-//{
-//    int currentRow=ui->listWidgetSymTags->currentRow();
-
-//    if(currentRow!=-1)
-//    {
-//        int nID=ui->listWidgetSymTags->currentItem()->data(Qt::UserRole).toInt();
-//        QWinPDB::HANDLE_OPTIONS handleOptions={0};
-
-////        handleOptions.bOffsets=ui->checkBoxOffsets->isChecked();
-////        handleOptions.bSizes=ui->checkBoxSizes->isChecked();
-
-////        QString sResult=pWinPDB->handle(nID,&handleOptions);
-
-////        ui->textBrowserResult->setText(sResult);
-//        QWinPDB::ELEM elem=pWinPDB->getElem(nID);
-
-//        QString sText=QWinPDB::elemToString(&elem,&handleOptions,0,false);
-
-//        ui->textBrowserResult->setText(sText);
-//    }
-//}
-
-//void MainWindow::on_checkBoxOffsets_toggled(bool checked)
-//{
-//    handle();
-//}
-
-//void MainWindow::on_checkBoxSizes_toggled(bool checked)
-//{
-//    handle();
-//}
 
 void GuiMainWindow::on_actionOptions_triggered()
 {
@@ -237,6 +104,66 @@ void GuiMainWindow::adjustWindow()
     show();
 }
 
+void GuiMainWindow::_openFile(QString sFileName)
+{
+    if(sFileName!="")
+    {
+        if(pdbData.pWinPDB)
+        {
+            delete pdbData.pWinPDB;
+        }
+
+        pdbData.pWinPDB=new QWinPDB;
+
+        QAbstractItemModel *pModel=pFilter->sourceModel();
+
+        pFilter->setSourceModel(0);
+
+        delete pModel;
+
+        if(pdbData.pWinPDB->loadFromFile(sFileName))
+        {
+            ui->lineEditSearch->clear();
+
+            DialogProcess dp(this,&pdbData,PDBProcess::TYPE_IMPORT);
+            dp.exec();
+
+            int nCount=pdbData.stats.listSymbols.count();
+
+            QStandardItemModel *model=new QStandardItemModel(nCount,2,this);
+
+            model->setHeaderData(0,Qt::Horizontal,tr("ID"));
+            model->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
+
+            for(int i = 0; i<nCount; i++)
+            {
+                QStandardItem *itemID = new QStandardItem;
+                itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).dwID),Qt::DisplayRole);
+                itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).type),Qt::UserRole+1);
+                itemID->setTextAlignment(Qt::AlignRight);
+                model->setItem(i,0,itemID);
+
+                QStandardItem *itemSymbol = new QStandardItem;
+                itemSymbol->setText(pdbData.stats.listSymbols.at(i).sName);
+                model->setItem(i,1,itemSymbol);
+            }
+
+//            ui->tableViewSymbols->setModel(model);
+
+            pFilter->setSourceModel(model);
+
+            ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
+            ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(1,QHeaderView::Stretch);
+
+            connect(ui->tableViewSymbols->selectionModel(),SIGNAL(currentChanged(QModelIndex const&,QModelIndex const&)),this,SLOT(onCurrentChanged(QModelIndex const&,QModelIndex const&)));
+        }
+        else
+        {
+            QMessageBox::critical(this,tr("Error"),QString("%1: %2").arg(tr("Cannot open file")).arg(sFileName));
+        }
+    }
+}
+
 void GuiMainWindow::on_lineEditSearch_textChanged(const QString &arg1)
 {
     pFilter->setFilterRegExp(arg1);
@@ -262,10 +189,10 @@ void GuiMainWindow::handle()
 
         if(list.count())
         {
-            QWinPDB::HANDLE_OPTIONS handleOptions=getHandleOptions();
+            pdbData.handleOptions=getHandleOptions();
             quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
 
-            QString sText=pWinPDB->handleElement(nID,&handleOptions);
+            QString sText=pdbData.pWinPDB->handleElement(nID,&(pdbData.handleOptions));
 
             ui->textBrowserResult->setText(sText);
         }
@@ -333,7 +260,7 @@ void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
 
 void GuiMainWindow::on_actionCPP_triggered()
 {
-    DialogExport dialogExport(this,pWinPDB,&stats);
+    DialogExport dialogExport(this,&pdbData);
 
     dialogExport.exec();
 }
@@ -348,4 +275,38 @@ void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
 void GuiMainWindow::on_actionQuit_triggered()
 {
     this->close();
+}
+
+void GuiMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->acceptProposedAction();
+}
+
+void GuiMainWindow::dragMoveEvent(QDragMoveEvent *event)
+{
+    event->acceptProposedAction();
+}
+
+void GuiMainWindow::dropEvent(QDropEvent *event)
+{
+    const QMimeData* mimeData=event->mimeData();
+
+    if(mimeData->hasUrls())
+    {
+        QList<QUrl> urlList=mimeData->urls();
+
+        if(urlList.count())
+        {
+            QString sFileName=urlList.at(0).toLocalFile();
+
+            QFileInfo fiLink(sFileName);
+
+            if(fiLink.isSymLink())
+            {
+                sFileName=fiLink.symLinkTarget();
+            }
+
+            _openFile(sFileName);
+        }
+    }
 }

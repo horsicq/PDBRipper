@@ -21,14 +21,13 @@
 #include "dialogexport.h"
 #include "ui_dialogexport.h"
 
-DialogExport::DialogExport(QWidget *parent,QWinPDB *pWinPDB, QWinPDB::STATS *pStats) :
+DialogExport::DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData) :
     QDialog(parent),
     ui(new Ui::DialogExport)
 {
     ui->setupUi(this);
 
-    this->pWinPDB=pWinPDB;
-    this->pStats=pStats;
+    this->pData=pData;
 
     ui->comboBoxSortType->addItem(tr("ID"),QWinPDB::ST_ID);
     ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_ID);
@@ -40,18 +39,16 @@ DialogExport::DialogExport(QWidget *parent,QWinPDB *pWinPDB, QWinPDB::STATS *pSt
     ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
     ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
 
-    QWinPDB::HANDLE_OPTIONS handleOptions=QWinPDB::getDefaultHandleOptions();
-
-    ui->checkBoxShowComments->setChecked(handleOptions.bShowComments);
-    ui->checkBoxFixTypes->setChecked(handleOptions.bFixTypes);
-    ui->checkBoxAddAlignment->setChecked(handleOptions.bAddAlignment);
+    ui->checkBoxShowComments->setChecked(pData->handleOptions.bShowComments);
+    ui->checkBoxFixTypes->setChecked(pData->handleOptions.bFixTypes);
+    ui->checkBoxAddAlignment->setChecked(pData->handleOptions.bAddAlignment);
 
     {
         int nCount=ui->comboBoxFixOffsets->count();
 
         for(int i=0;i<nCount;i++)
         {
-            if(ui->comboBoxFixOffsets->itemData(i).toUInt()==handleOptions.fixOffsets)
+            if(ui->comboBoxFixOffsets->itemData(i).toUInt()==pData->handleOptions.fixOffsets)
             {
                 ui->comboBoxFixOffsets->setCurrentIndex(i);
 
@@ -64,7 +61,7 @@ DialogExport::DialogExport(QWidget *parent,QWinPDB *pWinPDB, QWinPDB::STATS *pSt
 
         for(int i=0;i<nCount;i++)
         {
-            if(ui->comboBoxSortType->itemData(i).toUInt()==handleOptions.sortType)
+            if(ui->comboBoxSortType->itemData(i).toUInt()==pData->handleOptions.sortType)
             {
                 ui->comboBoxSortType->setCurrentIndex(i);
 
@@ -77,7 +74,7 @@ DialogExport::DialogExport(QWidget *parent,QWinPDB *pWinPDB, QWinPDB::STATS *pSt
 
         for(int i=0;i<nCount;i++)
         {
-            if(ui->comboBoxExportType->itemData(i).toUInt()==handleOptions.exportType)
+            if(ui->comboBoxExportType->itemData(i).toUInt()==pData->handleOptions.exportType)
             {
                 ui->comboBoxExportType->setCurrentIndex(i);
 
@@ -113,9 +110,7 @@ void DialogExport::on_pushButtonOK_clicked()
 
     if(!sFileName.isEmpty())
     {
-        QString sString; // TODO
-
-        DialogProcess dp(this,pWinPDB,pStats,&sString,PDBProcess::TYPE_EXPORT);
+        DialogProcess dp(this,pData,PDBProcess::TYPE_EXPORT);
         dp.exec(); // TODO Check return
 
         QFile file;
@@ -124,7 +119,7 @@ void DialogExport::on_pushButtonOK_clicked()
         if(file.open(QIODevice::ReadWrite))
         {
             file.resize(0);
-            file.write(sString.toLatin1().data(),sString.length());
+            file.write(pData->sString.toLatin1().data(),pData->sString.length());
             file.close();
             QMessageBox::information(0, tr("Information"), QString("%1: %2").arg(tr("File saved")).arg(sFileName));
         }
