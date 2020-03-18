@@ -30,10 +30,6 @@
 
 #include <QObject>
 
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QSqlTableModel>
 #include <QUuid>
 #include <QMap>
 #include <QStack>

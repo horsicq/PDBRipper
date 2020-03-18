@@ -22,6 +22,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include "consoleoutput.h"
+#include "../pdbprocess.h"
 #include "../global.h"
 
 int main(int argc, char *argv[])
@@ -42,9 +43,41 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
 
+    parser.addPositionalArgument("file","The file to open.");
+
+    QCommandLineOption clOutputFile                 (QStringList()<<"o"<<"outputfile",          "Output file<path>.",                           "path");
+    QCommandLineOption clShowComments               (QStringList()<<"c"<<"showcomments",        "Show comments."                                );
+    QCommandLineOption clFixTypes                   (QStringList()<<"f"<<"fixtypes",            "Fix types."                                    );
+    QCommandLineOption clAddAlignment               (QStringList()<<"l"<<"addalignment",        "Add alignment."                                );
+    QCommandLineOption clFixOffsetsStructs          (QStringList()<<"s"<<"fostructsandunions",  "Fix offsets(structs and unions)."              );
+    QCommandLineOption clFixOffsetsAll              (QStringList()<<"a"<<"foall",               "Fix offsets(all)."                             );
+    QCommandLineOption clSortById                   (QStringList()<<"i"<<"sortbyid",            "Sort by ID."                                   );
+    QCommandLineOption clSortByName                 (QStringList()<<"n"<<"sortbyname",          "Sort by name."                                 );
+    QCommandLineOption clSortByDeps                 (QStringList()<<"i"<<"sortbydeps",          "Sort by dependencies."                         );
+    QCommandLineOption clExportCpp                  (QStringList()<<"p"<<"exportcpp",           "Export C++"                                    );
+
+    parser.addOption(clOutputFile);
+    parser.addOption(clShowComments);
+    parser.addOption(clFixTypes);
+    parser.addOption(clAddAlignment);
+    parser.addOption(clFixOffsetsStructs);
+    parser.addOption(clFixOffsetsAll);
+    parser.addOption(clSortById);
+    parser.addOption(clSortByName);
+    parser.addOption(clSortByDeps);
+    parser.addOption(clExportCpp);
+
     parser.process(app);
 
     bool bProcess=false;
+
+    PDBProcess::PDBDATA pdbData={};
+
+    pdbData.handleOptions.bAddAlignment=parser.isSet(clAddAlignment);
+    pdbData.handleOptions.bFixTypes=parser.isSet(clFixTypes);
+    pdbData.handleOptions.bShowComments=parser.isSet(clShowComments);
+
+    // TODO
 
     if(!bProcess)
     {
