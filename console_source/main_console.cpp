@@ -77,7 +77,59 @@ int main(int argc, char *argv[])
     pdbData.handleOptions.bFixTypes=parser.isSet(clFixTypes);
     pdbData.handleOptions.bShowComments=parser.isSet(clShowComments);
 
-    // TODO
+    if(parser.isSet(clFixOffsetsStructs))
+    {
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_STRUCTSANDUNIONS;
+    }
+    else if(parser.isSet(clFixOffsetsAll))
+    {
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_ALL;
+    }
+    else
+    {
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO; // Default
+    }
+
+    if(parser.isSet(clSortById))
+    {
+        pdbData.handleOptions.sortType=QWinPDB::ST_ID;
+    }
+    else if(parser.isSet(clSortByName))
+    {
+        pdbData.handleOptions.sortType=QWinPDB::ST_NAME;
+    }
+    else if(parser.isSet(clSortByDeps))
+    {
+        pdbData.handleOptions.sortType=QWinPDB::ST_DEP;
+    }
+    else
+    {
+        pdbData.handleOptions.sortType=QWinPDB::ST_ID; // Default
+    }
+
+    if(parser.isSet(clExportCpp))
+    {
+        pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
+    }
+    else
+    {
+        pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS; // Default
+    }
+
+    QString sOutputFileName=parser.value(clOutputFile);
+
+    // mb TODO multifiles
+    QList<QString> listInputFiles=parser.positionalArguments();
+
+    if(listInputFiles.count())
+    {
+        QString sPDBFileName=listInputFiles.at(0);
+        // TODO
+    }
+    else
+    {
+        consoleOutput.errorMessage(QString("No input file specified"));
+    }
 
     if(!bProcess)
     {
