@@ -124,6 +124,15 @@ int main(int argc, char *argv[])
     if(listInputFiles.count())
     {
         QString sPDBFileName=listInputFiles.at(0);
+
+        if(sOutputFileName!="")
+        {
+            // TODO output to file
+        }
+        else
+        {
+            // TODO output to console
+        }
         // TODO
     }
     else
