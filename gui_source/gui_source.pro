@@ -1,17 +1,9 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2015-03-23T09:14:01
-#
-#-------------------------------------------------
-
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = pdbripper
 TEMPLATE = app
-
-
 
 SOURCES +=\
     dialogabout.cpp \
@@ -35,18 +27,17 @@ HEADERS  += \
     guimainwindow.h
 
 FORMS    += \
-        dialogabout.ui \
-        dialogexport.ui \
-        dialogoptions.ui \
-        dialogprocess.ui \
-        guimainwindow.ui
+    dialogabout.ui \
+    dialogexport.ui \
+    dialogoptions.ui \
+    dialogprocess.ui \
+    guimainwindow.ui
 
 VC_PATH = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
 LIBS += $$VC_PATH"\DIA SDK\lib\diaguids.lib"
 
 INCLUDEPATH += $$VC_PATH"\DIA SDK\include"
 DEPENDPATH += $$VC_PATH"\DIA SDK\include"
-
 
 RC_ICONS = ../icons/main.ico
 

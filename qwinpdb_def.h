@@ -2061,6 +2061,5 @@ const char * const rgAccess[] =
     "public"
 };
 
-
 #endif // QWINPDB_DEF
 

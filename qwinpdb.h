@@ -27,7 +27,6 @@
 #define ALIGN_DOWN(x, align)    ((x) & ~((align) - 1))
 #define ALIGN_UP(x, align) (((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
 
-
 #include <QObject>
 
 #include <QUuid>
@@ -602,7 +601,6 @@ public:
 
         QList<ELEM> listChildren;
     };
-
 
     ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
     ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions);

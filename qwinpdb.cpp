@@ -31,7 +31,6 @@ bool sortLessThan(const QWinPDB::SYMBOL_RECORD &v1, const QWinPDB::SYMBOL_RECORD
     return v1.dwID<v2.dwID;
 }
 
-
 QWinPDB::QWinPDB(QObject *parent) : QObject(parent)
 {
     pDiaDataSource=nullptr;
@@ -179,7 +178,6 @@ qint64 QWinPDB::variantToQint64(VARIANT value)
 
     return result;
 }
-
 
 QString QWinPDB::indent(int nLevel)
 {
@@ -1106,7 +1104,6 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType,QWinPDB::HANDLE_OPTIONS *pHan
     {
         qDebug("Error!!!");
     }
-
 
     return result;
 }
@@ -2171,6 +2168,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     setProcessEnable(true);
 
+    // TODO
     sResult="123";
 
     setProcessEnable(true);
