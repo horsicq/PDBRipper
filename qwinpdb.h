@@ -688,6 +688,7 @@ private:
     IDiaSymbol *pGlobal;
     DWORD dwMachineType;
     bool __bIsProcessStop;
+    QMap<quint32,ELEM> mapElems;
 };
 
 #endif // QWINPDB_H

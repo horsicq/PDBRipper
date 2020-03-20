@@ -111,21 +111,22 @@ void DialogExport::on_pushButtonOK_clicked()
     if(!sFileName.isEmpty())
     {
         DialogProcess dp(this,pData,PDBProcess::TYPE_EXPORT);
-        dp.exec(); // TODO Check return
-
-        QFile file;
-        file.setFileName(sFileName);
-
-        if(file.open(QIODevice::ReadWrite))
+        if(dp.exec()==QDialog::Accepted)
         {
-            file.resize(0);
-            file.write(pData->sString.toLatin1().data(),pData->sString.length());
-            file.close();
-            QMessageBox::information(0, tr("Information"), QString("%1: %2").arg(tr("File saved")).arg(sFileName));
-        }
-        else
-        {
-            QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
+            QFile file;
+            file.setFileName(sFileName);
+
+            if(file.open(QIODevice::ReadWrite))
+            {
+                file.resize(0);
+                file.write(pData->sString.toLatin1().data(),pData->sString.length());
+                file.close();
+                QMessageBox::information(0, tr("Information"), QString("%1: %2").arg(tr("File saved")).arg(sFileName));
+            }
+            else
+            {
+                QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
+            }
         }
 
         this->close();

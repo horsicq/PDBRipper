@@ -262,9 +262,12 @@ void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
 
 void GuiMainWindow::on_actionCPP_triggered()
 {
-    DialogExport dialogExport(this,&pdbData);
+    if(pdbData.pWinPDB)
+    {
+        DialogExport dialogExport(this,&pdbData);
 
-    dialogExport.exec();
+        dialogExport.exec();
+    }
 }
 
 void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)

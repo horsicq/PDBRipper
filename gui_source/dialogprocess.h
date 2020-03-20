@@ -52,6 +52,7 @@ private:
     QThread *thread;
     PDBProcess *pPDBProcess;
     bool bIsRun;
+    int nReturnCode;
 };
 
 #endif // DIALOGPROCESS_H

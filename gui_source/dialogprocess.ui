@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Scan</string>
+   <string/>
   </property>
   <property name="modal">
    <bool>true</bool>

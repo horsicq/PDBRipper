@@ -27,6 +27,15 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
 {
     ui->setupUi(this);
 
+    if(type==PDBProcess::TYPE_EXPORT)
+    {
+        setWindowTitle(tr("Export"));
+    }
+    else if(type==PDBProcess::TYPE_IMPORT)
+    {
+        setWindowTitle(tr("Import"));
+    }
+
     thread=new QThread;
 
     pPDBProcess=new PDBProcess(0,pData,type);
@@ -39,6 +48,8 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
     bIsRun=true;
     connect(thread, SIGNAL(started()), pPDBProcess, SLOT(process()));
     thread->start();
+
+    nReturnCode=QDialog::Accepted;
 }
 
 DialogProcess::~DialogProcess()
@@ -57,6 +68,8 @@ DialogProcess::~DialogProcess()
 
 void DialogProcess::on_pushButtonCancel_clicked()
 {
+    nReturnCode=QDialog::Rejected;
+
     if(bIsRun)
     {
         pPDBProcess->stop();
@@ -66,7 +79,7 @@ void DialogProcess::on_pushButtonCancel_clicked()
 
 void DialogProcess::onCompleted()
 {
-    this->close();
+    done(nReturnCode);
 }
 
 void DialogProcess::onSetProgressMaximum(int nMax)
