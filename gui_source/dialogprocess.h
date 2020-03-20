@@ -47,6 +47,10 @@ public slots:
     void onSetProgressMaximum(int nMax);
     void onSetProgressValue(int nValue);
 
+signals:
+    void errorMessage(QString sText);
+    void infoMessage(QString sText);
+
 private:
     Ui::DialogProcess *ui;
     QThread *thread;

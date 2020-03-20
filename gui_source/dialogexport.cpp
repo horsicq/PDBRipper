@@ -30,8 +30,8 @@ DialogExport::DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData) :
     this->pData=pData;
 
     ui->comboBoxSortType->addItem(tr("ID"),QWinPDB::ST_ID);
-    ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_ID);
-    ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_ID);
+    ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_NAME);
+    ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_DEP);
 
     ui->comboBoxExportType->addItem(QString("C++"),QWinPDB::ET_CPLUSPLUS);
 
@@ -110,24 +110,12 @@ void DialogExport::on_pushButtonOK_clicked()
 
     if(!sFileName.isEmpty())
     {
+        pData->handleOptions=getHandleOptions();
+        pData->sResultFileName=sFileName;
         DialogProcess dp(this,pData,PDBProcess::TYPE_EXPORT);
-        if(dp.exec()==QDialog::Accepted)
-        {
-            QFile file;
-            file.setFileName(sFileName);
-
-            if(file.open(QIODevice::ReadWrite))
-            {
-                file.resize(0);
-                file.write(pData->sString.toLatin1().data(),pData->sString.length());
-                file.close();
-                QMessageBox::information(0, tr("Information"), QString("%1: %2").arg(tr("File saved")).arg(sFileName));
-            }
-            else
-            {
-                QMessageBox::critical(0, tr("Critical"),QString("%1: %2").arg(tr("Cannot save file")).arg(sFileName));
-            }
-        }
+        connect(&dp,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+        connect(&dp,SIGNAL(infoMessage(QString)),this,SLOT(infoMessage(QString)));
+        dp.exec();
 
         this->close();
     }
@@ -136,4 +124,14 @@ void DialogExport::on_pushButtonOK_clicked()
 void DialogExport::on_pushButtonCancel_clicked()
 {
     this->close();
+}
+
+void DialogExport::errorMessage(QString sText)
+{
+    QMessageBox::critical(this,tr("Error"),sText);
+}
+
+void DialogExport::infoMessage(QString sText)
+{
+    QMessageBox::information(this,tr("Information"),sText);
 }

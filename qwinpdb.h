@@ -584,6 +584,7 @@ public:
         DWORD nID;
         DWORD nTypeID;
         QString sName;
+        QString sTypeName;
     };
 
     struct ELEM
@@ -688,7 +689,6 @@ private:
     IDiaSymbol *pGlobal;
     DWORD dwMachineType;
     bool __bIsProcessStop;
-    QMap<quint32,ELEM> mapElems;
 };
 
 #endif // QWINPDB_H

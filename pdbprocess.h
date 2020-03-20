@@ -22,6 +22,7 @@
 #define PDBPROCESS_H
 
 #include <QObject>
+#include <QFile>
 #include "qwinpdb.h"
 
 class PDBProcess : public QObject
@@ -41,6 +42,7 @@ public:
         QWinPDB::STATS stats;
         QString sString;
         QWinPDB::HANDLE_OPTIONS handleOptions;
+        QString sResultFileName;
     };
 
     explicit PDBProcess(QObject *parent, PDBDATA *pData, TYPE type);
@@ -50,6 +52,8 @@ signals:
     void completed();
     void setProgressMaximum(int);
     void setProgressValue(int);
+    void errorMessage(QString sText);
+    void infoMessage(QString sText);
 
 public slots:
     void process();

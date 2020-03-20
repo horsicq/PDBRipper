@@ -36,22 +36,31 @@ bool sortElemInfoID(const QWinPDB::ELEM_INFO &v1, const QWinPDB::ELEM_INFO &v2)
 
 bool sortElemInfoName(const QWinPDB::ELEM_INFO &v1, const QWinPDB::ELEM_INFO &v2)
 {
-    return v1.baseInfo.sName<v2.baseInfo.sName;
+    bool bResult=v1.baseInfo.sName<v2.baseInfo.sName;
+
+    return bResult;
 }
 
 bool sortElemInfoDeps(const QWinPDB::ELEM_INFO &v1, const QWinPDB::ELEM_INFO &v2)
 {
-    bool bResult=false;
+    bool bResult=true;
 
-    int nCount=v2.listChildrenBaseInfos.count();
+//    if(((v1.baseInfo.sName=="_RTL_DYNAMIC_HASH_TABLE_ENUMERATOR")||(v1.baseInfo.sName=="_LIST_ENTRY"))&&
+//        ((v2.baseInfo.sName=="_RTL_DYNAMIC_HASH_TABLE_ENUMERATOR")||(v2.baseInfo.sName=="_LIST_ENTRY")))
+//    {
+//        qDebug("Test");
+//    }
+
+    int nCount=v1.listChildrenBaseInfos.count();
 
     for(int i=0;i<nCount;i++)
     {
-        if(v2.listChildrenBaseInfos.at(i).nTypeID)
+        if(v1.listChildrenBaseInfos.at(i).nTypeID)
         {
-            if(v1.baseInfo.nID==v2.listChildrenBaseInfos.at(i).nTypeID)
+//            if(v2.baseInfo.nID==v1.listChildrenBaseInfos.at(i).nTypeID)
+            if(v2.baseInfo.sTypeName==v1.listChildrenBaseInfos.at(i).sTypeName)
             {
-                bResult=true;
+                bResult=false;
 
                 break;
             }
@@ -1696,194 +1705,185 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
 
     result.baseInfo=getBaseInfo(pParent);
 
-    if(!mapElems.contains(result.baseInfo.nID))
+    bool bChildren=true;
+
+    DWORD dwSymTag=_getSymTag(pParent);
+    if(dwSymTag==SymTagUDT)
     {
-        bool bChildren=true;
+        result.elemType=ELEM_TYPE_UDT;
+        result._udt=_getRecordUDT(pParent);
+        result.dwSize=result._udt._length;
+    }
+    else if(dwSymTag==SymTagFunction)
+    {
+        result.elemType=ELEM_TYPE_FUNCTION;
+        result._function=_getRecordFunction(pParent,pHandleOptions);
+        result.dwSize=result._function._length; // TODO Check!
+    }
+    else if(dwSymTag==SymTagTypedef)
+    {
+        result.elemType=ELEM_TYPE_TYPEDEF;
+        result._typedef=_getRecordTypeDef(pParent);
+        bChildren=false;
+    }
+    else if(dwSymTag==SymTagData)
+    {
+        result.elemType=ELEM_TYPE_DATA;
+        result._data=_getRecordData(pParent,pHandleOptions);
+        result.dwSize=result._data.rtype.nSize;
+        result.dwOffset=result._data.rtype.nOffset;
+        result.dwBitOffset=result._data.rtype.nBitOffset;
+        result.dwBitSize=result._data.rtype.nBitSize;
 
-        DWORD dwSymTag=_getSymTag(pParent);
-        if(dwSymTag==SymTagUDT)
+        if(result._data.rtype.bIsPointer||result._data.rtype.bIsReference)
         {
-            result.elemType=ELEM_TYPE_UDT;
-            result._udt=_getRecordUDT(pParent);
-            result.dwSize=result._udt._length;
-        }
-        else if(dwSymTag==SymTagFunction)
-        {
-            result.elemType=ELEM_TYPE_FUNCTION;
-            result._function=_getRecordFunction(pParent,pHandleOptions);
-            result.dwSize=result._function._length; // TODO Check!
-        }
-        else if(dwSymTag==SymTagTypedef)
-        {
-            result.elemType=ELEM_TYPE_TYPEDEF;
-            result._typedef=_getRecordTypeDef(pParent);
             bChildren=false;
         }
-        else if(dwSymTag==SymTagData)
-        {
-            result.elemType=ELEM_TYPE_DATA;
-            result._data=_getRecordData(pParent,pHandleOptions);
-            result.dwSize=result._data.rtype.nSize;
-            result.dwOffset=result._data.rtype.nOffset;
-            result.dwBitOffset=result._data.rtype.nBitOffset;
-            result.dwBitSize=result._data.rtype.nBitSize;
+    }
+    else if(dwSymTag==SymTagEnum)
+    {
+        result.elemType=ELEM_TYPE_ENUM;
+        result._enum=_getRecordEnum(pParent);
+    }
+    else if(dwSymTag==SymTagBaseClass)
+    {
+        result.elemType=ELEM_TYPE_BASECLASS;
+        result._baseclass=_getRecordBaseClass(pParent);
+        bChildren=false;
+    }
+    else if(dwSymTag==SymTagVTable)
+    {
+        result.elemType=ELEM_TYPE_VTABLE;
+        result._vtable=_getRecordVTable(pParent);
+    }
+    else if(dwSymTag==SymTagFuncDebugStart)
+    {
+        result.elemType=ELEM_TYPE_FUNCDEBUGSTART;
+        result._funcdebugstart=_getRecordFuncDebugStart(pParent);
+    }
+    else if(dwSymTag==SymTagFuncDebugEnd)
+    {
+        result.elemType=ELEM_TYPE_FUNCDEBUGEND;
+        result._funcdebugend=_getRecordFuncDebugEnd(pParent);
+    }
+    else if(dwSymTag==SymTagCallSite)
+    {
+//        _checkSymbol(pParent);
 
-            if(result._data.rtype.bIsPointer||result._data.rtype.bIsReference)
-            {
-                bChildren=false;
-            }
-        }
-        else if(dwSymTag==SymTagEnum)
-        {
-            result.elemType=ELEM_TYPE_ENUM;
-            result._enum=_getRecordEnum(pParent);
-        }
-        else if(dwSymTag==SymTagBaseClass)
-        {
-            result.elemType=ELEM_TYPE_BASECLASS;
-            result._baseclass=_getRecordBaseClass(pParent);
-            bChildren=false;
-        }
-        else if(dwSymTag==SymTagVTable)
-        {
-            result.elemType=ELEM_TYPE_VTABLE;
-            result._vtable=_getRecordVTable(pParent);
-        }
-        else if(dwSymTag==SymTagFuncDebugStart)
-        {
-            result.elemType=ELEM_TYPE_FUNCDEBUGSTART;
-            result._funcdebugstart=_getRecordFuncDebugStart(pParent);
-        }
-        else if(dwSymTag==SymTagFuncDebugEnd)
-        {
-            result.elemType=ELEM_TYPE_FUNCDEBUGEND;
-            result._funcdebugend=_getRecordFuncDebugEnd(pParent);
-        }
-        else if(dwSymTag==SymTagCallSite)
-        {
-    //        _checkSymbol(pParent);
-
-            result.elemType=ELEM_TYPE_CALLSITE;
-            result._callsite=_getRecordCallSite(pParent,pHandleOptions);
-        }
-        else if(dwSymTag==SymTagLabel)
-        {
-            result.elemType=ELEM_TYPE_LABEL;
-            result._label=_getRecordLabel(pParent);
-        }
-        else if(dwSymTag==SymTagBlock)
-        {
-            result.elemType=ELEM_TYPE_BLOCK;
-            result._block=_getRecordBlock(pParent);
-        }
-        else
-        {
-            qFatal(rgTags[dwSymTag]);
-        }
-
-        if(bChildren)
-        {
-            IDiaEnumSymbols *pEnumSymbols;
-            if(pParent->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
-            {
-                LONG nCount;
-                if(pEnumSymbols->get_Count(&nCount)==S_OK)
-                {
-                    if(nCount)
-                    {
-                        IDiaSymbol *pSymbol;
-                        ULONG celt = 0;
-
-                        qint64 nCurrentOffset=0;
-                        int nAlignCount=0;
-
-                        while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
-                        {
-                            ELEM elemChild=_getElem(pSymbol,pHandleOptions);
-
-                            bool bAdd=true;
-
-                            if(elemChild.elemType==ELEM_TYPE_VTABLE)
-                            {
-                                bAdd=false;
-                            }
-
-                            if(elemChild.elemType==ELEM_TYPE_TYPEDEF)
-                            {
-                                bAdd=false;
-                            }
-
-                            if(bAdd)
-                            {
-                                if(pHandleOptions->bAddAlignment)
-                                {
-                                    bool bAddAlignment=false;
-
-                                    if((elemChild.dwOffset)&&(elemChild.dwOffset>nCurrentOffset))
-                                    {
-                                        bAddAlignment=true;
-                                    }
-
-                                    if(result.elemType==ELEM_TYPE_FUNCTION)
-                                    {
-                                        bAddAlignment=false;
-                                    }
-
-                                    if(result.elemType==ELEM_TYPE_BLOCK)
-                                    {
-                                        bAddAlignment=false;
-                                    }
-
-                                    if(bAddAlignment)
-                                    {
-                                        qDebug("Alignment");
-                                        ELEM alignElem={};
-
-                                        alignElem.elemType=ELEM_TYPE_FAKEDATA;
-                                        alignElem.dwOffset=nCurrentOffset;
-                                        alignElem.dwSize=elemChild.dwOffset-nCurrentOffset;
-                                        alignElem._data.rtype.bIsArray=true;
-                                        alignElem._data.rtype.sName=QString("__align%1").arg(nAlignCount);
-                                        alignElem._data.rtype.listArrayCount.append(alignElem.dwSize);
-                                        alignElem._data.rtype.type=RD_BASETYPE;
-                                        alignElem._data.rtype.sTypeName="unsigned char";
-                                        alignElem._data.rtype.nBaseType=5; // unsigned char
-                                        alignElem._data.rtype.nAccess=1; // private
-
-                                        result.listChildren.append(alignElem);
-
-                                        nAlignCount++;
-                                    }
-                                }
-
-                                // TODO Alignment
-                                result.listChildren.append(elemChild);
-
-                                if(elemChild.dwSize)
-                                {
-                                    nCurrentOffset=elemChild.dwOffset+elemChild.dwSize;
-                                }
-                            }
-    //                        QString sTest;
-    //                        BSTR bstring=nullptr;
-    //                        if(pSymbol->get_name(&bstring)==S_OK) {sTest=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
-
-    //                        qDebug(sTest.toLatin1().data());
-
-                            pSymbol->Release();
-                        }
-                    }
-                }
-
-                pEnumSymbols->Release();
-            }
-        }
-
-        mapElems.insert(result.baseInfo.nID,result);
+        result.elemType=ELEM_TYPE_CALLSITE;
+        result._callsite=_getRecordCallSite(pParent,pHandleOptions);
+    }
+    else if(dwSymTag==SymTagLabel)
+    {
+        result.elemType=ELEM_TYPE_LABEL;
+        result._label=_getRecordLabel(pParent);
+    }
+    else if(dwSymTag==SymTagBlock)
+    {
+        result.elemType=ELEM_TYPE_BLOCK;
+        result._block=_getRecordBlock(pParent);
     }
     else
     {
-        result=mapElems.value(result.baseInfo.nID);
+        qFatal(rgTags[dwSymTag]);
+    }
+
+    if(bChildren)
+    {
+        IDiaEnumSymbols *pEnumSymbols;
+        if(pParent->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
+        {
+            LONG nCount;
+            if(pEnumSymbols->get_Count(&nCount)==S_OK)
+            {
+                if(nCount)
+                {
+                    IDiaSymbol *pSymbol;
+                    ULONG celt = 0;
+
+                    qint64 nCurrentOffset=0;
+                    int nAlignCount=0;
+
+                    while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
+                    {
+                        ELEM elemChild=_getElem(pSymbol,pHandleOptions);
+
+                        bool bAdd=true;
+
+                        if(elemChild.elemType==ELEM_TYPE_VTABLE)
+                        {
+                            bAdd=false;
+                        }
+
+                        if(elemChild.elemType==ELEM_TYPE_TYPEDEF)
+                        {
+                            bAdd=false;
+                        }
+
+                        if(bAdd)
+                        {
+                            if(pHandleOptions->bAddAlignment)
+                            {
+                                bool bAddAlignment=false;
+
+                                if((elemChild.dwOffset)&&(elemChild.dwOffset>nCurrentOffset))
+                                {
+                                    bAddAlignment=true;
+                                }
+
+                                if(result.elemType==ELEM_TYPE_FUNCTION)
+                                {
+                                    bAddAlignment=false;
+                                }
+
+                                if(result.elemType==ELEM_TYPE_BLOCK)
+                                {
+                                    bAddAlignment=false;
+                                }
+
+                                if(bAddAlignment)
+                                {
+                                    qDebug("Alignment");
+                                    ELEM alignElem={};
+
+                                    alignElem.elemType=ELEM_TYPE_FAKEDATA;
+                                    alignElem.dwOffset=nCurrentOffset;
+                                    alignElem.dwSize=elemChild.dwOffset-nCurrentOffset;
+                                    alignElem._data.rtype.bIsArray=true;
+                                    alignElem._data.rtype.sName=QString("__align%1").arg(nAlignCount);
+                                    alignElem._data.rtype.listArrayCount.append(alignElem.dwSize);
+                                    alignElem._data.rtype.type=RD_BASETYPE;
+                                    alignElem._data.rtype.sTypeName="unsigned char";
+                                    alignElem._data.rtype.nBaseType=5; // unsigned char
+                                    alignElem._data.rtype.nAccess=1; // private
+
+                                    result.listChildren.append(alignElem);
+
+                                    nAlignCount++;
+                                }
+                            }
+
+                            // TODO Alignment
+                            result.listChildren.append(elemChild);
+
+                            if(elemChild.dwSize)
+                            {
+                                nCurrentOffset=elemChild.dwOffset+elemChild.dwSize;
+                            }
+                        }
+//                        QString sTest;
+//                        BSTR bstring=nullptr;
+//                        if(pSymbol->get_name(&bstring)==S_OK) {sTest=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
+
+//                        qDebug(sTest.toLatin1().data());
+
+                        pSymbol->Release();
+                    }
+                }
+            }
+
+            pEnumSymbols->Release();
+        }
     }
 
     return result;
@@ -2257,6 +2257,8 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
     for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
     {
         sResult+=listElemInfos.at(i).sText;
+        sResult+="\r\n";
+        sResult+="\r\n";
     }
 
     setProcessEnable(true);
@@ -2281,6 +2283,7 @@ QWinPDB::ELEM_BASEINFO QWinPDB::getBaseInfo(IDiaSymbol *pParent)
     if(pType)
     {
         pType->get_symIndexId(&result.nTypeID);
+        if(pType->get_name(&bstring)==S_OK) {result.sTypeName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
     }
 
     return result;
@@ -2305,6 +2308,4 @@ void QWinPDB::cleanup()
         pDiaDataSource->Release();
         pDiaDataSource=nullptr;
     }
-
-    mapElems.clear();
 }
