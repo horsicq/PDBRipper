@@ -602,15 +602,23 @@ public:
         QList<ELEM> listChildren;
     };
 
+    struct ELEMENT_INFO
+    {
+        quint32 nID;
+        QString sName;
+        QString sText;
+        QList<quint32> listChildrenID;
+    };
+
     ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
     ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions);
 
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
 
-    static QString elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
+    static ELEMENT_INFO elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
 
-    QString handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
+    ELEMENT_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
 
     QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
 
