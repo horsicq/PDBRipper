@@ -579,8 +579,17 @@ public:
         ELEM_TYPE_FAKEDATA
     };
 
+    struct ELEM_BASEINFO
+    {
+        DWORD nID;
+        DWORD nTypeID;
+        QString sName;
+    };
+
     struct ELEM
     {
+        ELEM_BASEINFO baseInfo;
+
         DWORD dwOffset;
         DWORD dwSize;
         DWORD dwBitOffset;
@@ -602,12 +611,11 @@ public:
         QList<ELEM> listChildren;
     };
 
-    struct ELEMENT_INFO
+    struct ELEM_INFO
     {
-        quint32 nID;
-        QString sName;
+        ELEM_BASEINFO baseInfo;
         QString sText;
-        QList<quint32> listChildrenID;
+        QList<ELEM_BASEINFO> listChildrenBaseInfos;
     };
 
     ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
@@ -616,11 +624,13 @@ public:
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
 
-    static ELEMENT_INFO elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
+    static ELEM_INFO getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
 
-    ELEMENT_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
+    ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
 
     QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
+
+    ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
 
 private:
     void cleanup();

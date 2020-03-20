@@ -192,7 +192,9 @@ void GuiMainWindow::handle()
             pdbData.handleOptions=getHandleOptions();
             quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
 
-            QString sText=pdbData.pWinPDB->handleElement(nID,&(pdbData.handleOptions)).sText;
+            QWinPDB::ELEM_INFO elemInfo=pdbData.pWinPDB->handleElement(nID,&(pdbData.handleOptions));
+
+            QString sText=elemInfo.sText;
 
             ui->textBrowserResult->setText(sText);
         }

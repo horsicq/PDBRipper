@@ -1664,6 +1664,8 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
 {
     ELEM result={};
 
+    result.baseInfo=getBaseInfo(pParent);
+
     bool bChildren=true;
 
     DWORD dwSymTag=_getSymTag(pParent);
@@ -1996,9 +1998,11 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
     }
 }
 
-QWinPDB::ELEMENT_INFO QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass)
+QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass)
 {
-    ELEMENT_INFO result;
+    ELEM_INFO result;
+
+    result.baseInfo=pElem->baseInfo;
 
     // TODO TYPEDEFS !!!
 
@@ -2069,7 +2073,7 @@ QWinPDB::ELEMENT_INFO QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *p
         {
             if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
             {
-                result.sText+=elemToString(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==1)).sText;
+                result.sText+=getElemInfo(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==1)).sText;
 
                 result.sText+=";";
 
@@ -2105,6 +2109,8 @@ QWinPDB::ELEMENT_INFO QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *p
 
                 result.sText+="\r\n";
             }
+
+            result.listChildrenBaseInfos.append(pElem->listChildren.at(i).baseInfo);
         }
 
         result.sText+=_getTab(nLevel)+"}";
@@ -2148,7 +2154,7 @@ QWinPDB::ELEMENT_INFO QWinPDB::elemToString(const ELEM *pElem, HANDLE_OPTIONS *p
     return result;
 }
 
-QWinPDB::ELEMENT_INFO QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
+QWinPDB::ELEM_INFO QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     QWinPDB::ELEM elem=getElem(nID,pHandleOptions);
 
@@ -2159,7 +2165,7 @@ QWinPDB::ELEMENT_INFO QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTION
         fixOffsets(&elem);
     }
 
-    return QWinPDB::elemToString(&elem,pHandleOptions,0,false);
+    return QWinPDB::getElemInfo(&elem,pHandleOptions,0,false);
 }
 
 QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
@@ -2168,14 +2174,40 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     setProcessEnable(true);
 
-    // TODO
-    sResult="123";
+    QList<ELEM_INFO> listElemInfos;
+
+    int nCount=pStats->listSymbols.count();
+
+    for(int i=0;i<nCount;i++)
+    {
+        listElemInfos.append(handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions));
+    }
 
     setProcessEnable(true);
 
     emit completed();
 
     return sResult;
+}
+
+QWinPDB::ELEM_BASEINFO QWinPDB::getBaseInfo(IDiaSymbol *pParent)
+{
+    ELEM_BASEINFO result={};
+
+    BSTR bstring=nullptr;
+
+    pParent->get_symIndexId(&result.nID);
+    if(pParent->get_name(&bstring)==S_OK) {result.sName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
+
+    IDiaSymbol *pType=0;
+
+    pParent->get_type(&pType);
+    if(pType)
+    {
+        pType->get_symIndexId(&result.nTypeID);
+    }
+
+    return result;
 }
 
 void QWinPDB::cleanup()
