@@ -135,13 +135,16 @@ int main(int argc, char *argv[])
             }
             {
                 PDBProcess pdbProcess(nullptr,&pdbData,PDBProcess::TYPE_EXPORT);
-                // TODO connect signals
+
+                QObject::connect(&pdbProcess,SIGNAL(infoMessage(QString)),&consoleOutput,SLOT(infoMessage(QString)));
+                QObject::connect(&pdbProcess,SIGNAL(errorMessage(QString)),&consoleOutput,SLOT(errorMessage(QString)));
+
                 pdbProcess.process();
             }
 
             if(sOutputFileName=="")
             {
-                // TODO output to console
+                consoleOutput.infoMessage(pdbData.sString);
             }
         }
         else
