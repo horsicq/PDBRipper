@@ -682,6 +682,8 @@ signals:
     void completed();
     void setProgressMaximum(int);
     void setProgressValue(int);
+    void errorMessage(QString sText);
+    void infoMessage(QString sText);
 
 private:
     IDiaDataSource *pDiaDataSource;

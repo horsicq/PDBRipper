@@ -72,6 +72,8 @@ private slots:
     void on_checkBoxFixTypes_toggled(bool checked);
     void on_actionQuit_triggered();
 
+    void errorMessage(QString sText);
+
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;

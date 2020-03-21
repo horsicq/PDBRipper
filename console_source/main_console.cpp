@@ -75,6 +75,9 @@ int main(int argc, char *argv[])
 
     pdbData.pWinPDB=new QWinPDB;
 
+    QObject::connect(pdbData.pWinPDB,SIGNAL(infoMessage(QString)),&consoleOutput,SLOT(infoMessage(QString)));
+    QObject::connect(pdbData.pWinPDB,SIGNAL(errorMessage(QString)),&consoleOutput,SLOT(errorMessage(QString)));
+
     pdbData.handleOptions.bAddAlignment=parser.isSet(clAddAlignment);
     pdbData.handleOptions.bFixTypes=parser.isSet(clFixTypes);
     pdbData.handleOptions.bShowComments=parser.isSet(clShowComments);
@@ -151,10 +154,8 @@ int main(int argc, char *argv[])
         {
             consoleOutput.errorMessage(QString("%1: %2").arg(QString("Cannot open file")).arg(sPDBFileName));
         }
-    }
-    else
-    {
-        consoleOutput.errorMessage(QString("No input file specified"));
+
+        bProcess=true;
     }
 
     if(!bProcess)

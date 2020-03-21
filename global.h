@@ -21,6 +21,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include <QString>
+
 #define X_APPLICATIONNAME "PDBRipper"
 #define X_APPLICATIONVERSION "2.00"
 #define X_ORGANIZATIONNAME "NTInfo"
@@ -30,6 +32,8 @@ namespace PDBRIPPER
 {
     struct OPTIONS
     {
+        bool bSaveLastDirectory;
+        QString sLastDirectory;
         bool bStayOnTop;
     };
 }

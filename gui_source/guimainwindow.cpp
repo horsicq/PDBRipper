@@ -68,7 +68,14 @@ GuiMainWindow::~GuiMainWindow()
 
 void GuiMainWindow::on_actionOpen_triggered()
 {
-    QString sFileName=QFileDialog::getOpenFileName(this, tr("Open File..."),QString(), tr("PDB-Files (*.pdb);;All Files (*)"));
+    QString sDirectory;
+
+    if(options.bSaveLastDirectory&&QDir().exists(options.sLastDirectory))
+    {
+        sDirectory=options.sLastDirectory;
+    }
+
+    QString sFileName=QFileDialog::getOpenFileName(this, tr("Open File..."),sDirectory, tr("PDB-Files (*.pdb);;All Files (*)"));
 
     _openFile(sFileName);
 }
@@ -106,8 +113,14 @@ void GuiMainWindow::adjustWindow()
 
 void GuiMainWindow::_openFile(QString sFileName)
 {
-    if(sFileName!="")
+    if((sFileName!="")&&(QFileInfo(sFileName).isFile()))
     {
+        if(options.bSaveLastDirectory)
+        {
+            QFileInfo fi(sFileName);
+            options.sLastDirectory=fi.absolutePath();
+        }
+
         if(pdbData.pWinPDB)
         {
             delete pdbData.pWinPDB;
@@ -115,16 +128,19 @@ void GuiMainWindow::_openFile(QString sFileName)
 
         pdbData.pWinPDB=new QWinPDB;
 
+        connect(pdbData.pWinPDB,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+
         QAbstractItemModel *pModel=pFilter->sourceModel();
 
         pFilter->setSourceModel(0);
 
         delete pModel;
 
+        ui->lineEditSearch->clear();
+        ui->textBrowserResult->clear();
+
         if(pdbData.pWinPDB->loadFromFile(sFileName))
         {
-            ui->lineEditSearch->clear();
-
             DialogProcess dp(this,&pdbData,PDBProcess::TYPE_IMPORT);
             dp.exec();
 
@@ -280,6 +296,11 @@ void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
 void GuiMainWindow::on_actionQuit_triggered()
 {
     this->close();
+}
+
+void GuiMainWindow::errorMessage(QString sText)
+{
+    QMessageBox::critical(this,tr("Error"),sText);
 }
 
 void GuiMainWindow::dragEnterEvent(QDragEnterEvent *event)

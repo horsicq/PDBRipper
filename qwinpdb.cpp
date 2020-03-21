@@ -109,7 +109,9 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     if(FAILED(hr))
     {
-        qFatal("Cannot load msdia library!");
+        emit errorMessage(tr("Cannot load msdia library!"));
+
+        return false;
     }
 
     QByteArray baBuffer; // TODO function
@@ -121,6 +123,8 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     if(FAILED(hr))
     {
+        emit errorMessage(tr("Cannot load data from PDB!"));
+
         return false;
     }
 
@@ -128,26 +132,30 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     if(FAILED(hr))
     {
+        emit errorMessage(tr("Cannot open session!"));
+
         return false;
     }
 
     // TODO Exe info
     hr=pDiaSession->get_globalScope(&pGlobal);
 
-    DWORD dwAge;
-    hr=pGlobal->get_age(&dwAge);
-
     BSTR bstrName;
 
     if(pGlobal->get_name(&bstrName)!=S_OK)
     {
+        emit errorMessage(tr("Cannot get PDB name!"));
+
         return false;
     }
 
-    QString sString=QString::fromWCharArray(bstrName);
+    DWORD dwAge;
+    hr=pGlobal->get_age(&dwAge);
 
     if(hr!=S_OK)
     {
+        emit errorMessage(tr("Cannot get PDB age!"));
+
         return false;
     }
 
@@ -1559,6 +1567,8 @@ QWinPDB::STATS QWinPDB::getStats()
 {
     setProcessEnable(true);
 
+    emit infoMessage(tr("Get stats"));
+
     STATS result={};
 
     QMap<QString,qint64> mapUDT;
@@ -2229,7 +2239,8 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
     {
-        listElemInfos.append(handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions));
+        ELEM_INFO elemInfo=handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions);
+        listElemInfos.append(elemInfo);
 
         if(nCurrentIndex>nCurrentProcent*nProcent)
         {
@@ -2238,10 +2249,14 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
         }
 
         nCurrentIndex++;
+
+        emit infoMessage(QString("%1: %2").arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
     }
 
     if(!__bIsProcessStop)
     {
+        emit infoMessage(tr("Sort elements"));
+
         if(pHandleOptions->sortType==ST_ID)
         {
             qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoID);

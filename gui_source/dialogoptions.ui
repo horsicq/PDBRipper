@@ -25,6 +25,13 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
+        <widget class="QCheckBox" name="checkBoxSaveLastDirectory">
+         <property name="text">
+          <string>Save last directory</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="checkBoxStayOnTop">
          <property name="text">
           <string>Stay on top</string>

@@ -29,6 +29,7 @@ DialogOptions::DialogOptions(QWidget *parent, PDBRIPPER::OPTIONS *pOptions) :
 
     this->pOptions=pOptions;
 
+    ui->checkBoxSaveLastDirectory->setChecked(pOptions->bSaveLastDirectory);
     ui->checkBoxStayOnTop->setChecked(pOptions->bStayOnTop);
 }
 
@@ -40,18 +41,24 @@ DialogOptions::~DialogOptions()
 void DialogOptions::loadOptions(PDBRIPPER::OPTIONS *pOptions)
 {
     QSettings settings(QApplication::applicationDirPath()+QDir::separator()+"pdbripper.ini",QSettings::IniFormat);
+
+    pOptions->sLastDirectory=settings.value("LastDirectory","").toString();
     pOptions->bStayOnTop=settings.value("StayOnTop",false).toBool();
+    pOptions->bSaveLastDirectory=settings.value("SaveLastDirectory",true).toBool();
 }
 
 void DialogOptions::saveOptions(PDBRIPPER::OPTIONS *pOptions)
 {
     QSettings settings(QApplication::applicationDirPath()+QDir::separator()+"pdbripper.ini",QSettings::IniFormat);
 
+    settings.setValue("SaveLastDirectory",pOptions->bSaveLastDirectory);
+    settings.setValue("LastDirectory",pOptions->sLastDirectory);
     settings.setValue("StayOnTop",pOptions->bStayOnTop);
 }
 
 void DialogOptions::on_pushButtonOK_clicked()
 {
+    pOptions->bSaveLastDirectory=ui->checkBoxSaveLastDirectory->isChecked();
     pOptions->bStayOnTop=ui->checkBoxStayOnTop->isChecked();
 
     saveOptions(pOptions);
