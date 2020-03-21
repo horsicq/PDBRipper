@@ -129,15 +129,20 @@ int main(int argc, char *argv[])
 
         if(pdbData.pWinPDB->loadFromFile(sPDBFileName))
         {
-            if(sOutputFileName!="")
             {
-                // TODO output to file
+                PDBProcess pdbProcess(nullptr,&pdbData,PDBProcess::TYPE_IMPORT);
+                pdbProcess.process();
             }
-            else
+            {
+                PDBProcess pdbProcess(nullptr,&pdbData,PDBProcess::TYPE_EXPORT);
+                // TODO connect signals
+                pdbProcess.process();
+            }
+
+            if(sOutputFileName=="")
             {
                 // TODO output to console
             }
-            // TODO
         }
         else
         {
