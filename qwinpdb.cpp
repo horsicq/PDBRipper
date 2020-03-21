@@ -1801,7 +1801,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
     }
     else
     {
-        qFatal(rgTags[dwSymTag]);
+        emit infoMessage(rgTags[dwSymTag]);
     }
 
     if(bChildren)
