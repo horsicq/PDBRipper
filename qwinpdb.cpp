@@ -99,7 +99,11 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     // TODO msdia option
 
-    HRESULT hr=NoRegCoCreate(L"msdia140.dll", _uuidof(DiaSourceAlt),
+//    HRESULT hr=NoRegCoCreate(L"msdia140.dll", _uuidof(DiaSourceAlt),
+//                              _uuidof(IDiaDataSource),
+//                              (void **)(&pDiaDataSource));
+
+    HRESULT hr=NoRegCoCreate(L"msdia120.dll", _uuidof(DiaSourceAlt),
                               _uuidof(IDiaDataSource),
                               (void **)(&pDiaDataSource));
 
