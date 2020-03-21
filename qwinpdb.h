@@ -32,6 +32,7 @@
 #include <QMap>
 #include <QStack>
 #include <QDebug>
+#include <QCollator>
 
 #include "global.h"
 #include "qwinpdb_def.h"

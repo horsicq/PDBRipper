@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     QCommandLineOption clFixOffsetsAll              (QStringList()<<"a"<<"foall",               "Fix offsets(all)."                             );
     QCommandLineOption clSortById                   (QStringList()<<"i"<<"sortbyid",            "Sort by ID."                                   );
     QCommandLineOption clSortByName                 (QStringList()<<"n"<<"sortbyname",          "Sort by name."                                 );
-    QCommandLineOption clSortByDeps                 (QStringList()<<"i"<<"sortbydeps",          "Sort by dependencies."                         );
+    QCommandLineOption clSortByDeps                 (QStringList()<<"d"<<"sortbydeps",          "Sort by dependencies."                         );
     QCommandLineOption clExportCpp                  (QStringList()<<"p"<<"exportcpp",           "Export C++"                                    );
 
     parser.addOption(clOutputFile);
@@ -128,6 +128,8 @@ int main(int argc, char *argv[])
 
     if(listInputFiles.count())
     {
+        pdbData.sResultFileName=sOutputFileName;
+
         QString sPDBFileName=listInputFiles.at(0);
 
         if(pdbData.pWinPDB->loadFromFile(sPDBFileName))
