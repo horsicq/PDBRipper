@@ -28,12 +28,12 @@
 #define ALIGN_UP(x, align) (((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
 
 #include <QObject>
-
 #include <QUuid>
 #include <QMap>
 #include <QStack>
 #include <QDebug>
 
+#include "global.h"
 #include "qwinpdb_def.h"
 
 class QWinPDB : public QObject

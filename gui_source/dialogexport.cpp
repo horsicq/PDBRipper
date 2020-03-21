@@ -105,13 +105,14 @@ QWinPDB::HANDLE_OPTIONS DialogExport::getHandleOptions()
 
 void DialogExport::on_pushButtonOK_clicked()
 {
-    // TODO
+    pData->handleOptions=getHandleOptions();
+
     QString sFileName=QFileDialog::getSaveFileName(this, tr("Save File..."),"export.h", tr("h-Files (*.h);;All Files (*)"));
 
     if(!sFileName.isEmpty())
     {
-        pData->handleOptions=getHandleOptions();
         pData->sResultFileName=sFileName;
+
         DialogProcess dp(this,pData,PDBProcess::TYPE_EXPORT);
         connect(&dp,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
         connect(&dp,SIGNAL(infoMessage(QString)),this,SLOT(infoMessage(QString)));
