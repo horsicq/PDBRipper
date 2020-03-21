@@ -73,6 +73,8 @@ int main(int argc, char *argv[])
 
     PDBProcess::PDBDATA pdbData={};
 
+    pdbData.pWinPDB=new QWinPDB;
+
     pdbData.handleOptions.bAddAlignment=parser.isSet(clAddAlignment);
     pdbData.handleOptions.bFixTypes=parser.isSet(clFixTypes);
     pdbData.handleOptions.bShowComments=parser.isSet(clShowComments);
@@ -125,15 +127,22 @@ int main(int argc, char *argv[])
     {
         QString sPDBFileName=listInputFiles.at(0);
 
-        if(sOutputFileName!="")
+        if(pdbData.pWinPDB->loadFromFile(sPDBFileName))
         {
-            // TODO output to file
+            if(sOutputFileName!="")
+            {
+                // TODO output to file
+            }
+            else
+            {
+                // TODO output to console
+            }
+            // TODO
         }
         else
         {
-            // TODO output to console
+            consoleOutput.errorMessage(QString("%1: %2").arg(QString("Cannot open file")).arg(sPDBFileName));
         }
-        // TODO
     }
     else
     {

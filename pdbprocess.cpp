@@ -40,20 +40,23 @@ void PDBProcess::process()
     {
         pData->sString=pData->pWinPDB->exportString(&(pData->stats),&(pData->handleOptions));
 
-        QFile file;
-        file.setFileName(pData->sResultFileName);
-
-        if(file.open(QIODevice::ReadWrite))
+        if(pData->sResultFileName!="")
         {
-            file.resize(0);
-            file.write(pData->sString.toLatin1().data(),pData->sString.length());
-            file.close();
+            QFile file;
+            file.setFileName(pData->sResultFileName);
 
-            emit infoMessage(QString("%1: %2").arg(tr("File saved")).arg(pData->sResultFileName));
-        }
-        else
-        {
-            emit errorMessage(QString("%1: %2").arg(tr("Cannot save file")).arg(pData->sResultFileName));
+            if(file.open(QIODevice::ReadWrite))
+            {
+                file.resize(0);
+                file.write(pData->sString.toLatin1().data(),pData->sString.length());
+                file.close();
+
+                emit infoMessage(QString("%1: %2").arg(tr("File saved")).arg(pData->sResultFileName));
+            }
+            else
+            {
+                emit errorMessage(QString("%1: %2").arg(tr("Cannot save file")).arg(pData->sResultFileName));
+            }
         }
     }
 }
