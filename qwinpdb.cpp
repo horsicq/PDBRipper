@@ -25,7 +25,6 @@
 
 bool sortLessThan(const QWinPDB::SYMBOL_RECORD &v1, const QWinPDB::SYMBOL_RECORD &v2)
 {
-//    return v1.sName<v2.sName; // TODO id sort
     return v1.dwID<v2.dwID;
 }
 
@@ -47,19 +46,12 @@ bool sortElemInfoDeps(const QWinPDB::ELEM_INFO &v1, const QWinPDB::ELEM_INFO &v2
 {
     bool bResult=true;
 
-//    if(((v1.baseInfo.sName=="_RTL_DYNAMIC_HASH_TABLE_ENUMERATOR")||(v1.baseInfo.sName=="_LIST_ENTRY"))&&
-//        ((v2.baseInfo.sName=="_RTL_DYNAMIC_HASH_TABLE_ENUMERATOR")||(v2.baseInfo.sName=="_LIST_ENTRY")))
-//    {
-//        qDebug("Test");
-//    }
-
     int nCount=v1.listChildrenBaseInfos.count();
 
     for(int i=0;i<nCount;i++)
     {
         if(v1.listChildrenBaseInfos.at(i).nTypeID)
         {
-//            if(v2.baseInfo.nID==v1.listChildrenBaseInfos.at(i).nTypeID)
             if(v2.baseInfo.sTypeName==v1.listChildrenBaseInfos.at(i).sTypeName)
             {
                 bResult=false;

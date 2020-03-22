@@ -98,23 +98,6 @@ public:
         QList<QString> listFunctionArgs;
     };
 
-//    enum ELEMENT_TYPE
-//    {
-//        ELEMENT_TYPE_UNKNOWN=0,
-//        ELEMENT_TYPE_STRUCT,
-//        ELEMENT_TYPE_CLASS,
-//        ELEMENT_TYPE_INTERFACE,
-//        ELEMENT_TYPE_UNION,
-//        ELEMENT_TYPE_DATA
-//    };
-
-//    struct ELEMENT
-//    {
-//        ELEMENT_TYPE elementType;
-//        RTYPE rtype;
-//        QList<ELEMENT> listChildren;
-//    };
-
     struct RECORD_DATA
     {
         DWORD _access; // TODO enum

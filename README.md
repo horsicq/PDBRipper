@@ -1,3 +1,6 @@
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/horsicq/PDBRipper.svg)](https://github.com/horsicq/PDBRipper/releases)
+[![GitHub All Releases](https://img.shields.io/github/downloads/horsicq/PDBRipper/total.svg)](https://github.com/horsicq/PDBRipper/releases)
+
 PDBRipper
 =======
 

@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     QCommandLineOption clSortById                   (QStringList()<<"i"<<"sortbyid",            "Sort by ID."                                   );
     QCommandLineOption clSortByName                 (QStringList()<<"n"<<"sortbyname",          "Sort by name."                                 );
     QCommandLineOption clSortByDeps                 (QStringList()<<"d"<<"sortbydeps",          "Sort by dependencies."                         );
-    QCommandLineOption clExportCpp                  (QStringList()<<"p"<<"exportcpp",           "Export C++"                                    );
+    QCommandLineOption clExportCpp                  (QStringList()<<"p"<<"exportcpp",           "Export C++."                                   );
 
     parser.addOption(clOutputFile);
     parser.addOption(clShowComments);
