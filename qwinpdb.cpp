@@ -1508,55 +1508,6 @@ QWinPDB::PDB_INFO QWinPDB::getAllTags(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
     return result;
 }
 
-QList<QWinPDB::SYMBOL_RECORD> QWinPDB::getUDTList(DWORD dwKind)
-{
-    QList<SYMBOL_RECORD> listResult;
-
-    IDiaEnumSymbols *pEnumSymbols;
-    LONG nCount;
-    if(pGlobal->findChildren(SymTagUDT, nullptr, nsNone, &pEnumSymbols)==S_OK)
-    {
-        if(pEnumSymbols->get_Count(&nCount)==S_OK)
-        {
-            if(nCount)
-            {
-                IDiaSymbol *pSymbol;
-                ULONG celt = 0;
-                ULONG iMod = 1;
-
-                QMap<QString,int> mapTypes;
-
-                while(SUCCEEDED(pEnumSymbols->Next(1, &pSymbol, &celt)) && (celt == 1))
-                {
-                    DWORD _dwKind=0;
-                    pSymbol->get_udtKind(&_dwKind);
-
-                    if(dwKind==_dwKind)
-                    {
-                        BSTR bstring;
-                        SYMBOL_RECORD record={};
-
-                        pSymbol->get_symIndexId(&record.dwID);
-                        if(pSymbol->get_name(&bstring)==S_OK) {record.sName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
-
-                        listResult.append(record);
-                    }
-
-                    pSymbol->Release();
-                }
-            }
-        }
-
-        pEnumSymbols->Release();
-    }
-
-    return listResult;
-}
-QList<QWinPDB::SYMBOL_RECORD> QWinPDB::getClasses()
-{
-    return getUDTList(1);
-}
-
 QWinPDB::STATS QWinPDB::getStats()
 {
     setProcessEnable(true);

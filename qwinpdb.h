@@ -24,8 +24,8 @@
 #pragma comment(lib,"Advapi32.lib")
 #pragma comment(lib,"OleAut32.lib")
 
-#define ALIGN_DOWN(x, align)    ((x) & ~((align) - 1))
-#define ALIGN_UP(x, align) (((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
+#define ALIGN_DOWN  (x, align) ((x) & ~((align) - 1))
+#define ALIGN_UP    (x, align) (((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
 
 #include <QObject>
 #include <QUuid>
@@ -536,8 +536,6 @@ public:
     ~QWinPDB();
 
     PDB_INFO getAllTags(HANDLE_OPTIONS *pHandleOptions);
-    QList<SYMBOL_RECORD> getUDTList(DWORD dwKind);
-    QList<SYMBOL_RECORD> getClasses(); // TODO remove
 
     STATS getStats();
     void stop();
