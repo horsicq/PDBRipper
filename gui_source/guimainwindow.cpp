@@ -130,11 +130,11 @@ void GuiMainWindow::_openFile(QString sFileName)
 
         connect(pdbData.pWinPDB,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
 
-        QAbstractItemModel *pModel=pFilter->sourceModel();
+        QAbstractItemModel *pOldModel=pFilter->sourceModel();
 
         pFilter->setSourceModel(0);
 
-        delete pModel;
+        delete pOldModel;
 
         ui->lineEditSearch->clear();
         ui->textBrowserResult->clear();
@@ -146,10 +146,10 @@ void GuiMainWindow::_openFile(QString sFileName)
 
             int nCount=pdbData.stats.listSymbols.count();
 
-            QStandardItemModel *model=new QStandardItemModel(nCount,2,this);
+            QStandardItemModel *pModel=new QStandardItemModel(nCount,2,this);
 
-            model->setHeaderData(0,Qt::Horizontal,tr("ID"));
-            model->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
+            pModel->setHeaderData(0,Qt::Horizontal,tr("ID"));
+            pModel->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
 
             for(int i = 0; i<nCount; i++)
             {
@@ -157,16 +157,16 @@ void GuiMainWindow::_openFile(QString sFileName)
                 itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).dwID),Qt::DisplayRole);
                 itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).type),Qt::UserRole+1);
                 itemID->setTextAlignment(Qt::AlignRight);
-                model->setItem(i,0,itemID);
+                pModel->setItem(i,0,itemID);
 
                 QStandardItem *itemSymbol = new QStandardItem;
                 itemSymbol->setText(pdbData.stats.listSymbols.at(i).sName);
-                model->setItem(i,1,itemSymbol);
+                pModel->setItem(i,1,itemSymbol);
             }
 
 //            ui->tableViewSymbols->setModel(model);
 
-            pFilter->setSourceModel(model);
+            pFilter->setSourceModel(pModel);
 
             ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
             ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(1,QHeaderView::Stretch);
