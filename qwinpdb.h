@@ -527,13 +527,10 @@ public:
         QString sResultFileName;
     };
 
-    explicit QWinPDB(QObject *parent = 0);
-
-    static HANDLE_OPTIONS getDefaultHandleOptions();
-
-    bool loadFromFile(QString sFileName);
-
+    explicit QWinPDB(QObject *parent=0);
     ~QWinPDB();
+    static HANDLE_OPTIONS getDefaultHandleOptions();
+    bool loadFromFile(QString sFileName);
 
     PDB_INFO getAllTags(HANDLE_OPTIONS *pHandleOptions);
 
@@ -603,16 +600,11 @@ public:
 
     ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
     ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions);
-
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
-
     ELEM_INFO getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
-
     ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
-
     QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
-
     ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
 
 private:
