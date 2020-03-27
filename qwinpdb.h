@@ -527,13 +527,11 @@ public:
         QString sResultFileName;
     };
 
-    explicit QWinPDB(QObject *parent=0);
+    explicit QWinPDB(QObject *parent=nullptr);
     ~QWinPDB();
     static HANDLE_OPTIONS getDefaultHandleOptions();
     bool loadFromFile(QString sFileName);
-
     PDB_INFO getAllTags(HANDLE_OPTIONS *pHandleOptions);
-
     STATS getStats();
     void stop();
     void setProcessEnable(bool bState);
@@ -609,14 +607,10 @@ public:
 
 private:
     void cleanup();
-
     QString generateGUID();
-
     VALUE getValue(IDiaSymbol *pSymbol);
     qint64 variantToQint64(VARIANT value);
-
     QString indent(int nLevel);
-
     RECORD_UDT _getRecordUDT(IDiaSymbol *pSymbol);
     RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_DATA _getRecordData(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
@@ -636,20 +630,15 @@ private:
     RECORD_CALLSITE _getRecordCallSite(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_LABEL _getRecordLabel(IDiaSymbol *pSymbol);
     RECORD_BLOCK _getRecordBlock(IDiaSymbol *pSymbol);
-
     void _checkSymbol(IDiaSymbol *pSymbol);
-
     RTYPE getSymbolType(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RTYPE _getType(IDiaSymbol *pType, HANDLE_OPTIONS *pHandleOptions);
-
     QString getSymbolTypeString(IDiaSymbol *pSymbol);
     QString _getTypeString(IDiaSymbol *pType);
-
     DWORD _getSymTag(IDiaSymbol *pSymbol);
     bool getSymbolByID(DWORD dwID,IDiaSymbol **ppSymbol);
     static QString rtypeToString(RTYPE rtype, bool bIsClass);
     static QString getAccessString(int nAccess);
-
     static QString _getTab(int nLevel);
 
 signals:
