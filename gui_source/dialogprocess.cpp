@@ -42,6 +42,7 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
     pPDBProcess->moveToThread(thread);
 
     connect(pPDBProcess, SIGNAL(completed()), this, SLOT(onCompleted()));
+    connect(pPDBProcess, SIGNAL(setProgressMinimum(int)), this, SLOT(onSetProgressMinimum(int)));
     connect(pPDBProcess, SIGNAL(setProgressMaximum(int)), this, SLOT(onSetProgressMaximum(int)));
     connect(pPDBProcess, SIGNAL(setProgressValue(int)), this, SLOT(onSetProgressValue(int)));
 
@@ -83,6 +84,11 @@ void DialogProcess::on_pushButtonCancel_clicked()
 void DialogProcess::onCompleted()
 {
     done(nReturnCode);
+}
+
+void DialogProcess::onSetProgressMinimum(int nMin)
+{
+    ui->progressBarTotal->setMinimum(nMin);
 }
 
 void DialogProcess::onSetProgressMaximum(int nMax)

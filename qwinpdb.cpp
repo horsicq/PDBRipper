@@ -1525,6 +1525,7 @@ QWinPDB::STATS QWinPDB::getStats()
         {
             if(nCount)
             {
+                emit setProgressMinimum(0);
                 emit setProgressMaximum(nCount);
 
                 IDiaSymbol *pSymbol;
@@ -2173,6 +2174,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     int nCount=pStats->listSymbols.count();
 
+    emit setProgressMinimum(0);
     emit setProgressMaximum(nCount);
 
     int nCurrentIndex=0;

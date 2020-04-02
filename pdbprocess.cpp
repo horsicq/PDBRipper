@@ -26,6 +26,7 @@ PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(pare
     this->type=type;
 
     connect(pData->pWinPDB, SIGNAL(completed()), this, SIGNAL(completed()));
+    connect(pData->pWinPDB, SIGNAL(setProgressMinimum(int)), this, SIGNAL(setProgressMinimum(int)));
     connect(pData->pWinPDB, SIGNAL(setProgressMaximum(int)), this, SIGNAL(setProgressMaximum(int)));
     connect(pData->pWinPDB, SIGNAL(setProgressValue(int)), this, SIGNAL(setProgressValue(int)));
 }

@@ -44,6 +44,7 @@ private slots:
 
 public slots:
     void onCompleted();
+    void onSetProgressMinimum(int nMin);
     void onSetProgressMaximum(int nMax);
     void onSetProgressValue(int nValue);
 
