@@ -22,7 +22,6 @@
 #define QWINPDB_DEF
 
 #include <QString>
-//#include "../../cpp/_lib/DIA_SDK/include/dia2.h"
 #include "dia2.h"
 #include "diacreate.h"
 #include "cvconst.h"
