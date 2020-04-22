@@ -13,9 +13,9 @@ PDBRipper is a utility for extract an information from PDB-files.
 How to build on Windows
 =======
 
-Install Visual Studio 2013: https://docs.microsoft.com/en-us/visualstudio/releasenotes/vs2013-community-vs
+Install Visual Studio 2013: https://github.com/horsicq/build_tools
 
-Install Qt 5.6.3 for VS2013: https://download.qt.io/archive/qt/5.6/5.6.3/qt-opensource-windows-x86-msvc2013-5.6.3.exe
+Install Qt 5.6.3 for VS2013: https://github.com/horsicq/build_tools
 
 Install 7-Zip: https://www.7-zip.org/
 
