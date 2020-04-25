@@ -196,10 +196,6 @@ QWinPDB::VALUE QWinPDB::getValue(IDiaSymbol *pSymbol)
             default:            emit infoMessage(tr("Unknown VARIANT"));
         }
     }
-//    else
-//    {
-//        qDebug("QWinPDB::getValue error"); // TODO remove
-//    }
 
     return vResult;
 }
