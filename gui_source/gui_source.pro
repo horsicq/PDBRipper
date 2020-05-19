@@ -6,27 +6,27 @@ TARGET = pdbripper
 TEMPLATE = app
 
 SOURCES +=\
+    ../qwinpdb.cpp \
+    ../pdbprocess.cpp \
     dialogabout.cpp \
     dialogexport.cpp \
     dialogoptions.cpp \
-    ../qwinpdb.cpp \
     dialogprocess.cpp \
-    ../pdbprocess.cpp \
     guimainwindow.cpp \
     main_gui.cpp
 
-HEADERS  += \
+HEADERS += \
     ../global.h \
     ../qwinpdb.h \
     ../qwinpdb_def.h \
+    ../pdbprocess.h \
     dialogabout.h \
     dialogexport.h \
     dialogoptions.h \
     dialogprocess.h \
-    ../pdbprocess.h \
     guimainwindow.h
 
-FORMS    += \
+FORMS += \
     dialogabout.ui \
     dialogexport.ui \
     dialogoptions.ui \
