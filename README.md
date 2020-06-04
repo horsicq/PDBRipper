@@ -4,7 +4,7 @@
 PDBRipper
 =======
 
-PDBRipper is a utility for extract an information from PDB-files.
+PDBRipper is an utility for extract an information from PDB-files.
 
 ![alt text](https://github.com/horsicq/PDBRipper/blob/master/docs/screenshot_gui.jpg "Screenshot gui")
 ![alt text](https://github.com/horsicq/PDBRipper/blob/master/docs/screenshot_console.jpg "Screenshot console")
