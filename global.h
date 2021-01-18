@@ -1,4 +1,4 @@
-// Copyright (c) 2020 hors<horsicq@gmail.com>
+// Copyright (c) 2020-2021 hors<horsicq@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 #include <QString>
 
 #define X_APPLICATIONNAME "PDBRipper"
-#define X_APPLICATIONVERSION "2.00"
+#define X_APPLICATIONVERSION "2.01"
 #define X_ORGANIZATIONNAME "NTInfo"
 #define X_ORGANIZATIONDOMAIN "ntinfo.biz"
 

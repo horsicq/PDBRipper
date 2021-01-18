@@ -1,4 +1,4 @@
-// copyright (c) 2020 hors<horsicq@gmail.com>
+// copyright (c) 2020-2021 hors<horsicq@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -1020,14 +1020,25 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType,QWinPDB::HANDLE_OPTIONS *pHan
 
             if(pHandleOptions->bFixTypes)
             {
-                if((result.nBaseType==7)&&(result.nSize!=4)) // "unsigned int"
+                if(((result.nBaseType==7)||(result.nBaseType==14))&&(result.nSize!=4)) // "unsigned int"
                 {
                     switch(result.nSize)
                     {
-                        case 1:     result.sTypeName="unsigned char";   break;
-                        case 2:     result.sTypeName="unsigned short";  break;
-                        case 4:     result.sTypeName="unsigned int";    break;
-                        case 8:     result.sTypeName="unsigned long";   break;
+                        case 1:     result.sTypeName="unsigned char";       break;
+                        case 2:     result.sTypeName="unsigned short";      break;
+                        case 4:     result.sTypeName="unsigned int";        break;
+                        case 8:     result.sTypeName="unsigned long long";  break;
+                    }
+                }
+
+                if(((result.nBaseType==6)||(result.nBaseType==13))&&(result.nSize!=4)) // "int"
+                {
+                    switch(result.nSize)
+                    {
+                        case 1:     result.sTypeName="char";                break;
+                        case 2:     result.sTypeName="short";               break;
+                        case 4:     result.sTypeName="int";                 break;
+                        case 8:     result.sTypeName="long long";           break;
                     }
                 }
             }
@@ -1848,9 +1859,13 @@ void QWinPDB::fixOffsets(QWinPDB::ELEM *pElem) // TODO Options
 
     elem.listChildren.clear();
 
-    int nCount=pElem->listChildren.count();
+    QList<ELEM> listChildren=pElem->listChildren;
 
-    _appendElem(&elem,&(pElem->listChildren),0,nCount);
+    listChildren=_fixBitFields(&listChildren);
+
+    int nCount=listChildren.count();
+
+    _appendElem(&elem,&listChildren,0,nCount);
 
     *pElem=elem;
 }
@@ -1888,7 +1903,7 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
                     _nPosition=j;
                 }
 
-                _dwSize+=pListChildren->at(j).dwSize;
+                _dwSize=qMax((DWORD)_dwSize,pListChildren->at(j).dwOffset+pListChildren->at(j).dwSize);
                 _nCount++;
             }
 
@@ -1914,7 +1929,7 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
                         break;
                     }
 
-                    _dwSize+=pListChildren->at(j).dwSize;
+                    _dwSize=qMax((DWORD)_dwSize,pListChildren->at(j).dwOffset+pListChildren->at(j).dwSize);
                     _nCount++;
                 }
 
@@ -1946,26 +1961,29 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
                     pElemUnion=pElem;
                 }
 
+                // TODO Check
                 for(int j=0;j<nCount;j++)
                 {
-                    if(listCounts.at(j)>1)
-                    {
-                        QWinPDB::ELEM *pElemStruct=new QWinPDB::ELEM();
-                        *pElemStruct={};
-                        pElemStruct->elemType=ELEM_TYPE_FAKESTRUCT;
-                        pElemStruct->dwSize=listSizes.at(j);
-                        pElemStruct->_udt.sType="struct";
+//                    if(listCounts.at(j)>1)
+//                    {
+//                        QWinPDB::ELEM *pElemStruct=new QWinPDB::ELEM();
+//                        *pElemStruct={};
+//                        pElemStruct->elemType=ELEM_TYPE_FAKESTRUCT;
+//                        pElemStruct->dwSize=listSizes.at(j);
+//                        pElemStruct->_udt.sType="struct";
 
-                        _appendElem(pElemStruct,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
+//                        _appendElem(pElemStruct,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
 
-                        pElemUnion->listChildren.append(*pElemStruct);
+//                        pElemUnion->listChildren.append(*pElemStruct);
 
-                        delete pElemStruct;
-                    }
-                    else
-                    {
-                        _appendElem(pElemUnion,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
-                    }
+//                        delete pElemStruct;
+//                    }
+//                    else
+//                    {
+//                        _appendElem(pElemUnion,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
+//                    }
+
+                    _appendElem(pElemUnion,pListChildren,listPositions.at(j),listPositions.at(j)+listCounts.at(j));
 
                     i+=listCounts.at(j);
                 }
@@ -1988,6 +2006,63 @@ void QWinPDB::_appendElem(QWinPDB::ELEM *pElem, QList<QWinPDB::ELEM> *pListChild
             pElem->listChildren.append(pListChildren->at(i));
         }
     }
+}
+
+QList<QWinPDB::ELEM> QWinPDB::_fixBitFields(QList<QWinPDB::ELEM> *pListChildren)
+{
+    QList<QWinPDB::ELEM> listResult;
+
+    int nCount=pListChildren->count();
+
+    for(int i=0;i<nCount;i++)
+    {
+        if(pListChildren->at(i).dwBitSize)
+        {
+            quint32 nSize=pListChildren->at(i).dwSize;
+            quint32 nOffset=pListChildren->at(i).dwOffset;
+
+            QList<QWinPDB::ELEM> listBitFields;
+
+            for(;i<nCount;i++)
+            {
+                if(pListChildren->at(i).dwBitSize==0)
+                {
+                    i--;
+                    break;
+                }
+
+                nSize=(pListChildren->at(i).dwOffset+pListChildren->at(i).dwSize)-nOffset;
+
+                listBitFields.append(pListChildren->at(i));
+            }
+
+            if(nSize==3) // TODO !!!
+            {
+                if((pListChildren->at(i+1).dwSize==1)&&(pListChildren->at(i+1).dwOffset==(nOffset+nSize)))
+                {
+                    i++;
+                    listBitFields.append(pListChildren->at(i));
+                    nSize=4;
+                }
+            }
+
+            QWinPDB::ELEM elemStruct={};
+            elemStruct.elemType=ELEM_TYPE_FAKESTRUCT;
+            elemStruct.dwSize=nSize;
+            elemStruct.dwOffset=nOffset;
+            elemStruct._udt.sType="struct";
+
+            _appendElem(&elemStruct,&listBitFields,0,listBitFields.count());
+
+            listResult.append(elemStruct);
+        }
+        else
+        {
+            listResult.append(pListChildren->at(i));
+        }
+    }
+
+    return listResult;
 }
 
 QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass)

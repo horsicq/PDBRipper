@@ -1,4 +1,4 @@
-// copyright (c) 2020 hors<horsicq@gmail.com>
+// copyright (c) 2020-2021 hors<horsicq@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -600,6 +600,7 @@ public:
     ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions);
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
+    QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);
     ELEM_INFO getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
     ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
     QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
