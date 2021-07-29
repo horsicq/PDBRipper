@@ -1,0 +1,9 @@
+[submodule "XOptions"]
+	path = XOptions
+	url = https://github.com/horsicq/XOptions
+[submodule "XShortcuts"]
+	path = XShortcuts
+	url = https://github.com/horsicq/XShortcuts
+[submodule "build_tools"]
+	path = build_tools
+	url = https://github.com/horsicq/build_tools
