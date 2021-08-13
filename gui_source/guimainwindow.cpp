@@ -27,14 +27,24 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(QString("%1 v%2").arg(X_APPLICATIONNAME).arg(X_APPLICATIONVERSION));
+    setWindowTitle(QString("%1 v%2").arg(X_APPLICATIONDISPLAYNAME,X_APPLICATIONVERSION));
+
+    g_xOptions.setName(X_OPTIONSFILE);
+
+    QList<XOptions::ID> listIDs;
+
+    listIDs.append(XOptions::ID_STYLE);
+    listIDs.append(XOptions::ID_SAVELASTDIRECTORY);
+    listIDs.append(XOptions::ID_STAYONTOP);
+
+    g_xOptions.setValueIDs(listIDs);
+    g_xOptions.load();
+
+    adjustWindow();
 
     setAcceptDrops(true);
 
     pdbData.pWinPDB=0;
-
-    DialogOptions::loadOptions(&options);
-    adjustWindow();
 
     pFilter=new QSortFilterProxyModel(this);
     ui->tableViewSymbols->setModel(pFilter);
@@ -57,32 +67,28 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
 
 GuiMainWindow::~GuiMainWindow()
 {
+    g_xOptions.save();
+
     if(pdbData.pWinPDB)
     {
         delete pdbData.pWinPDB;
     }
 
-    DialogOptions::saveOptions(&options);
     delete ui;
 }
 
 void GuiMainWindow::on_actionOpen_triggered()
 {
-    QString sDirectory;
+    QString sDirectory=g_xOptions.getLastDirectory();
 
-    if(options.bSaveLastDirectory&&QDir().exists(options.sLastDirectory))
-    {
-        sDirectory=options.sLastDirectory;
-    }
-
-    QString sFileName=QFileDialog::getOpenFileName(this, tr("Open File..."),sDirectory, tr("PDB-Files (*.pdb);;All Files (*)"));
+    QString sFileName=QFileDialog::getOpenFileName(this,tr("Open file")+QString("..."),sDirectory, tr("PDB-Files (*.pdb);;All Files (*)"));
 
     _openFile(sFileName);
 }
 
 void GuiMainWindow::on_actionOptions_triggered()
 {
-    DialogOptions dialogOptions(this,&options);
+    DialogOptions dialogOptions(this,&g_xOptions);
     dialogOptions.exec();
 
     adjustWindow();
@@ -97,29 +103,14 @@ void GuiMainWindow::on_actionAbout_triggered()
 
 void GuiMainWindow::adjustWindow()
 {
-    Qt::WindowFlags wf=windowFlags();
-    if(options.bStayOnTop)
-    {
-        wf|=Qt::WindowStaysOnTopHint;
-    }
-    else
-    {
-        wf&=~(Qt::WindowStaysOnTopHint);
-    }
-    setWindowFlags(wf);
-
-    show();
+    g_xOptions.adjustStayOnTop(this);
 }
 
 void GuiMainWindow::_openFile(QString sFileName)
 {
     if((sFileName!="")&&(QFileInfo(sFileName).isFile()))
     {
-        if(options.bSaveLastDirectory)
-        {
-            QFileInfo fi(sFileName);
-            options.sLastDirectory=fi.absolutePath();
-        }
+        g_xOptions.setLastDirectory(QFileInfo(sFileName).absolutePath());
 
         if(pdbData.pWinPDB)
         {

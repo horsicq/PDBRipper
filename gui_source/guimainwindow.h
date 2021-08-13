@@ -32,6 +32,7 @@
 #include "dialogabout.h"
 #include "dialogoptions.h"
 #include "dialogexport.h"
+#include "xoptions.h"
 #include "../global.h"
 
 namespace Ui
@@ -91,7 +92,7 @@ private:
 
     Ui::GuiMainWindow *ui;
     PDBProcess::PDBDATA pdbData;
-    PDBRIPPER::OPTIONS options;
+    XOptions g_xOptions;
     QSortFilterProxyModel *pFilter;
 };
 

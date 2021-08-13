@@ -43,5 +43,10 @@ RC_ICONS = ../icons/main.ico
 
 include(../build.pri)
 
+!contains(XCONFIG, xoptions) {
+    XCONFIG += xoptions
+    include(../XOptions/xoptions.pri)
+}
+
 RESOURCES += \
     resources.qrc

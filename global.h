@@ -23,19 +23,11 @@
 
 #include <QString>
 
-#define X_APPLICATIONNAME "PDBRipper"
+#define X_APPLICATIONDISPLAYNAME "PDBRipper"
+#define X_APPLICATIONNAME "pdbripper"
 #define X_APPLICATIONVERSION "2.01"
 #define X_ORGANIZATIONNAME "NTInfo"
 #define X_ORGANIZATIONDOMAIN "ntinfo.biz"
-
-namespace PDBRIPPER
-{
-    struct OPTIONS
-    {
-        bool bSaveLastDirectory;
-        QString sLastDirectory;
-        bool bStayOnTop;
-    };
-}
+#define X_OPTIONSFILE "pdbripper.ini"
 
 #endif // GLOBAL_H
