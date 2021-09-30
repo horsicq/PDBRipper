@@ -69,6 +69,7 @@ private slots:
     void on_comboBoxFixOffsets_currentIndexChanged(int index);
     void on_checkBoxAddAlignment_toggled(bool checked);
     void on_actionCPP_triggered();
+    void on_actionXNTSV_triggered();
 
     void on_checkBoxFixTypes_toggled(bool checked);
     void on_actionQuit_triggered();

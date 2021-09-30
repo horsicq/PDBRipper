@@ -266,17 +266,18 @@
     <addaction name="actionOpen"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuExport">
+   <widget class="QMenu" name="menuAction">
     <property name="title">
      <string>Action</string>
     </property>
-    <widget class="QMenu" name="menuExport_2">
+    <widget class="QMenu" name="menuExport">
      <property name="title">
       <string>Export</string>
      </property>
      <addaction name="actionCPP"/>
+     <addaction name="actionXNTSV"/>
     </widget>
-    <addaction name="menuExport_2"/>
+    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
@@ -291,7 +292,7 @@
     <addaction name="actionOptions"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuExport"/>
+   <addaction name="menuAction"/>
    <addaction name="menuTools"/>
    <addaction name="menuInfo"/>
   </widget>
@@ -312,7 +313,7 @@
   </action>
   <action name="actionCPP">
    <property name="text">
-    <string>C++</string>
+    <string notr="true">C++</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -321,6 +322,11 @@
    </property>
    <property name="shortcut">
     <string>Alt+Q</string>
+   </property>
+  </action>
+  <action name="actionXNTSV">
+   <property name="text">
+    <string notr="true">XNTSV</string>
    </property>
   </action>
  </widget>

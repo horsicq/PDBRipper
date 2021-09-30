@@ -271,6 +271,18 @@ void GuiMainWindow::on_actionCPP_triggered()
 {
     if(pdbData.pWinPDB)
     {
+        pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
+        DialogExport dialogExport(this,&pdbData);
+
+        dialogExport.exec();
+    }
+}
+
+void GuiMainWindow::on_actionXNTSV_triggered()
+{
+    if(pdbData.pWinPDB)
+    {
+        pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
         DialogExport dialogExport(this,&pdbData);
 
         dialogExport.exec();

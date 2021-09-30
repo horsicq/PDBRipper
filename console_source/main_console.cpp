@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     QCommandLineOption clSortByName                 (QStringList()<<"n"<<"sortbyname",          "Sort by name."                                 );
     QCommandLineOption clSortByDeps                 (QStringList()<<"d"<<"sortbydeps",          "Sort by dependencies."                         );
     QCommandLineOption clExportCpp                  (QStringList()<<"p"<<"exportcpp",           "Export C++."                                   );
+    QCommandLineOption clExportXntsv                (QStringList()<<"x"<<"exportxntsv",         "Export XNTSV."                                 );
 
     parser.addOption(clOutputFile);
     parser.addOption(clShowComments);
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
     parser.addOption(clSortByName);
     parser.addOption(clSortByDeps);
     parser.addOption(clExportCpp);
+    parser.addOption(clExportXntsv);
 
     parser.process(app);
 
@@ -115,6 +117,10 @@ int main(int argc, char *argv[])
     if(parser.isSet(clExportCpp))
     {
         pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
+    }
+    else if(parser.isSet(clExportXntsv))
+    {
+        pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
     }
     else
     {

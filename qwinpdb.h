@@ -513,7 +513,8 @@ public:
 
     enum ET
     {
-        ET_CPLUSPLUS=0
+        ET_CPLUSPLUS=0,
+        ET_XNTSV
     };
 
     struct HANDLE_OPTIONS

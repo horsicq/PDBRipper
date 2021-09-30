@@ -35,7 +35,7 @@ class DialogExport : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData);
+    explicit DialogExport(QWidget *parent,PDBProcess::PDBDATA *pData);
     ~DialogExport();
 
 private:

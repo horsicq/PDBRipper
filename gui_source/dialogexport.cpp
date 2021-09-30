@@ -29,14 +29,15 @@ DialogExport::DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData) :
 
     this->pData=pData;
 
-    ui->comboBoxSortType->addItem(tr("ID"),QWinPDB::ST_ID);
+    ui->comboBoxSortType->addItem(QString("ID"),QWinPDB::ST_ID);
     ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_NAME);
     ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_DEP);
 
     ui->comboBoxExportType->addItem(QString("C++"),QWinPDB::ET_CPLUSPLUS);
+    ui->comboBoxExportType->addItem(QString("XNTSV"),QWinPDB::ET_XNTSV);
 
     ui->comboBoxFixOffsets->addItem(tr("No"),QWinPDB::FO_NO);
-    ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
+    ui->comboBoxFixOffsets->addItem(tr("Struct and unions"),QWinPDB::FO_STRUCTSANDUNIONS);
     ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
 
     ui->checkBoxShowComments->setChecked(pData->handleOptions.bShowComments);
@@ -107,7 +108,18 @@ void DialogExport::on_pushButtonOK_clicked()
 {
     pData->handleOptions=getHandleOptions();
 
-    QString sFileName=QFileDialog::getSaveFileName(this, tr("Save File..."),"export.h", tr("h-Files (*.h);;All Files (*)"));
+    QString sFileName;
+
+    if(pData->handleOptions.exportType==QWinPDB::ET_CPLUSPLUS)
+    {
+        sFileName=QString("%1.h").arg(tr("Export"));
+        sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("%1 (*.h);;%2 (*)").arg(tr("Text files"),tr("All files")));
+    }
+    else if(pData->handleOptions.exportType==QWinPDB::ET_XNTSV)
+    {
+        sFileName=QString("%1.json").arg(tr("Export"));
+        sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("%1 (*.json);;%2 (*)").arg(tr("Text files"),tr("All files")));
+    }
 
     if(!sFileName.isEmpty())
     {
