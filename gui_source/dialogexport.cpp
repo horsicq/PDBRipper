@@ -123,7 +123,7 @@ void DialogExport::on_pushButtonOK_clicked()
 
     if(!sFileName.isEmpty())
     {
-        pData->sResultFileName=sFileName;
+        pData->handleOptions.sResultFileName=sFileName;
 
         DialogProcess dp(this,pData,PDBProcess::TYPE_EXPORT);
         connect(&dp,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));

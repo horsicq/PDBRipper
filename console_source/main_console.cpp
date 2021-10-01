@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
     if(listInputFiles.count())
     {
-        pdbData.sResultFileName=sOutputFileName;
+        pdbData.handleOptions.sResultFileName=sOutputFileName;
 
         QString sPDBFileName=listInputFiles.at(0);
 

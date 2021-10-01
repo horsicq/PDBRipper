@@ -2243,29 +2243,32 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     QList<ELEM_INFO> listElemInfos;
 
-    int nCount=pStats->listSymbols.count();
-
-    emit setProgressMinimum(0);
-    emit setProgressMaximum(nCount);
-
-    int nCurrentIndex=0;
-    int nCurrentProcent=0;
-    int nProcent=nCount/1000;
-
-    for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
+    if(!__bIsProcessStop)
     {
-        ELEM_INFO elemInfo=handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions);
-        listElemInfos.append(elemInfo);
+        int nCount=pStats->listSymbols.count();
 
-        if(nCurrentIndex>nCurrentProcent*nProcent)
+        emit setProgressMinimum(0);
+        emit setProgressMaximum(nCount);
+
+        int nCurrentIndex=0;
+        int nCurrentProcent=0;
+        int nProcent=nCount/1000;
+
+        for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
         {
-            nCurrentProcent++;
-            emit setProgressValue(nCurrentIndex);
+            ELEM_INFO elemInfo=handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions);
+            listElemInfos.append(elemInfo);
+
+            if(nCurrentIndex>nCurrentProcent*nProcent)
+            {
+                nCurrentProcent++;
+                emit setProgressValue(nCurrentIndex);
+            }
+
+            nCurrentIndex++;
+
+            emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
         }
-
-        nCurrentIndex++;
-
-        emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
     }
 
     if(!__bIsProcessStop)
@@ -2308,7 +2311,14 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
         sResult+=QString("// Bugreports : horsicq@gmail.com\r\n");
         sResult+="\r\n";
 
-        nCount=listElemInfos.count();
+        int nCount=listElemInfos.count();
+
+        emit setProgressMinimum(0);
+        emit setProgressMaximum(nCount);
+
+        int nCurrentIndex=0;
+        int nCurrentProcent=0;
+        int nProcent=nCount/1000;
 
         if(nCount)
         {
@@ -2317,6 +2327,14 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
                 sResult+=listElemInfos.at(i).sText;
                 sResult+="\r\n";
                 sResult+="\r\n";
+
+                if(nCurrentIndex>nCurrentProcent*nProcent)
+                {
+                    nCurrentProcent++;
+                    emit setProgressValue(nCurrentIndex);
+                }
+
+                nCurrentIndex++;
             }
         }
 
@@ -2324,7 +2342,37 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
     }
     else if(pHandleOptions->exportType==ET_XNTSV)
     {
-        // TODO
+        int nCount=listElemInfos.count();
+
+        emit setProgressMinimum(0);
+        emit setProgressMaximum(nCount);
+
+        int nCurrentIndex=0;
+        int nCurrentProcent=0;
+        int nProcent=nCount/1000;
+
+        QJsonObject recordObject;
+        recordObject.insert("name",QJsonValue::fromVariant(pHandleOptions->sResultFileName));
+
+        if(nCount)
+        {
+            for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
+            {
+                // TODO
+                //sResult+=listElemInfos.at(i).sText;
+
+                if(nCurrentIndex>nCurrentProcent*nProcent)
+                {
+                    nCurrentProcent++;
+                    emit setProgressValue(nCurrentIndex);
+                }
+
+                nCurrentIndex++;
+            }
+        }
+
+        QJsonDocument doc(recordObject);
+        sResult=doc.toJson(QJsonDocument::Indented);
     }
 
     setProcessEnable(true);

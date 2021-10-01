@@ -33,6 +33,8 @@
 #include <QStack>
 #include <QDebug>
 #include <QCollator>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "global.h"
 #include "qwinpdb_def.h"

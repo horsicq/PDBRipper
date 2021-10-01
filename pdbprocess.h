@@ -42,7 +42,6 @@ public:
         QWinPDB::STATS stats;
         QString sString;
         QWinPDB::HANDLE_OPTIONS handleOptions;
-        QString sResultFileName;
     };
 
     explicit PDBProcess(QObject *parent, PDBDATA *pData, TYPE type);
@@ -60,8 +59,8 @@ public slots:
     void process();
 
 private:
-    PDBDATA *pData;
-    TYPE type;
+    PDBDATA *g_pData;
+    TYPE g_type;
 };
 
 #endif // PDBPROCESS_H

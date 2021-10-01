@@ -22,8 +22,8 @@
 
 PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(parent)
 {
-    this->pData=pData;
-    this->type=type;
+    this->g_pData=pData;
+    this->g_type=type;
 
     connect(pData->pWinPDB, SIGNAL(completed()), this, SIGNAL(completed()));
     connect(pData->pWinPDB, SIGNAL(setProgressMinimum(int)), this, SIGNAL(setProgressMinimum(int)));
@@ -33,30 +33,30 @@ PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(pare
 
 void PDBProcess::process()
 {
-    if(type==TYPE_IMPORT)
+    if(g_type==TYPE_IMPORT)
     {
-        pData->stats=pData->pWinPDB->getStats();
+        g_pData->stats=g_pData->pWinPDB->getStats();
     }
-    else if(type==TYPE_EXPORT)
+    else if(g_type==TYPE_EXPORT)
     {
-        pData->sString=pData->pWinPDB->exportString(&(pData->stats),&(pData->handleOptions));
+        g_pData->sString=g_pData->pWinPDB->exportString(&(g_pData->stats),&(g_pData->handleOptions));
 
-        if(pData->sResultFileName!="")
+        if(g_pData->handleOptions.sResultFileName!="")
         {
             QFile file;
-            file.setFileName(pData->sResultFileName);
+            file.setFileName(g_pData->handleOptions.sResultFileName);
 
             if(file.open(QIODevice::ReadWrite))
             {
                 file.resize(0);
-                file.write(pData->sString.toLatin1().data(),pData->sString.length());
+                file.write(g_pData->sString.toLatin1().data(),g_pData->sString.length());
                 file.close();
 
-                emit infoMessage(QString("%1: %2").arg(tr("File saved")).arg(pData->sResultFileName));
+                emit infoMessage(QString("%1: %2").arg(tr("File saved")).arg(g_pData->handleOptions.sResultFileName));
             }
             else
             {
-                emit errorMessage(QString("%1: %2").arg(tr("Cannot save file")).arg(pData->sResultFileName));
+                emit errorMessage(QString("%1: %2").arg(tr("Cannot save file")).arg(g_pData->handleOptions.sResultFileName));
             }
         }
     }
@@ -64,5 +64,5 @@ void PDBProcess::process()
 
 void PDBProcess::stop()
 {
-    pData->pWinPDB->stop();
+    g_pData->pWinPDB->stop();
 }
