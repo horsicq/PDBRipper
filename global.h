@@ -25,7 +25,7 @@
 
 #define X_APPLICATIONDISPLAYNAME "PDBRipper"
 #define X_APPLICATIONNAME "pdbripper"
-#define X_APPLICATIONVERSION "2.01"
+#define X_APPLICATIONVERSION "2.02"
 #define X_ORGANIZATIONNAME "NTInfo"
 #define X_ORGANIZATIONDOMAIN "ntinfo.biz"
 #define X_OPTIONSFILE "pdbripper.ini"

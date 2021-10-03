@@ -52,7 +52,7 @@ GuiMainWindow::GuiMainWindow(QWidget *parent) :
     QSignalBlocker blocker(ui->comboBoxFixOffsets);
 
     ui->comboBoxFixOffsets->addItem(tr("No"),QWinPDB::FO_NO);
-    ui->comboBoxFixOffsets->addItem(tr("Struct and Unions"),QWinPDB::FO_STRUCTSANDUNIONS);
+    ui->comboBoxFixOffsets->addItem(tr("Struct and unions"),QWinPDB::FO_STRUCTSANDUNIONS);
     ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
 
     pdbData.handleOptions=QWinPDB::getDefaultHandleOptions();
@@ -81,7 +81,7 @@ void GuiMainWindow::on_actionOpen_triggered()
 {
     QString sDirectory=g_xOptions.getLastDirectory();
 
-    QString sFileName=QFileDialog::getOpenFileName(this,tr("Open file")+QString("..."),sDirectory, tr("PDB-Files (*.pdb);;All Files (*)"));
+    QString sFileName=QFileDialog::getOpenFileName(this,tr("Open file"),sDirectory, QString("PDB %1 (*.pdb);;%2 (*)").arg(tr("Files"),tr("All files")));
 
     _openFile(sFileName);
 }
@@ -132,6 +132,8 @@ void GuiMainWindow::_openFile(QString sFileName)
 
         if(pdbData.pWinPDB->loadFromFile(sFileName))
         {
+            pdbData.sPDBFileName=sFileName;
+
             DialogProcess dp(this,&pdbData,PDBProcess::TYPE_IMPORT);
             dp.exec();
 

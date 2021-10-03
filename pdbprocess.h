@@ -42,6 +42,7 @@ public:
         QWinPDB::STATS stats;
         QString sString;
         QWinPDB::HANDLE_OPTIONS handleOptions;
+        QString sPDBFileName;
     };
 
     explicit PDBProcess(QObject *parent, PDBDATA *pData, TYPE type);

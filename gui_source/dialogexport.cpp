@@ -100,7 +100,6 @@ QWinPDB::HANDLE_OPTIONS DialogExport::getHandleOptions()
     result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
     result.sortType=(QWinPDB::ST)ui->comboBoxSortType->currentData().toUInt();
     result.exportType=(QWinPDB::ET)ui->comboBoxExportType->currentData().toUInt();
-
     return result;
 }
 
@@ -108,17 +107,17 @@ void DialogExport::on_pushButtonOK_clicked()
 {
     pData->handleOptions=getHandleOptions();
 
-    QString sFileName;
+    QString sFileName=QFileInfo(pData->sPDBFileName).baseName();
 
     if(pData->handleOptions.exportType==QWinPDB::ET_CPLUSPLUS)
     {
-        sFileName=QString("%1.h").arg(tr("Export"));
-        sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("%1 (*.h);;%2 (*)").arg(tr("Text files"),tr("All files")));
+        sFileName=QString("%1.h").arg(sFileName);
+        sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("H %1 (*.h);;%2 (*)").arg(tr("Files"),tr("All files")));
     }
     else if(pData->handleOptions.exportType==QWinPDB::ET_XNTSV)
     {
-        sFileName=QString("%1.json").arg(tr("Export"));
-        sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("%1 (*.json);;%2 (*)").arg(tr("Text files"),tr("All files")));
+        sFileName=QString("%1.json").arg(sFileName);
+        sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("JSON %1 (*.json);;%2 (*)").arg(tr("Files"),tr("All files")));
     }
 
     if(!sFileName.isEmpty())

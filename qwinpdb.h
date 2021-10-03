@@ -35,6 +35,7 @@
 #include <QCollator>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QFileInfo>
 
 #include "global.h"
 #include "qwinpdb_def.h"

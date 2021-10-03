@@ -2291,7 +2291,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     if(pHandleOptions->exportType==ET_CPLUSPLUS)
     {
-        QString sExportName=pHandleOptions->sResultFileName.toUpper();
+        QString sExportName=QFileInfo(pHandleOptions->sResultFileName).baseName().toUpper();
 
         sExportName=sExportName.replace(".","_");
 
