@@ -34,6 +34,7 @@
 #include <QDebug>
 #include <QCollator>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QFileInfo>
 

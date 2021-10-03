@@ -1204,16 +1204,16 @@ bool QWinPDB::getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol)
     bool bResult=false;
 
     IDiaEnumSymbols *pEnumSymbols;
-    LONG nCount;
-    if(pGlobal->findChildren(SymTagNull, NULL, nsNone, &pEnumSymbols)==S_OK)
+    LONG nCount=0;
+    if(pGlobal->findChildren(SymTagNull,NULL,nsNone,&pEnumSymbols)==S_OK)
     {
         if(pEnumSymbols->get_Count(&nCount)==S_OK)
         {
             if(nCount)
             {
-                ULONG celt = 0;
-                ULONG iMod = 1;
-                while(SUCCEEDED(pEnumSymbols->Next(1, ppSymbol, &celt)) && (celt == 1))
+                ULONG celt=0;
+//                ULONG iMod=1;
+                while(SUCCEEDED(pEnumSymbols->Next(1,ppSymbol,&celt))&&(celt==1))
                 {
                     DWORD _dwID=0;
 
@@ -2073,150 +2073,161 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
 
     // TODO TYPEDEFS !!!
 
-    if(pElem->elemType==ELEM_TYPE_ENUM)
+    if(pHandleOptions->exportType==ET_CPLUSPLUS)
     {
-        result.sText+=_getTab(nLevel)+QString("enum %1\r\n").arg(pElem->_enum._name);
-        result.sText+=_getTab(nLevel)+"{\r\n";
-
-        int nCount=pElem->listChildren.count();
-
-        for(int i=0;i<nCount;i++)
+        if(pElem->elemType==ELEM_TYPE_ENUM)
         {
-            result.sText+=_getTab(nLevel+1)+QString("%1=%2").arg(pElem->listChildren.at(i)._data._name).arg(pElem->listChildren.at(i)._data.value.vValue.toString());
+            result.sText+=_getTab(nLevel)+QString("enum %1\r\n").arg(pElem->_enum._name);
+            result.sText+=_getTab(nLevel)+"{\r\n";
 
-            if(i!=(nCount-1))
+            int nCount=pElem->listChildren.count();
+
+            for(int i=0;i<nCount;i++)
             {
-                result.sText+=",";
-            }
-            result.sText+="\r\n";
-        }
+                result.sText+=_getTab(nLevel+1)+QString("%1=%2").arg(pElem->listChildren.at(i)._data._name).arg(pElem->listChildren.at(i)._data.value.vValue.toString());
 
-        result.sText+=_getTab(nLevel)+"}";
-    }
-    else if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION)||(pElem->elemType==ELEM_TYPE_FAKESTRUCT))
-    {
-        result.sText+=_getTab(nLevel)+QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
-
-        QList<QString> listBaseClasses;
-
-        int nChildrenCount=pElem->listChildren.count();
-
-        // Get basic clasess
-        for(int i=0;i<nChildrenCount;i++)
-        {
-            if(pElem->listChildren.at(i).elemType==ELEM_TYPE_BASECLASS)
-            {
-                listBaseClasses.append(QString("%1 %2").arg(getAccessString(pElem->listChildren.at(i)._baseclass._access)).arg(pElem->listChildren.at(i)._baseclass._name));
-            }
-        }
-
-        int nBaseClassCount=listBaseClasses.count();
-
-        for(int i=0;i<nBaseClassCount;i++)
-        {
-            if(i==0)
-            {
-                result.sText+=QString(" : ");
-            }
-
-            result.sText+=listBaseClasses.at(i);
-
-            if(i!=nBaseClassCount-1)
-            {
-                result.sText+=QString(", ");
-            }
-        }
-
-        if(pHandleOptions->bShowComments)
-        {
-            result.sText+=QString("// Size=0x%1").arg(pElem->dwSize,0,16);
-        }
-
-        result.sText+="\r\n";
-        result.sText+=_getTab(nLevel)+"{\r\n";
-
-        // TODO typedefs
-        for(int i=0;i<nChildrenCount;i++)
-        {
-            if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
-            {
-                result.sText+=getElemInfo(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==1)).sText;
-
-                result.sText+=";";
-
-                if(pHandleOptions->bShowComments)
+                if(i!=(nCount-1))
                 {
-                    bool bShowComments=false;
-
-                    if(pElem->listChildren.at(i).listChildren.count()==0)
-                    {
-                        bShowComments=true;
-                    }
-
-                    if(pElem->listChildren.at(i).elemType==ELEM_TYPE_FUNCTION)
-                    {
-                        bShowComments=true;
-                    }
-
-                    // TODO Functions start end
-
-                    if(bShowComments)
-                    {
-                        if(pElem->listChildren.at(i).dwSize)
-                        {
-                            result.sText+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
-                        }
-
-                        if(pElem->listChildren.at(i).dwBitSize)
-                        {
-                            result.sText+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset,0,16).arg(pElem->listChildren.at(i).dwBitSize,0,16);
-                        }
-                    }
+                    result.sText+=",";
                 }
-
                 result.sText+="\r\n";
             }
 
-            result.listChildrenBaseInfos.append(pElem->listChildren.at(i).baseInfo);
+            result.sText+=_getTab(nLevel)+"}";
         }
-
-        result.sText+=_getTab(nLevel)+"}";
-    }
-    else if((pElem->elemType==ELEM_TYPE_DATA)||(pElem->elemType==ELEM_TYPE_FAKEDATA))
-    {
-        result.sText+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,bIsClass);
-
-        if(pElem->_data.value.bIsValid) // TODO Check
+        else if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION)||(pElem->elemType==ELEM_TYPE_FAKESTRUCT))
         {
-            result.sText+=QString("=%1").arg(pElem->_data.value.vValue.toString());
+            result.sText+=_getTab(nLevel)+QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
+
+            QList<QString> listBaseClasses;
+
+            int nChildrenCount=pElem->listChildren.count();
+
+            // Get basic clasess
+            for(int i=0;i<nChildrenCount;i++)
+            {
+                if(pElem->listChildren.at(i).elemType==ELEM_TYPE_BASECLASS)
+                {
+                    listBaseClasses.append(QString("%1 %2").arg(getAccessString(pElem->listChildren.at(i)._baseclass._access)).arg(pElem->listChildren.at(i)._baseclass._name));
+                }
+            }
+
+            int nBaseClassCount=listBaseClasses.count();
+
+            for(int i=0;i<nBaseClassCount;i++)
+            {
+                if(i==0)
+                {
+                    result.sText+=QString(" : ");
+                }
+
+                result.sText+=listBaseClasses.at(i);
+
+                if(i!=nBaseClassCount-1)
+                {
+                    result.sText+=QString(", ");
+                }
+            }
+
+            if(pHandleOptions->bShowComments)
+            {
+                result.sText+=QString("// Size=0x%1").arg(pElem->dwSize,0,16);
+            }
+
+            result.sText+="\r\n";
+            result.sText+=_getTab(nLevel)+"{\r\n";
+
+            // TODO typedefs
+            for(int i=0;i<nChildrenCount;i++)
+            {
+                if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
+                {
+                    result.sText+=getElemInfo(&(pElem->listChildren.at(i)),pHandleOptions,nLevel+1,(pElem->_udt._udtKind==1)).sText;
+
+                    result.sText+=";";
+
+                    if(pHandleOptions->bShowComments)
+                    {
+                        bool bShowComments=false;
+
+                        if(pElem->listChildren.at(i).listChildren.count()==0)
+                        {
+                            bShowComments=true;
+                        }
+
+                        if(pElem->listChildren.at(i).elemType==ELEM_TYPE_FUNCTION)
+                        {
+                            bShowComments=true;
+                        }
+
+                        // TODO Functions start end
+
+                        if(bShowComments)
+                        {
+                            if(pElem->listChildren.at(i).dwSize)
+                            {
+                                result.sText+=QString("// Offset=0x%1 Size=0x%2").arg(pElem->listChildren.at(i).dwOffset,0,16).arg(pElem->listChildren.at(i).dwSize,0,16);
+                            }
+
+                            if(pElem->listChildren.at(i).dwBitSize)
+                            {
+                                result.sText+=QString(" BitOffset=0x%1 BitSize=0x%2").arg(pElem->listChildren.at(i).dwBitOffset,0,16).arg(pElem->listChildren.at(i).dwBitSize,0,16);
+                            }
+                        }
+                    }
+
+                    result.sText+="\r\n";
+                }
+
+                result.listChildrenBaseInfos.append(pElem->listChildren.at(i).baseInfo);
+            }
+
+            result.sText+=_getTab(nLevel)+"}";
         }
-    }
-    else if(pElem->elemType==ELEM_TYPE_FUNCTION)
-    {
-        result.sText+=_getTab(nLevel)+rtypeToString(pElem->_function.rtype,bIsClass);
-        // TODO function start,end
-    }
-    else if(pElem->elemType==ELEM_TYPE_TYPEDEF)
-    {
-        // TODO Check typedef
-        emit infoMessage(QString("TYPEDEF"));
-    }
-    else if(pElem->elemType==ELEM_TYPE_VTABLE)
-    {
-        // TODO Check typedef
-        emit infoMessage(QString("VTABLE"));
-    }
-    else
-    {
-        emit infoMessage(QString("Unknown ELEM_TYPE"));
-    }
+        else if((pElem->elemType==ELEM_TYPE_DATA)||(pElem->elemType==ELEM_TYPE_FAKEDATA))
+        {
+            result.sText+=_getTab(nLevel)+rtypeToString(pElem->_data.rtype,bIsClass);
 
-    if(nLevel==0)
-    {
-        result.sText+=";";
-    }
+            if(pElem->_data.value.bIsValid) // TODO Check
+            {
+                result.sText+=QString("=%1").arg(pElem->_data.value.vValue.toString());
+            }
+        }
+        else if(pElem->elemType==ELEM_TYPE_FUNCTION)
+        {
+            result.sText+=_getTab(nLevel)+rtypeToString(pElem->_function.rtype,bIsClass);
+            // TODO function start,end
+        }
+        else if(pElem->elemType==ELEM_TYPE_TYPEDEF)
+        {
+            // TODO Check typedef
+            emit infoMessage(QString("TYPEDEF"));
+        }
+        else if(pElem->elemType==ELEM_TYPE_VTABLE)
+        {
+            // TODO Check typedef
+            emit infoMessage(QString("VTABLE"));
+        }
+        else
+        {
+            emit infoMessage(QString("Unknown ELEM_TYPE"));
+        }
 
-    // TODO if struct has basic class -> interface
+        if(nLevel==0)
+        {
+            result.sText+=";";
+        }
+
+        // TODO if struct has basic class -> interface
+    }
+    else if(pHandleOptions->exportType==ET_CPLUSPLUS)
+    {
+        if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION)||(pElem->elemType==ELEM_TYPE_FAKESTRUCT))
+        {
+
+        }
+        // TODO
+    }
 
     return result;
 }
@@ -2351,8 +2362,10 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
         int nCurrentProcent=0;
         int nProcent=nCount/1000;
 
-        QJsonObject recordObject;
-        recordObject.insert("name",QJsonValue::fromVariant(pHandleOptions->sResultFileName));
+        QJsonObject jsonMain;
+        jsonMain.insert("name",QJsonValue::fromVariant(QFileInfo(pHandleOptions->sResultFileName).baseName()));
+
+        QJsonArray jsonArrayStructs;
 
         if(nCount)
         {
@@ -2360,6 +2373,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
             {
                 // TODO
                 //sResult+=listElemInfos.at(i).sText;
+                QJsonObject jsonRecord;
 
                 if(nCurrentIndex>nCurrentProcent*nProcent)
                 {
@@ -2367,11 +2381,15 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
                     emit setProgressValue(nCurrentIndex);
                 }
 
+                jsonArrayStructs.append(jsonRecord);
+
                 nCurrentIndex++;
             }
         }
 
-        QJsonDocument doc(recordObject);
+        jsonMain.insert("structs",jsonArrayStructs);
+
+        QJsonDocument doc(jsonMain);
         sResult=doc.toJson(QJsonDocument::Indented);
     }
 

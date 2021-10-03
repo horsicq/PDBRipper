@@ -111,12 +111,12 @@ void DialogExport::on_pushButtonOK_clicked()
 
     if(pData->handleOptions.exportType==QWinPDB::ET_CPLUSPLUS)
     {
-        sFileName=QString("%1.h").arg(sFileName);
+        sFileName=QFileInfo(pData->sPDBFileName).filePath()+QDir::separator()+QString("%1.h").arg(sFileName);
         sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("H %1 (*.h);;%2 (*)").arg(tr("Files"),tr("All files")));
     }
     else if(pData->handleOptions.exportType==QWinPDB::ET_XNTSV)
     {
-        sFileName=QString("%1.json").arg(sFileName);
+        sFileName=QFileInfo(pData->sPDBFileName).filePath()+QDir::separator()+QString("%1.json").arg(sFileName);
         sFileName=QFileDialog::getSaveFileName(this, tr("Save file"),sFileName, QString("JSON %1 (*.json);;%2 (*)").arg(tr("Files"),tr("All files")));
     }
 
