@@ -273,7 +273,13 @@ void GuiMainWindow::on_actionCPP_triggered()
 {
     if(pdbData.pWinPDB)
     {
+        pdbData.handleOptions.bAddAlignment=false;
+        pdbData.handleOptions.bFixTypes=false;
+        pdbData.handleOptions.bShowComments=false;
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
+        pdbData.handleOptions.sortType=QWinPDB::ST_ID;
         pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
+
         DialogExport dialogExport(this,&pdbData);
 
         dialogExport.exec();
@@ -284,7 +290,13 @@ void GuiMainWindow::on_actionXNTSV_triggered()
 {
     if(pdbData.pWinPDB)
     {
+        pdbData.handleOptions.bAddAlignment=false;
+        pdbData.handleOptions.bFixTypes=true;
+        pdbData.handleOptions.bShowComments=false;
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
+        pdbData.handleOptions.sortType=QWinPDB::ST_NAME;
         pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
+
         DialogExport dialogExport(this,&pdbData);
 
         dialogExport.exec();

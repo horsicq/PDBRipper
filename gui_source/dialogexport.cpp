@@ -29,6 +29,19 @@ DialogExport::DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData) :
 
     this->pData=pData;
 
+    ui->comboBoxExportType->setEnabled(false);
+
+    if(pData->handleOptions.exportType==QWinPDB::ET_CPLUSPLUS)
+    {
+        ui->groupBoxSortType->setEnabled(true);
+        ui->groupBoxOptions->setEnabled(true);
+    }
+    else if(pData->handleOptions.exportType==QWinPDB::ET_XNTSV)
+    {
+        ui->groupBoxSortType->setEnabled(false);
+        ui->groupBoxOptions->setEnabled(false);
+    }
+
     ui->comboBoxSortType->addItem(QString("ID"),QWinPDB::ST_ID);
     ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_NAME);
     ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_DEP);
@@ -100,6 +113,7 @@ QWinPDB::HANDLE_OPTIONS DialogExport::getHandleOptions()
     result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
     result.sortType=(QWinPDB::ST)ui->comboBoxSortType->currentData().toUInt();
     result.exportType=(QWinPDB::ET)ui->comboBoxExportType->currentData().toUInt();
+
     return result;
 }
 

@@ -45,7 +45,7 @@ public:
         QString sPDBFileName;
     };
 
-    explicit PDBProcess(QObject *parent, PDBDATA *pData, TYPE type);
+    explicit PDBProcess(QObject *parent,PDBDATA *pData,TYPE type);
     void stop();
 
 signals:

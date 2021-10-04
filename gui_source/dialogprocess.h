@@ -36,7 +36,7 @@ class DialogProcess : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBProcess::TYPE type);
+    explicit DialogProcess(QWidget *parent,PDBProcess::PDBDATA *pData,PDBProcess::TYPE type);
     ~DialogProcess();
 
 private slots:

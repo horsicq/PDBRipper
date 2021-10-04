@@ -1238,9 +1238,9 @@ bool QWinPDB::getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol)
     return bResult;
 }
 
-QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsClass)
+QWinPDB::RTYPESTRUCT QWinPDB::rtypeToStruct(RTYPE rtype, bool bIsClass)
 {
-    QString sResult;
+    RTYPESTRUCT result={};
 
     if(bIsClass)
     {
@@ -1248,97 +1248,105 @@ QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsClass)
 
         if(sAccess!="")
         {
-            sResult+=QString("%1 ").arg(sAccess);
+            result.sType+=QString("%1 ").arg(sAccess);
         }
     }
 
     if(rtype.bIsConst)
     {
-        sResult+="const ";
+        result.sType+="const ";
     }
 
     if(rtype.type==RD_UDT)
     {
-        sResult+=rtype.sTypeName;
+        result.sType+=rtype.sTypeName;
     }
     else if(rtype.type==RD_ENUM)
     {
-        sResult+=rtype.sTypeName;
+        result.sType+=rtype.sTypeName;
     }
     else if(rtype.type==RD_BASETYPE)
     {
-        sResult+=rtype.sTypeName;
+        result.sType+=rtype.sTypeName;
     }
 
     bool bFuncPointer=(rtype.type==RD_FUNCTION)&&(rtype.nSize);
 
     if((rtype.type==RD_FUNCTION)&&(!bFuncPointer))
     {
-        sResult+=rtype.sFunctionRet;
+        result.sType+=rtype.sFunctionRet;
     }
 
     if(bFuncPointer)
     {
-        sResult+=QString("%1 (").arg(rtype.sFunctionRet);
+        result.sType+=QString("%1 (").arg(rtype.sFunctionRet);
     }
 
-    sResult+=" "; // TODO !!!
+    result.sType+=" "; // TODO !!!
 
     if(rtype.bIsReference)
     {
-        sResult+="&";
+        result.sType+="&";
     }
 
     if(rtype.bIsPointer)
     {
         for(int i=0;i<rtype.nPointerDeep;i++)
         {
-            sResult+="*";
+            result.sType+="*";
         }
     }
 
+    result.sName+=rtype.sName;
+
     if(bFuncPointer)
     {
-        sResult+=QString("%1)").arg(rtype.sName);
-    }
-    else
-    {
-        sResult+=rtype.sName;
+        result.sName+=QString(")");
     }
 
     if(rtype.bIsArray)
     {
         for(int i=rtype.listArrayCount.count()-1;i>=0;i--)
         {
-            sResult+=QString("[%1]").arg(rtype.listArrayCount.at(i));
+            result.sName+=QString("[%1]").arg(rtype.listArrayCount.at(i));
         }
     }
 
     else if(rtype.type==RD_FUNCTION)
     {
-        sResult+="(";
+        result.sName+="(";
 
         int nCount=rtype.listFunctionArgs.count();
 
         for(int i=0;i<nCount;i++)
         {
-            sResult+=rtype.listFunctionArgs.at(i);
+            result.sName+=rtype.listFunctionArgs.at(i);
 
             if(i!=(nCount-1))
             {
-                sResult+=",";
+                result.sName+=",";
             }
         }
 
-        sResult+=")";
+        result.sName+=")";
     }
 
     if(rtype.nBitSize)
     {
-        sResult+=QString(":%1").arg(rtype.nBitSize);
+        result.sName+=QString(":%1").arg(rtype.nBitSize);
     }
 
-    return sResult;
+    result.sType=result.sType.trimmed();
+    result.sName=result.sName.trimmed();
+
+    return result;
+}
+
+QString QWinPDB::rtypeToString(QWinPDB::RTYPE rtype, bool bIsClass)
+{
+    RTYPESTRUCT rtypeStruct=rtypeToStruct(rtype,bIsClass);
+
+    return QString("%1 %2").arg(rtypeStruct.sType,rtypeStruct.sName);
 }
 
 QString QWinPDB::getAccessString(int nAccess)
@@ -1387,7 +1395,7 @@ QWinPDB::PDB_INFO QWinPDB::getAllTags(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
             if(nCount)
             {
                 IDiaSymbol *pSymbol;
-                ULONG celt = 0;
+                ULONG celt=0;
 
                 QMap<QString,int> mapTypes;
 
@@ -1764,7 +1772,7 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOpti
                 if(nCount)
                 {
                     IDiaSymbol *pSymbol;
-                    ULONG celt = 0;
+                    ULONG celt=0;
 
                     qint64 nCurrentOffset=0;
                     int nAlignCount=0;
@@ -2075,6 +2083,8 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
 
     if(pHandleOptions->exportType==ET_CPLUSPLUS)
     {
+        result.bIsValid=true;
+
         if(pElem->elemType==ELEM_TYPE_ENUM)
         {
             result.sText+=_getTab(nLevel)+QString("enum %1\r\n").arg(pElem->_enum._name);
@@ -2220,13 +2230,69 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
 
         // TODO if struct has basic class -> interface
     }
-    else if(pHandleOptions->exportType==ET_CPLUSPLUS)
+    else if(pHandleOptions->exportType==ET_XNTSV)
     {
         if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION)||(pElem->elemType==ELEM_TYPE_FAKESTRUCT))
         {
+            result.bIsValid=true;
 
+            HANDLE_OPTIONS _handleOptions={};
+            _handleOptions.bAddAlignment=true;
+            _handleOptions.bFixTypes=true;
+            _handleOptions.bShowComments=true;
+            _handleOptions.fixOffsets=FO_ALL;
+            _handleOptions.sortType=ST_NAME;
+            _handleOptions.exportType=ET_CPLUSPLUS;
+
+            result.sText=QWinPDB::getElemInfo(pElem,&_handleOptions,nLevel,bIsClass).sText;
+
+            QString sName=QString("%1 %2").arg(pElem->_udt.sType,pElem->baseInfo.sName);
+            QString sInfoFile=QFileInfo(pHandleOptions->sResultFileName).baseName()+"/";
+
+            result.jsonObject.insert("infofile",QJsonValue::fromVariant(sInfoFile+sName+".txt"));
+
+            result.jsonObject.insert("name",QJsonValue::fromVariant(sName));
+            result.jsonObject.insert("size",QJsonValue::fromVariant((qint64)(pElem->dwSize)));
+
+            QJsonArray jsonArrayPositions;
+
+            int nChildrenCount=pElem->listChildren.count();
+
+            for(int i=0;i<nChildrenCount;i++)
+            {
+                if(pElem->listChildren.at(i).elemType!=ELEM_TYPE_BASECLASS)
+                {
+                    QJsonObject jsonObject;
+
+                    jsonObject.insert("offset",QJsonValue::fromVariant((qint64)(pElem->listChildren.at(i).dwOffset)));
+                    jsonObject.insert("size",QJsonValue::fromVariant((qint64)(pElem->listChildren.at(i).dwSize)));
+
+                    if(pElem->listChildren.at(i).dwBitSize)
+                    {
+                        jsonObject.insert("bitoffset",QJsonValue::fromVariant((qint64)(pElem->listChildren.at(i).dwBitOffset)));
+                        jsonObject.insert("bitsize",QJsonValue::fromVariant((qint64)(pElem->listChildren.at(i).dwBitSize)));
+                    }
+
+                    RTYPESTRUCT rtypeStruct={};
+
+                    if((pElem->listChildren.at(i).elemType==ELEM_TYPE_DATA)||(pElem->listChildren.at(i).elemType==ELEM_TYPE_FAKEDATA))
+                    {
+                        rtypeStruct=rtypeToStruct(pElem->listChildren.at(i)._data.rtype,bIsClass);
+                    }
+                    else if(pElem->listChildren.at(i).elemType==ELEM_TYPE_FUNCTION)
+                    {
+                        rtypeStruct=rtypeToStruct(pElem->listChildren.at(i)._function.rtype,bIsClass);
+                    }
+
+                    jsonObject.insert("type",QJsonValue::fromVariant(rtypeStruct.sType));
+                    jsonObject.insert("name",QJsonValue::fromVariant(rtypeStruct.sName));
+
+                    jsonArrayPositions.append(jsonObject);
+                }
+            }
+
+            result.jsonObject.insert("positions",jsonArrayPositions);
         }
-        // TODO
     }
 
     return result;
@@ -2268,7 +2334,11 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
         for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
         {
             ELEM_INFO elemInfo=handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions);
-            listElemInfos.append(elemInfo);
+
+            if(elemInfo.bIsValid)
+            {
+                listElemInfos.append(elemInfo);
+            }
 
             if(nCurrentIndex>nCurrentProcent*nProcent)
             {
@@ -2362,6 +2432,11 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
         int nCurrentProcent=0;
         int nProcent=nCount/1000;
 
+        QFileInfo fileInfo(pHandleOptions->sResultFileName);
+
+        QString sFilePrefix=fileInfo.absolutePath()+QDir::separator()+fileInfo.baseName();
+        QDir().mkdir(sFilePrefix);
+
         QJsonObject jsonMain;
         jsonMain.insert("name",QJsonValue::fromVariant(QFileInfo(pHandleOptions->sResultFileName).baseName()));
 
@@ -2371,9 +2446,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
         {
             for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
             {
-                // TODO
-                //sResult+=listElemInfos.at(i).sText;
-                QJsonObject jsonRecord;
+                QJsonObject jsonObject=listElemInfos.at(i).jsonObject;
 
                 if(nCurrentIndex>nCurrentProcent*nProcent)
                 {
@@ -2381,7 +2454,21 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
                     emit setProgressValue(nCurrentIndex);
                 }
 
-                jsonArrayStructs.append(jsonRecord);
+                jsonArrayStructs.append(jsonObject);
+
+                QString sFileName=sFilePrefix+QDir::separator()+listElemInfos.at(i).baseInfo.sName+".txt"; TODO
+
+                QFile(sFileName).remove();
+
+                QFile file;
+                file.setFileName(sFileName);
+
+                if(file.open(QIODevice::ReadWrite))
+                {
+                    file.write(listElemInfos.at(i).sText.toLatin1().data());
+
+                    file.close();
+                }
 
                 nCurrentIndex++;
             }

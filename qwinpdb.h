@@ -37,6 +37,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QFileInfo>
+#include <QDir>
 
 #include "global.h"
 #include "qwinpdb_def.h"
@@ -596,17 +597,19 @@ public:
 
     struct ELEM_INFO
     {
+        bool bIsValid;
         ELEM_BASEINFO baseInfo;
         QString sText;
+        QJsonObject jsonObject;
         QList<ELEM_BASEINFO> listChildrenBaseInfos;
     };
 
-    ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
-    ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions);
+    ELEM getElem(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
+    ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions);
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
     QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);
-    ELEM_INFO getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
+    ELEM_INFO getElemInfo(const ELEM *pElem,HANDLE_OPTIONS *pHandleOptions,int nLevel,bool bIsClass);
     ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
     QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
     ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
@@ -618,8 +621,8 @@ private:
     qint64 variantToQint64(VARIANT value);
     QString indent(int nLevel);
     RECORD_UDT _getRecordUDT(IDiaSymbol *pSymbol);
-    RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
-    RECORD_DATA _getRecordData(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
+    RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_DATA _getRecordData(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
     RECORD_BASETYPE _getRecordBaseType(IDiaSymbol *pSymbol);
     RECORD_FUNCTIONARGTYPE _getRecordFunctionArgType(IDiaSymbol *pSymbol);
     RECORD_VTABLE _getRecordVTable(IDiaSymbol *pSymbol);
@@ -633,17 +636,26 @@ private:
     RECORD_ARRAYTYPE _getRecordArrayType(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGSTART _getRecordFuncDebugStart(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGEND _getRecordFuncDebugEnd(IDiaSymbol *pSymbol);
-    RECORD_CALLSITE _getRecordCallSite(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
+    RECORD_CALLSITE _getRecordCallSite(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
     RECORD_LABEL _getRecordLabel(IDiaSymbol *pSymbol);
     RECORD_BLOCK _getRecordBlock(IDiaSymbol *pSymbol);
     void _checkSymbol(IDiaSymbol *pSymbol);
-    RTYPE getSymbolType(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
-    RTYPE _getType(IDiaSymbol *pType, HANDLE_OPTIONS *pHandleOptions);
+    RTYPE getSymbolType(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RTYPE _getType(IDiaSymbol *pType,HANDLE_OPTIONS *pHandleOptions);
     QString getSymbolTypeString(IDiaSymbol *pSymbol);
     QString _getTypeString(IDiaSymbol *pType);
     DWORD _getSymTag(IDiaSymbol *pSymbol);
     bool getSymbolByID(DWORD dwID,IDiaSymbol **ppSymbol);
-    static QString rtypeToString(RTYPE rtype, bool bIsClass);
+
+    struct RTYPESTRUCT
+    {
+        QString sType;
+        QString sName;
+    };
+
+    static RTYPESTRUCT rtypeToStruct(RTYPE rtype,bool bIsClass);
+
+    static QString rtypeToString(RTYPE rtype,bool bIsClass);
     static QString getAccessString(int nAccess);
     static QString _getTab(int nLevel);
 
