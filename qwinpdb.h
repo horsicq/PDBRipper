@@ -600,6 +600,7 @@ public:
         bool bIsValid;
         ELEM_BASEINFO baseInfo;
         QString sText;
+        QString sInfoFile;
         QJsonObject jsonObject;
         QList<ELEM_BASEINFO> listChildrenBaseInfos;
     };

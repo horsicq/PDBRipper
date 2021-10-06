@@ -2247,9 +2247,9 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
             result.sText=QWinPDB::getElemInfo(pElem,&_handleOptions,nLevel,bIsClass).sText;
 
             QString sName=QString("%1 %2").arg(pElem->_udt.sType,pElem->baseInfo.sName);
-            QString sInfoFile=QFileInfo(pHandleOptions->sResultFileName).baseName()+"/";
+            result.sInfoFile=sName+".txt";
 
-            result.jsonObject.insert("infofile",QJsonValue::fromVariant(sInfoFile+sName+".txt"));
+            result.jsonObject.insert("infofile",QJsonValue::fromVariant(result.sInfoFile));
 
             result.jsonObject.insert("name",QJsonValue::fromVariant(sName));
             result.jsonObject.insert("size",QJsonValue::fromVariant((qint64)(pElem->dwSize)));
@@ -2456,7 +2456,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
                 jsonArrayStructs.append(jsonObject);
 
-                QString sFileName=sFilePrefix+QDir::separator()+listElemInfos.at(i).baseInfo.sName+".txt"; TODO
+                QString sFileName=sFilePrefix+QDir::separator()+listElemInfos.at(i).sInfoFile;
 
                 QFile(sFileName).remove();
 
