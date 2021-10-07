@@ -66,7 +66,7 @@ bool sortElemInfoDeps(const QWinPDB::ELEM_INFO &v1, const QWinPDB::ELEM_INFO &v2
 
 QWinPDB::QWinPDB(QObject *parent) : QObject(parent)
 {
-    pDiaDataSource=nullptr;
+    g_pDiaDataSource=nullptr;
     pGlobal=nullptr;
     pDiaSession=nullptr;
     setProcessEnable(true);
@@ -95,7 +95,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     HRESULT hr=NoRegCoCreate(L"msdia140.dll", _uuidof(DiaSourceAlt),
                               _uuidof(IDiaDataSource),
-                              (void **)(&pDiaDataSource));
+                              (void **)(&g_pDiaDataSource));
 
 //    HRESULT hr=NoRegCoCreate(L"msdia120.dll", _uuidof(DiaSourceAlt),
 //                              _uuidof(IDiaDataSource),
@@ -113,7 +113,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
     baBuffer.fill(0);
     wchar_t *pwszFileName=(wchar_t *)baBuffer.data();
     sFileName.toWCharArray(pwszFileName);
-    hr=pDiaDataSource->loadDataFromPdb(pwszFileName);
+    hr=g_pDiaDataSource->loadDataFromPdb(pwszFileName);
 
     if(FAILED(hr))
     {
@@ -122,7 +122,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
         return false;
     }
 
-    hr=pDiaDataSource->openSession(&pDiaSession);
+    hr=g_pDiaDataSource->openSession(&pDiaSession);
 
     if(FAILED(hr))
     {
@@ -2522,9 +2522,9 @@ void QWinPDB::cleanup()
         pDiaSession=nullptr;
     }
 
-    if(pDiaDataSource)
+    if(g_pDiaDataSource)
     {
-        pDiaDataSource->Release();
-        pDiaDataSource=nullptr;
+        g_pDiaDataSource->Release();
+        g_pDiaDataSource=nullptr;
     }
 }

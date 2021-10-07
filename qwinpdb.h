@@ -669,7 +669,7 @@ signals:
     void infoMessage(QString sText);
 
 private:
-    IDiaDataSource *pDiaDataSource;
+    IDiaDataSource *g_pDiaDataSource;
     IDiaSession *pDiaSession;
     IDiaSymbol *pGlobal;
     DWORD dwMachineType;
