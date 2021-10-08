@@ -121,7 +121,7 @@ void DialogExport::on_pushButtonOK_clicked()
 {
     pData->handleOptions=getHandleOptions();
 
-    QString sFileName=QFileInfo(pData->sPDBFileName).baseName();
+    QString sFileName=QFileInfo(pData->sPDBFileName).completeBaseName();
 
     if(pData->handleOptions.exportType==QWinPDB::ET_CPLUSPLUS)
     {

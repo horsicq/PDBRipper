@@ -2372,7 +2372,7 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
     if(pHandleOptions->exportType==ET_CPLUSPLUS)
     {
-        QString sExportName=QFileInfo(pHandleOptions->sResultFileName).baseName().toUpper();
+        QString sExportName=QFileInfo(pHandleOptions->sResultFileName).completeBaseName().toUpper();
 
         sExportName=sExportName.replace(".","_");
 
@@ -2434,11 +2434,11 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
         QFileInfo fileInfo(pHandleOptions->sResultFileName);
 
-        QString sFilePrefix=fileInfo.absolutePath()+QDir::separator()+fileInfo.baseName();
+        QString sFilePrefix=fileInfo.absolutePath()+QDir::separator()+fileInfo.completeBaseName();
         QDir().mkdir(sFilePrefix);
 
         QJsonObject jsonMain;
-        jsonMain.insert("name",QJsonValue::fromVariant(QFileInfo(pHandleOptions->sResultFileName).baseName()));
+        jsonMain.insert("name",QJsonValue::fromVariant(QFileInfo(pHandleOptions->sResultFileName).completeBaseName()));
 
         QJsonArray jsonArrayStructs;
 
