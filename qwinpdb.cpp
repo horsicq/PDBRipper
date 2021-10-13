@@ -257,6 +257,8 @@ QWinPDB::RECORD_UDT QWinPDB::_getRecordUDT(IDiaSymbol *pSymbol)
     pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
     pSymbol->get_volatileType(&result._volatileType);
 
+    result._name=fixName(result._name,result._symIndexId);
+
     if(result._udtKind==0)      result.sType="struct";
     else if(result._udtKind==1) result.sType="class";
     else if(result._udtKind==2) result.sType="union";
@@ -1376,6 +1378,18 @@ QString QWinPDB::_getTab(int nLevel)
     return sResult;
 }
 
+QString QWinPDB::fixName(QString sName, quint32 nID)
+{
+    QString sResult=sName;
+
+    if(sResult.contains("<unnamed-tag>"))
+    {
+        sResult=sResult.replace("<unnamed-tag>",QString("_unnamed_%1").arg(nID));
+    }
+
+    return sResult;
+}
+
 QWinPDB::~QWinPDB()
 {
 //    qDebug("QWinPDB::~QWinPDB()");
@@ -1574,11 +1588,14 @@ QWinPDB::STATS QWinPDB::getStats()
                                 SysFreeString(bstring);
                             }
 
+                            pSymbol->get_symIndexId(&record.dwID);
+
+                            record.sName=fixName(record.sName,record.dwID);
+
                             if(mapUDT.value(record.sName,-1)!=nLen)
                             {
                                 DWORD _dwKind=0;
                                 pSymbol->get_udtKind(&_dwKind);
-                                pSymbol->get_symIndexId(&record.dwID);
 
                                 if(_dwKind==0)
                                 {
@@ -1616,6 +1633,8 @@ QWinPDB::STATS QWinPDB::getStats()
                             }
                             pSymbol->get_symIndexId(&record.dwID);
                             record.type=SYMBOL_TYPE_ENUM;
+
+                            record.sName=fixName(record.sName,record.dwID);
 
                             result.listSymbols.append(record);
                         }
@@ -2444,30 +2463,39 @@ QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *p
 
         if(nCount)
         {
+            QSet<QString> stElems;
+
             for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
             {
-                QJsonObject jsonObject=listElemInfos.at(i).jsonObject;
-
                 if(nCurrentIndex>nCurrentProcent*nProcent)
                 {
                     nCurrentProcent++;
                     emit setProgressValue(nCurrentIndex);
                 }
 
-                jsonArrayStructs.append(jsonObject);
+                QJsonObject jsonObject=listElemInfos.at(i).jsonObject;
 
-                QString sFileName=sFilePrefix+QDir::separator()+listElemInfos.at(i).sInfoFile;
+                QString sObjectName=jsonObject.value("name").toString();
 
-                QFile(sFileName).remove();
-
-                QFile file;
-                file.setFileName(sFileName);
-
-                if(file.open(QIODevice::ReadWrite))
+                if(!stElems.contains(sObjectName))
                 {
-                    file.write(listElemInfos.at(i).sText.toLatin1().data());
+                    stElems.insert(sObjectName);
 
-                    file.close();
+                    jsonArrayStructs.append(jsonObject);
+
+                    QString sFileName=sFilePrefix+QDir::separator()+listElemInfos.at(i).sInfoFile;
+
+                    QFile(sFileName).remove();
+
+                    QFile file;
+                    file.setFileName(sFileName);
+
+                    if(file.open(QIODevice::ReadWrite))
+                    {
+                        file.write(listElemInfos.at(i).sText.toLatin1().data());
+
+                        file.close();
+                    }
                 }
 
                 nCurrentIndex++;

@@ -660,6 +660,8 @@ private:
     static QString getAccessString(int nAccess);
     static QString _getTab(int nLevel);
 
+    static QString fixName(QString sName,quint32 nID);
+
 signals:
     void completed();
     void setProgressMinimum(int);

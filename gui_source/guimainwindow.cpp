@@ -144,7 +144,7 @@ void GuiMainWindow::_openFile(QString sFileName)
             pModel->setHeaderData(0,Qt::Horizontal,tr("ID"));
             pModel->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
 
-            for(int i = 0; i<nCount; i++)
+            for(int i = 0;i<nCount;i++)
             {
                 QStandardItem *itemID = new QStandardItem;
                 itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).dwID),Qt::DisplayRole);
