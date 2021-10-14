@@ -236,8 +236,6 @@ QWinPDB::RECORD_UDT QWinPDB::_getRecordUDT(IDiaSymbol *pSymbol)
 {
     RECORD_UDT result={};
 
-    BSTR bstring=nullptr;
-
     pSymbol->get_classParentId(&result._classParentId);
     pSymbol->get_constructor(&result._constructor);
     pSymbol->get_constType(&result._constType);
@@ -246,7 +244,6 @@ QWinPDB::RECORD_UDT QWinPDB::_getRecordUDT(IDiaSymbol *pSymbol)
     pSymbol->get_hasNestedTypes(&result._hasNestedTypes);
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
     pSymbol->get_nested(&result._nested);
     pSymbol->get_overloadedOperator(&result._overloadedOperator);
     pSymbol->get_packed(&result._packed);
@@ -257,7 +254,7 @@ QWinPDB::RECORD_UDT QWinPDB::_getRecordUDT(IDiaSymbol *pSymbol)
     pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
     pSymbol->get_volatileType(&result._volatileType);
 
-    result._name=fixName(result._name,result._symIndexId);
+    result._name=getName(pSymbol);
 
     if(result._udtKind==0)      result.sType="struct";
     else if(result._udtKind==1) result.sType="class";
@@ -296,7 +293,6 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol,QWinPDB
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
     pSymbol->get_locationType(&result._locationType);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);                   SysFreeString(bstring);}
     pSymbol->get_noInline(&result._noInline);
     pSymbol->get_notReached(&result._notReached);
     pSymbol->get_noReturn(&result._noReturn);
@@ -315,6 +311,7 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol,QWinPDB
     pSymbol->get_virtualBaseOffset(&result._virtualBaseOffset);
     pSymbol->get_volatileType(&result._volatileType);
 
+    result._name=getName(pSymbol);
     result.rtype=getSymbolType(pSymbol,pHandleOptions);
     result.rtype.sName=result._name;
     result.rtype.nAccess=result._access;
@@ -327,8 +324,6 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol,QWinPDB
 QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     RECORD_DATA result={};
-
-    BSTR bstring=nullptr;
 
     pSymbol->get_access(&result._access);
     pSymbol->get_addressOffset(&result._addressOffset);
@@ -344,7 +339,6 @@ QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol,QWinPDB::HANDLE
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
     pSymbol->get_locationType(&result._locationType);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
     pSymbol->get_offset(&result._offset);
     pSymbol->get_registerId(&result._registerId);
     pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
@@ -356,6 +350,7 @@ QWinPDB::RECORD_DATA QWinPDB::_getRecordData(IDiaSymbol *pSymbol,QWinPDB::HANDLE
     pSymbol->get_virtualAddress(&result._virtualAddress);
     pSymbol->get_volatileType(&result._volatileType);
 
+    result._name=getName(pSymbol);
     result.value=getValue(pSymbol);
 
     // TODO extra options
@@ -434,8 +429,6 @@ QWinPDB::RECORD_BASECLASS QWinPDB::_getRecordBaseClass(IDiaSymbol *pSymbol)
 {
     RECORD_BASECLASS result={};
 
-    BSTR bstring=nullptr;
-
     pSymbol->get_access(&result._access);
     pSymbol->get_classParentId(&result._classParentId);
     pSymbol->get_constructor(&result._constructor);
@@ -446,7 +439,6 @@ QWinPDB::RECORD_BASECLASS QWinPDB::_getRecordBaseClass(IDiaSymbol *pSymbol)
     pSymbol->get_indirectVirtualBaseClass(&result._indirectVirtualBaseClass);
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
     pSymbol->get_nested(&result._nested);
     pSymbol->get_offset(&result._offset);
     pSymbol->get_overloadedOperator(&result._overloadedOperator);
@@ -461,6 +453,8 @@ QWinPDB::RECORD_BASECLASS QWinPDB::_getRecordBaseClass(IDiaSymbol *pSymbol)
     pSymbol->get_virtualBasePointerOffset(&result._virtualBasePointerOffset);
     pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
     pSymbol->get_volatileType(&result._volatileType);
+
+    result._name=getName(pSymbol);
 
     return result;
 }
@@ -496,7 +490,6 @@ QWinPDB::RECORD_ENUM QWinPDB::_getRecordEnum(IDiaSymbol *pSymbol)
     pSymbol->get_hasNestedTypes(&result._hasNestedTypes);
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
     pSymbol->get_nested(&result._nested);
     pSymbol->get_overloadedOperator(&result._overloadedOperator);
     pSymbol->get_packed(&result._packed);
@@ -506,6 +499,8 @@ QWinPDB::RECORD_ENUM QWinPDB::_getRecordEnum(IDiaSymbol *pSymbol)
     pSymbol->get_udtKind(&result._udtKind);
     pSymbol->get_unalignedType(&result._unalignedType);
     pSymbol->get_volatileType(&result._volatileType);
+
+    result._name=getName(pSymbol);
 
     return result;
 }
@@ -525,10 +520,11 @@ QWinPDB::RECORD_PUBLICSYMBOL QWinPDB::_getRecordPublicSymbol(IDiaSymbol *pSymbol
     pSymbol->get_locationType(&result._locationType);
     pSymbol->get_managed(&result._managed);
     pSymbol->get_msil(&result._msil);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
     pSymbol->get_symIndexId(&result._symIndexId);
     pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
     if(pSymbol->get_undecoratedName(&bstring)==S_OK) {result._undecoratedName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
+
+    result._name=getName(pSymbol);
 
     return result;
 }
@@ -536,8 +532,6 @@ QWinPDB::RECORD_PUBLICSYMBOL QWinPDB::_getRecordPublicSymbol(IDiaSymbol *pSymbol
 QWinPDB::RECORD_TYPEDEF QWinPDB::_getRecordTypeDef(IDiaSymbol *pSymbol)
 {
     RECORD_TYPEDEF result={};
-
-    BSTR bstring=nullptr;
 
     pSymbol->get_baseType(&result._baseType);
     pSymbol->get_classParentId(&result._classParentId);
@@ -548,7 +542,6 @@ QWinPDB::RECORD_TYPEDEF QWinPDB::_getRecordTypeDef(IDiaSymbol *pSymbol)
     pSymbol->get_hasNestedTypes(&result._hasNestedTypes);
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
-    if(pSymbol->get_name(&bstring)==S_OK) {result._name=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
     pSymbol->get_nested(&result._nested);
     pSymbol->get_overloadedOperator(&result._overloadedOperator);
     pSymbol->get_packed(&result._packed);
@@ -560,6 +553,8 @@ QWinPDB::RECORD_TYPEDEF QWinPDB::_getRecordTypeDef(IDiaSymbol *pSymbol)
     pSymbol->get_unalignedType(&result._unalignedType);
     pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
     pSymbol->get_volatileType(&result._volatileType);
+
+    result._name=getName(pSymbol);
 
     return result;
 }
@@ -574,8 +569,9 @@ QWinPDB::RECORD_COMPILAND QWinPDB::_getRecordCompiland(IDiaSymbol *pSymbol)
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
     pSymbol->get_symIndexId(&result._symIndexId);
     if(pSymbol->get_sourceFileName(&bstring)==S_OK) {result._sourceFileName=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
-    if(pSymbol->get_name(&bstring)==S_OK)           {result._name=QString::fromWCharArray(bstring);             SysFreeString(bstring);}
     if(pSymbol->get_libraryName(&bstring)==S_OK)    {result._libraryName=QString::fromWCharArray(bstring);      SysFreeString(bstring);}
+
+    result._name=getName(pSymbol);
 
     return result;
 }
@@ -668,8 +664,6 @@ QWinPDB::RECORD_LABEL QWinPDB::_getRecordLabel(IDiaSymbol *pSymbol)
 {
     RECORD_LABEL result={};
 
-    BSTR bstring=nullptr;
-
     pSymbol->get_addressOffset(&result._addressOffset);
     pSymbol->get_addressSection(&result._addressSection);
     pSymbol->get_customCallingConvention(&result._customCallingConvention);
@@ -677,7 +671,6 @@ QWinPDB::RECORD_LABEL QWinPDB::_getRecordLabel(IDiaSymbol *pSymbol)
     pSymbol->get_interruptReturn(&result._interruptReturn);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
     pSymbol->get_locationType(&result._locationType);
-    if(pSymbol->get_name(&bstring)==S_OK)           {result._name=QString::fromWCharArray(bstring);             SysFreeString(bstring);}
     pSymbol->get_noInline(&result._noInline);
     pSymbol->get_noReturn(&result._noReturn);
     pSymbol->get_notReached(&result._notReached);
@@ -688,6 +681,8 @@ QWinPDB::RECORD_LABEL QWinPDB::_getRecordLabel(IDiaSymbol *pSymbol)
     pSymbol->get_symTag(&result._symTag);
     pSymbol->get_virtualAddress(&result._virtualAddress);
 
+    result._name=getName(pSymbol);
+
     return result;
 }
 
@@ -695,18 +690,17 @@ QWinPDB::RECORD_BLOCK QWinPDB::_getRecordBlock(IDiaSymbol *pSymbol)
 {
     RECORD_BLOCK result={};
 
-    BSTR bstring=nullptr;
-
     pSymbol->get_addressOffset(&result._addressOffset);
     pSymbol->get_addressSection(&result._addressSection);
     pSymbol->get_length(&result._length);
     pSymbol->get_lexicalParentId(&result._lexicalParentId);
     pSymbol->get_locationType(&result._locationType);
-    if(pSymbol->get_name(&bstring)==S_OK)           {result._name=QString::fromWCharArray(bstring);             SysFreeString(bstring);}
     pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
     pSymbol->get_symIndexId(&result._symIndexId);
     pSymbol->get_symTag(&result._symTag);
     pSymbol->get_virtualAddress(&result._virtualAddress);
+
+    result._name=getName(pSymbol);
 
     return result;
 }
@@ -1378,13 +1372,35 @@ QString QWinPDB::_getTab(int nLevel)
     return sResult;
 }
 
-QString QWinPDB::fixName(QString sName, quint32 nID)
+QString QWinPDB::_fixName(QString sName, quint32 nID)
 {
     QString sResult=sName;
 
     if(sResult.contains("<unnamed-tag>"))
     {
         sResult=sResult.replace("<unnamed-tag>",QString("_unnamed_%1").arg(nID));
+    }
+
+    return sResult;
+}
+
+QString QWinPDB::getName(IDiaSymbol *pSymbol)
+{
+    QString sResult;
+
+    BSTR bstring=nullptr;
+
+    if(pSymbol->get_name(&bstring)==S_OK)
+    {
+        sResult=QString::fromWCharArray(bstring);
+        SysFreeString(bstring);
+    }
+
+    if(sResult.contains("<unnamed-tag>"))
+    {
+        DWORD dwSymIndex=0;
+        pSymbol->get_symIndexId(&dwSymIndex);
+        sResult=sResult.replace("<unnamed-tag>",QString("_unnamed_%1").arg(dwSymIndex));
     }
 
     return sResult;
@@ -1568,7 +1584,7 @@ QWinPDB::STATS QWinPDB::getStats()
                 while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1)&&(!__bIsProcessStop)) // TODO Stop
                 {
                     SYMBOL_RECORD record={};
-                    BSTR bstring;
+                    BSTR bstring=nullptr;
                     DWORD dwSymTag=0;
                     pSymbol->get_symTag(&dwSymTag);
 
@@ -1582,15 +1598,9 @@ QWinPDB::STATS QWinPDB::getStats()
                         {
                             ULONGLONG nLen=0;
                             pSymbol->get_length(&nLen);
-                            if(pSymbol->get_name(&bstring)==S_OK)
-                            {
-                                record.sName=QString::fromWCharArray(bstring);
-                                SysFreeString(bstring);
-                            }
-
                             pSymbol->get_symIndexId(&record.dwID);
 
-                            record.sName=fixName(record.sName,record.dwID);
+                            record.sName=getName(pSymbol);
 
                             if(mapUDT.value(record.sName,-1)!=nLen)
                             {
@@ -1626,15 +1636,10 @@ QWinPDB::STATS QWinPDB::getStats()
 
                         if(dwParentClass==0)
                         {
-                            if(pSymbol->get_name(&bstring)==S_OK)
-                            {
-                                record.sName=QString::fromWCharArray(bstring);
-                                SysFreeString(bstring);
-                            }
+                            record.sName=getName(pSymbol);
+
                             pSymbol->get_symIndexId(&record.dwID);
                             record.type=SYMBOL_TYPE_ENUM;
-
-                            record.sName=fixName(record.sName,record.dwID);
 
                             result.listSymbols.append(record);
                         }
@@ -2519,10 +2524,9 @@ QWinPDB::ELEM_BASEINFO QWinPDB::getBaseInfo(IDiaSymbol *pParent)
 {
     ELEM_BASEINFO result={};
 
-    BSTR bstring=nullptr;
-
     pParent->get_symIndexId(&result.nID);
-    if(pParent->get_name(&bstring)==S_OK) {result.sName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
+
+    result.sName=getName(pParent);
 
     IDiaSymbol *pType=0;
 
@@ -2530,7 +2534,7 @@ QWinPDB::ELEM_BASEINFO QWinPDB::getBaseInfo(IDiaSymbol *pParent)
     if(pType)
     {
         pType->get_symIndexId(&result.nTypeID);
-        if(pType->get_name(&bstring)==S_OK) {result.sTypeName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
+        result.sTypeName=getName(pType);
     }
 
     return result;

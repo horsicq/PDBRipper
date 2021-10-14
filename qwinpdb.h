@@ -660,7 +660,8 @@ private:
     static QString getAccessString(int nAccess);
     static QString _getTab(int nLevel);
 
-    static QString fixName(QString sName,quint32 nID);
+    static QString _fixName(QString sName,quint32 nID);
+    static QString getName(IDiaSymbol *pSymbol);
 
 signals:
     void completed();
