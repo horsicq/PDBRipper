@@ -1016,6 +1016,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType,QWinPDB::HANDLE_OPTIONS *pHan
 
             if(pHandleOptions->bFixTypes)
             {
+                // TODO Check!
                 if(((result.nBaseType==7)||(result.nBaseType==14))&&(result.nSize!=4)) // "unsigned int"
                 {
                     switch(result.nSize)
@@ -2268,7 +2269,7 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
             _handleOptions.sortType=ST_NAME;
             _handleOptions.exportType=ET_CPLUSPLUS;
 
-            result.sText=QWinPDB::getElemInfo(pElem,&_handleOptions,nLevel,bIsClass).sText;
+            result.sText=QWinPDB::getElemInfo(pElem,&_handleOptions,0,false).sText;
 
             QString sName=QString("%1 %2").arg(pElem->_udt.sType,pElem->baseInfo.sName);
             result.sInfoFile=sName+".txt";
