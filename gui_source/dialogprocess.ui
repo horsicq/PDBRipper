@@ -32,7 +32,7 @@
       <set>Qt::AlignCenter</set>
      </property>
      <property name="format">
-      <string>%v/%m</string>
+      <string notr="true">%v/%m</string>
      </property>
     </widget>
    </item>

@@ -320,9 +320,6 @@
    <property name="text">
     <string>Quit</string>
    </property>
-   <property name="shortcut">
-    <string>Alt+Q</string>
-   </property>
   </action>
   <action name="actionXNTSV">
    <property name="text">

@@ -141,7 +141,7 @@ void GuiMainWindow::_openFile(QString sFileName)
 
             QStandardItemModel *pModel=new QStandardItemModel(nCount,2,this);
 
-            pModel->setHeaderData(0,Qt::Horizontal,tr("ID"));
+            pModel->setHeaderData(0,Qt::Horizontal,QString("ID"));
             pModel->setHeaderData(1,Qt::Horizontal,tr("Symbol"));
 
             for(int i = 0;i<nCount;i++)
