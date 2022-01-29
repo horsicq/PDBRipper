@@ -23,8 +23,8 @@
 
 #include <QString>
 #include "dia2.h"
-#include "diacreate.h"
-#include "cvconst.h"
+#include "diaCreate.h"
+#include "cvConst.h"
 
 #define QWINPDB_UNKNOWN "<Unknown>"
 

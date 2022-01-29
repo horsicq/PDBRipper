@@ -19,8 +19,5 @@ HEADERS += \
     ../qwinpdb_def.h \
     consoleoutput.h
 
-VC_PATH = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
-LIBS += $$VC_PATH"\DIA SDK\lib\diaguids.lib"
-
-INCLUDEPATH += $$VC_PATH"\DIA SDK\include"
-DEPENDPATH += $$VC_PATH"\DIA SDK\include"
+INCLUDEPATH += ../msdia
+SOURCES += ../msdia/diaCreate.cpp
