@@ -2077,7 +2077,7 @@ QList<QWinPDB::ELEM> QWinPDB::_fixBitFields(QList<QWinPDB::ELEM> *pListChildren)
 
             if(nSize==3) // TODO !!!
             {
-                if((pListChildren->at(i+1).dwSize==1)&&(pListChildren->at(i+1).dwOffset==(nOffset+nSize)))
+                if((i+1<pListChildren->size())&&(pListChildren->at(i+1).dwSize==1)&&(pListChildren->at(i+1).dwOffset==(nOffset+nSize)))
                 {
                     i++;
                     listBitFields.append(pListChildren->at(i));
