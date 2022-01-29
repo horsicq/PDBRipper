@@ -277,7 +277,7 @@ void GuiMainWindow::on_actionCPP_triggered()
         pdbData.handleOptions.bFixTypes=false;
         pdbData.handleOptions.bShowComments=false;
         pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
-        pdbData.handleOptions.sortType=QWinPDB::ST_ID;
+        pdbData.handleOptions.sortType=QWinPDB::ST_DEP;
         pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
 
         DialogExport dialogExport(this,&pdbData);
