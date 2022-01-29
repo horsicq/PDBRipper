@@ -1403,6 +1403,12 @@ QString QWinPDB::getName(IDiaSymbol *pSymbol)
         pSymbol->get_symIndexId(&dwSymIndex);
         sResult=sResult.replace("<unnamed-tag>",QString("_unnamed_%1").arg(dwSymIndex));
     }
+    else if(sResult.contains("<anonymous-tag>"))
+    {
+        DWORD dwSymIndex=0;
+        pSymbol->get_symIndexId(&dwSymIndex);
+        sResult=sResult.replace("<anonymous-tag>",QString("_anonymous_%1").arg(dwSymIndex));
+    }
 
     return sResult;
 }
