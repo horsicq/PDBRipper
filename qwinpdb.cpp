@@ -93,11 +93,11 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     // TODO msdia option
 
-    HRESULT hr=NoRegCoCreate(L"msdia140.dll", _uuidof(DiaSourceAlt),
+    HRESULT hr=NoRegCoCreate(L"msdia140.dll", _uuidof(DiaSource),
                               _uuidof(IDiaDataSource),
                               (void **)(&g_pDiaDataSource));
 
-//    HRESULT hr=NoRegCoCreate(L"msdia120.dll", _uuidof(DiaSourceAlt),
+//    HRESULT hr=NoRegCoCreate(L"msdia120.dll", _uuidof(DiaSource),
 //                              _uuidof(IDiaDataSource),
 //                              (void **)(&pDiaDataSource));
 
@@ -1403,6 +1403,12 @@ QString QWinPDB::getName(IDiaSymbol *pSymbol)
         pSymbol->get_symIndexId(&dwSymIndex);
         sResult=sResult.replace("<unnamed-tag>",QString("_unnamed_%1").arg(dwSymIndex));
     }
+    else if(sResult.contains("<anonymous-tag>"))
+    {
+        DWORD dwSymIndex=0;
+        pSymbol->get_symIndexId(&dwSymIndex);
+        sResult=sResult.replace("<anonymous-tag>",QString("_anonymous_%1").arg(dwSymIndex));
+    }
 
     return sResult;
 }
@@ -2071,7 +2077,7 @@ QList<QWinPDB::ELEM> QWinPDB::_fixBitFields(QList<QWinPDB::ELEM> *pListChildren)
 
             if(nSize==3) // TODO !!!
             {
-                if((pListChildren->at(i+1).dwSize==1)&&(pListChildren->at(i+1).dwOffset==(nOffset+nSize)))
+                if((i+1<pListChildren->size())&&(pListChildren->at(i+1).dwSize==1)&&(pListChildren->at(i+1).dwOffset==(nOffset+nSize)))
                 {
                     i++;
                     listBitFields.append(pListChildren->at(i));
