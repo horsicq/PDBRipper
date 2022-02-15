@@ -16,6 +16,10 @@ IF NOT [%X_ERROR%] == [] goto exit
 call %X_SOURCE_PATH%\build_tools\windows.cmd make_init
 call %X_SOURCE_PATH%\build_tools\windows.cmd make_build %X_SOURCE_PATH%\pdbripper_source.pro
 
+cd %X_SOURCE_PATH%\gui_source
+call %X_SOURCE_PATH%\build_tools\windows.cmd make_translate gui_source_tr.pro 
+cd %X_SOURCE_PATH%
+
 call %X_SOURCE_PATH%\build_tools\windows.cmd check_file %X_SOURCE_PATH%\build\release\pdbripper.exe
 
 IF NOT [%X_ERROR%] == [] goto exit
@@ -26,6 +30,8 @@ IF NOT [%X_ERROR%] == [] goto exit
 
 copy %X_SOURCE_PATH%\build\release\pdbripper.exe %X_SOURCE_PATH%\release\%X_BUILD_NAME%\
 copy %X_SOURCE_PATH%\build\release\pdbripperc.exe %X_SOURCE_PATH%\release\%X_BUILD_NAME%\
+xcopy %X_SOURCE_PATH%\XStyles\qss %X_SOURCE_PATH%\release\%X_BUILD_NAME%\qss /E /I /Y
+xcopy %X_SOURCE_PATH%\signatures\crypto.db %X_SOURCE_PATH%\release\%X_BUILD_NAME%\signatures\ /Y
 copy %X_SOURCE_PATH%\files\msdia140.dll %X_SOURCE_PATH%\release\%X_BUILD_NAME%\
 
 call %X_SOURCE_PATH%\build_tools\windows.cmd deploy_qt_library Qt5Widgets

@@ -1,6 +1,10 @@
 2.02
 -----------------------------------------------------------------------
 [+] XNTSV export
+[+] New options widget
+[+] Visual Studio independent MSDIA(thx: @mrexodia)
+[+] Fix some crashes(thx: @mrexodia)
+[+] New translations
 [+] Many bugs have been fixed.
 #######################################################################
 2.01

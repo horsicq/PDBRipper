@@ -1,24 +1,23 @@
-// copyright (c) 2020-2021 hors<horsicq@gmail.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
-
+/* Copyright (c) 2020-2022 hors<horsicq@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 #include "qwinpdb.h"
 
 // TODO mb add typedefs
@@ -1695,7 +1694,7 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptio
 
     if(getSymbolByID(nID,&pParent))
     {
-        result=_getElem(pParent,pHandleOptions);
+        result=_getElem(pParent,pHandleOptions,0);
 
         pParent->Release();
     }
@@ -1703,192 +1702,196 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptio
     return result;
 }
 
-QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent, HANDLE_OPTIONS *pHandleOptions)
+QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,int nLevel)
 {
     ELEM result={};
 
-    result.baseInfo=getBaseInfo(pParent);
+    if(nLevel<100) // Limit
+    {
+        result.baseInfo=getBaseInfo(pParent);
 
-    bool bChildren=true;
+        bool bChildren=true;
 
-    DWORD dwSymTag=_getSymTag(pParent);
-    if(dwSymTag==SymTagUDT)
-    {
-        result.elemType=ELEM_TYPE_UDT;
-        result._udt=_getRecordUDT(pParent);
-        result.dwSize=result._udt._length;
-    }
-    else if(dwSymTag==SymTagFunction)
-    {
-        result.elemType=ELEM_TYPE_FUNCTION;
-        result._function=_getRecordFunction(pParent,pHandleOptions);
-        result.dwSize=result._function._length; // TODO Check!
-    }
-    else if(dwSymTag==SymTagTypedef)
-    {
-        result.elemType=ELEM_TYPE_TYPEDEF;
-        result._typedef=_getRecordTypeDef(pParent);
-        bChildren=false;
-    }
-    else if(dwSymTag==SymTagData)
-    {
-        result.elemType=ELEM_TYPE_DATA;
-        result._data=_getRecordData(pParent,pHandleOptions);
-        result.dwSize=result._data.rtype.nSize;
-        result.dwOffset=result._data.rtype.nOffset;
-        result.dwBitOffset=result._data.rtype.nBitOffset;
-        result.dwBitSize=result._data.rtype.nBitSize;
-
-        if(result._data.rtype.bIsPointer||result._data.rtype.bIsReference)
+        DWORD dwSymTag=_getSymTag(pParent);
+        if(dwSymTag==SymTagUDT)
         {
+            result.elemType=ELEM_TYPE_UDT;
+            result._udt=_getRecordUDT(pParent);
+            result.dwSize=result._udt._length;
+        }
+        else if(dwSymTag==SymTagFunction)
+        {
+            result.elemType=ELEM_TYPE_FUNCTION;
+            result._function=_getRecordFunction(pParent,pHandleOptions);
+            result.dwSize=result._function._length; // TODO Check!
+        }
+        else if(dwSymTag==SymTagTypedef)
+        {
+            result.elemType=ELEM_TYPE_TYPEDEF;
+            result._typedef=_getRecordTypeDef(pParent);
             bChildren=false;
         }
-    }
-    else if(dwSymTag==SymTagEnum)
-    {
-        result.elemType=ELEM_TYPE_ENUM;
-        result._enum=_getRecordEnum(pParent);
-    }
-    else if(dwSymTag==SymTagBaseClass)
-    {
-        result.elemType=ELEM_TYPE_BASECLASS;
-        result._baseclass=_getRecordBaseClass(pParent);
-        bChildren=false;
-    }
-    else if(dwSymTag==SymTagVTable)
-    {
-        result.elemType=ELEM_TYPE_VTABLE;
-        result._vtable=_getRecordVTable(pParent);
-    }
-    else if(dwSymTag==SymTagFuncDebugStart)
-    {
-        result.elemType=ELEM_TYPE_FUNCDEBUGSTART;
-        result._funcdebugstart=_getRecordFuncDebugStart(pParent);
-    }
-    else if(dwSymTag==SymTagFuncDebugEnd)
-    {
-        result.elemType=ELEM_TYPE_FUNCDEBUGEND;
-        result._funcdebugend=_getRecordFuncDebugEnd(pParent);
-    }
-    else if(dwSymTag==SymTagCallSite)
-    {
-//        _checkSymbol(pParent);
-
-        result.elemType=ELEM_TYPE_CALLSITE;
-        result._callsite=_getRecordCallSite(pParent,pHandleOptions);
-    }
-    else if(dwSymTag==SymTagLabel)
-    {
-        result.elemType=ELEM_TYPE_LABEL;
-        result._label=_getRecordLabel(pParent);
-    }
-    else if(dwSymTag==SymTagBlock)
-    {
-        result.elemType=ELEM_TYPE_BLOCK;
-        result._block=_getRecordBlock(pParent);
-    }
-    else
-    {
-        emit infoMessage(rgTags[dwSymTag]);
-    }
-
-    if(bChildren)
-    {
-        IDiaEnumSymbols *pEnumSymbols;
-        if(pParent->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
+        else if(dwSymTag==SymTagData)
         {
-            LONG nCount;
-            if(pEnumSymbols->get_Count(&nCount)==S_OK)
+            result.elemType=ELEM_TYPE_DATA;
+            result._data=_getRecordData(pParent,pHandleOptions);
+            result.dwSize=result._data.rtype.nSize;
+            result.dwOffset=result._data.rtype.nOffset;
+            result.dwBitOffset=result._data.rtype.nBitOffset;
+            result.dwBitSize=result._data.rtype.nBitSize;
+
+            if(result._data.rtype.bIsPointer||result._data.rtype.bIsReference)
             {
-                if(nCount)
+                bChildren=false;
+            }
+        }
+        else if(dwSymTag==SymTagEnum)
+        {
+            result.elemType=ELEM_TYPE_ENUM;
+            result._enum=_getRecordEnum(pParent);
+        }
+        else if(dwSymTag==SymTagBaseClass)
+        {
+            result.elemType=ELEM_TYPE_BASECLASS;
+            result._baseclass=_getRecordBaseClass(pParent);
+            bChildren=false;
+        }
+        else if(dwSymTag==SymTagVTable)
+        {
+            result.elemType=ELEM_TYPE_VTABLE;
+            result._vtable=_getRecordVTable(pParent);
+        }
+        else if(dwSymTag==SymTagFuncDebugStart)
+        {
+            result.elemType=ELEM_TYPE_FUNCDEBUGSTART;
+            result._funcdebugstart=_getRecordFuncDebugStart(pParent);
+        }
+        else if(dwSymTag==SymTagFuncDebugEnd)
+        {
+            result.elemType=ELEM_TYPE_FUNCDEBUGEND;
+            result._funcdebugend=_getRecordFuncDebugEnd(pParent);
+        }
+        else if(dwSymTag==SymTagCallSite)
+        {
+    //        _checkSymbol(pParent);
+
+            result.elemType=ELEM_TYPE_CALLSITE;
+            result._callsite=_getRecordCallSite(pParent,pHandleOptions);
+        }
+        else if(dwSymTag==SymTagLabel)
+        {
+            result.elemType=ELEM_TYPE_LABEL;
+            result._label=_getRecordLabel(pParent);
+        }
+        else if(dwSymTag==SymTagBlock)
+        {
+            result.elemType=ELEM_TYPE_BLOCK;
+            result._block=_getRecordBlock(pParent);
+        }
+        else
+        {
+            emit infoMessage(rgTags[dwSymTag]);
+        }
+
+        if(bChildren)
+        {
+            IDiaEnumSymbols *pEnumSymbols;
+            if(pParent->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
+            {
+                LONG nCount;
+                if(pEnumSymbols->get_Count(&nCount)==S_OK)
                 {
-                    IDiaSymbol *pSymbol;
-                    ULONG celt=0;
-
-                    qint64 nCurrentOffset=0;
-                    int nAlignCount=0;
-
-                    while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
+                    if(nCount)
                     {
-                        ELEM elemChild=_getElem(pSymbol,pHandleOptions);
+                        IDiaSymbol *pSymbol;
+                        ULONG celt=0;
 
-                        bool bAdd=true;
+                        qint64 nCurrentOffset=0;
+                        int nAlignCount=0;
 
-                        if(elemChild.elemType==ELEM_TYPE_VTABLE)
+                        while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
                         {
-                            bAdd=false;
-                        }
+                            ELEM elemChild=_getElem(pSymbol,pHandleOptions,nLevel+1);
 
-                        if(elemChild.elemType==ELEM_TYPE_TYPEDEF)
-                        {
-                            bAdd=false;
-                        }
+                            bool bAdd=true;
 
-                        if(bAdd)
-                        {
-                            if(pHandleOptions->bAddAlignment)
+                            if(elemChild.elemType==ELEM_TYPE_VTABLE)
                             {
-                                bool bAddAlignment=false;
-
-                                if((elemChild.dwOffset)&&(elemChild.dwOffset>nCurrentOffset))
-                                {
-                                    bAddAlignment=true;
-                                }
-
-                                if(result.elemType==ELEM_TYPE_FUNCTION)
-                                {
-                                    bAddAlignment=false;
-                                }
-
-                                if(result.elemType==ELEM_TYPE_BLOCK)
-                                {
-                                    bAddAlignment=false;
-                                }
-
-                                if(bAddAlignment)
-                                {
-                                    ELEM alignElem={};
-
-                                    alignElem.elemType=ELEM_TYPE_FAKEDATA;
-                                    alignElem.dwOffset=nCurrentOffset;
-                                    alignElem.dwSize=elemChild.dwOffset-nCurrentOffset;
-                                    alignElem._data.rtype.bIsArray=true;
-                                    alignElem._data.rtype.sName=QString("__align%1").arg(nAlignCount);
-                                    alignElem._data.rtype.listArrayCount.append(alignElem.dwSize);
-                                    alignElem._data.rtype.type=RD_BASETYPE;
-                                    alignElem._data.rtype.sTypeName="unsigned char";
-                                    alignElem._data.rtype.nBaseType=5; // unsigned char
-                                    alignElem._data.rtype.nAccess=1; // private
-
-                                    result.listChildren.append(alignElem);
-
-                                    nAlignCount++;
-                                }
+                                bAdd=false;
                             }
 
-                            // TODO Alignment
-                            result.listChildren.append(elemChild);
-
-                            if(elemChild.dwSize)
+                            if(elemChild.elemType==ELEM_TYPE_TYPEDEF)
                             {
-                                nCurrentOffset=elemChild.dwOffset+elemChild.dwSize;
+                                bAdd=false;
                             }
+
+                            if(bAdd)
+                            {
+                                if(pHandleOptions->bAddAlignment)
+                                {
+                                    bool bAddAlignment=false;
+
+                                    if((elemChild.dwOffset)&&(elemChild.dwOffset>nCurrentOffset))
+                                    {
+                                        bAddAlignment=true;
+                                    }
+
+                                    if(result.elemType==ELEM_TYPE_FUNCTION)
+                                    {
+                                        bAddAlignment=false;
+                                    }
+
+                                    if(result.elemType==ELEM_TYPE_BLOCK)
+                                    {
+                                        bAddAlignment=false;
+                                    }
+
+                                    if(bAddAlignment)
+                                    {
+                                        ELEM alignElem={};
+
+                                        alignElem.elemType=ELEM_TYPE_FAKEDATA;
+                                        alignElem.dwOffset=nCurrentOffset;
+                                        alignElem.dwSize=elemChild.dwOffset-nCurrentOffset;
+                                        alignElem._data.rtype.bIsArray=true;
+                                        alignElem._data.rtype.sName=QString("__align%1").arg(nAlignCount);
+                                        alignElem._data.rtype.listArrayCount.append(alignElem.dwSize);
+                                        alignElem._data.rtype.type=RD_BASETYPE;
+                                        alignElem._data.rtype.sTypeName="unsigned char";
+                                        alignElem._data.rtype.nBaseType=5; // unsigned char
+                                        alignElem._data.rtype.nAccess=1; // private
+
+                                        result.listChildren.append(alignElem);
+
+                                        nAlignCount++;
+                                    }
+                                }
+
+                                // TODO Alignment
+                                result.listChildren.append(elemChild);
+
+                                if(elemChild.dwSize)
+                                {
+                                    nCurrentOffset=elemChild.dwOffset+elemChild.dwSize;
+                                }
+                            }
+    //                        QString sTest;
+    //                        BSTR bstring=nullptr;
+    //                        if(pSymbol->get_name(&bstring)==S_OK) {sTest=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
+
+    //                        qDebug(sTest.toLatin1().data());
+
+                            pSymbol->Release();
                         }
-//                        QString sTest;
-//                        BSTR bstring=nullptr;
-//                        if(pSymbol->get_name(&bstring)==S_OK) {sTest=QString::fromWCharArray(bstring);   SysFreeString(bstring);}
-
-//                        qDebug(sTest.toLatin1().data());
-
-                        pSymbol->Release();
                     }
                 }
-            }
 
-            pEnumSymbols->Release();
+                pEnumSymbols->Release();
+            }
         }
     }
 
+    // mb TODO ErrorMessage of limit !
     return result;
 }
 
@@ -2172,7 +2175,7 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
 
             if(pHandleOptions->bShowComments)
             {
-                result.sText+=QString("// Size=0x%1").arg(pElem->dwSize,0,16);
+                result.sText+=QString("// Size=0x%1 (Id=%2)").arg(QString("%1").arg(pElem->dwSize,0,16),QString::number(pElem->baseInfo.nID));
             }
 
             result.sText+="\r\n";
