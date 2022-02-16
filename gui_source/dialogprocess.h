@@ -21,9 +21,9 @@
 #ifndef DIALOGPROCESS_H
 #define DIALOGPROCESS_H
 
-#include <QWidget>
 #include <QDialog>
 #include <QThread>
+#include <QWidget>
 #include "../pdbprocess.h"
 
 namespace Ui

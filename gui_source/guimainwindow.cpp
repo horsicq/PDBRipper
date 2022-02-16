@@ -21,8 +21,8 @@
 #include "guimainwindow.h"
 #include "ui_guimainwindow.h"
 
-GuiMainWindow::GuiMainWindow(QWidget *parent) :
-    QMainWindow(parent),
+GuiMainWindow::GuiMainWindow(QWidget *pParent) :
+    QMainWindow(pParent),
     ui(new Ui::GuiMainWindow)
 {
     ui->setupUi(this);
@@ -81,7 +81,7 @@ void GuiMainWindow::on_actionOpen_triggered()
 {
     QString sDirectory=g_xOptions.getLastDirectory();
 
-    QString sFileName=QFileDialog::getOpenFileName(this,tr("Open file"),sDirectory, QString("PDB %1 (*.pdb);;%2 (*)").arg(tr("Files"),tr("All files")));
+    QString sFileName=QFileDialog::getOpenFileName(this,tr("Open file"),sDirectory,QString("PDB %1 (*.pdb);;%2 (*)").arg(tr("Files"),tr("All files")));
 
     _openFile(sFileName);
 }
@@ -180,7 +180,7 @@ void GuiMainWindow::on_lineEditSearch_textChanged(const QString &arg1)
     pFilter->setFilterKeyColumn(1);
 }
 
-void GuiMainWindow::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+void GuiMainWindow::onCurrentChanged(const QModelIndex &current,const QModelIndex &previous)
 {
     Q_UNUSED(current)
     Q_UNUSED(previous)

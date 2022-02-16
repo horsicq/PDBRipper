@@ -21,8 +21,8 @@
 #ifndef DIALOGABOUT_H
 #define DIALOGABOUT_H
 
-#include <QDialog>
 #include <QDate>
+#include <QDialog>
 #include "../global.h"
 #include "xoptions.h"
 

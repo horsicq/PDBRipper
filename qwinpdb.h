@@ -27,18 +27,17 @@
 #define ALIGN_DOWN  (x, align) ((x) & ~((align) - 1))
 #define ALIGN_UP    (x, align) (((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
 
-#include <QObject>
-#include <QUuid>
-#include <QMap>
-#include <QStack>
-#include <QDebug>
 #include <QCollator>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QFileInfo>
+#include <QDebug>
 #include <QDir>
-
+#include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMap>
+#include <QObject>
+#include <QStack>
+#include <QUuid>
 #include "global.h"
 #include "qwinpdb_def.h"
 

@@ -21,8 +21,8 @@
 #ifndef PDBPROCESS_H
 #define PDBPROCESS_H
 
-#include <QObject>
 #include <QFile>
+#include <QObject>
 #include "qwinpdb.h"
 
 class PDBProcess : public QObject
@@ -46,6 +46,7 @@ public:
     };
 
     explicit PDBProcess(QObject *parent,PDBDATA *pData,TYPE type);
+
     void stop();
 
 signals:

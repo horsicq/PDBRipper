@@ -41,13 +41,13 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
     pPDBProcess=new PDBProcess(0,pData,type);
     pPDBProcess->moveToThread(thread);
 
-    connect(pPDBProcess, SIGNAL(completed()), this, SLOT(onCompleted()));
-    connect(pPDBProcess, SIGNAL(setProgressMinimum(int)), this, SLOT(onSetProgressMinimum(int)));
-    connect(pPDBProcess, SIGNAL(setProgressMaximum(int)), this, SLOT(onSetProgressMaximum(int)));
-    connect(pPDBProcess, SIGNAL(setProgressValue(int)), this, SLOT(onSetProgressValue(int)));
+    connect(pPDBProcess,SIGNAL(completed()),this,SLOT(onCompleted()));
+    connect(pPDBProcess,SIGNAL(setProgressMinimum(int)),this,SLOT(onSetProgressMinimum(int)));
+    connect(pPDBProcess,SIGNAL(setProgressMaximum(int)),this,SLOT(onSetProgressMaximum(int)));
+    connect(pPDBProcess,SIGNAL(setProgressValue(int)),this,SLOT(onSetProgressValue(int)));
 
-    connect(pPDBProcess, SIGNAL(errorMessage(QString)), this, SIGNAL(errorMessage(QString)));
-    connect(pPDBProcess, SIGNAL(infoMessage(QString)), this, SIGNAL(infoMessage(QString)));
+    connect(pPDBProcess,SIGNAL(errorMessage(QString)),this,SIGNAL(errorMessage(QString)));
+    connect(pPDBProcess,SIGNAL(infoMessage(QString)),this,SIGNAL(infoMessage(QString)));
 
     bIsRun=true;
     connect(thread, SIGNAL(started()), pPDBProcess, SLOT(process()));

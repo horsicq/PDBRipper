@@ -21,19 +21,19 @@
 #ifndef GUIMAINWINDOW_H
 #define GUIMAINWINDOW_H
 
-#include <QMainWindow>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QStandardItemModel>
-#include <QSortFilterProxyModel>
 #include <QDragEnterEvent>
+#include <QFileDialog>
+#include <QMainWindow>
+#include <QMessageBox>
 #include <QMimeData>
-#include "dialogprocess.h"
-#include "dialogabout.h"
-#include "dialogoptions.h"
-#include "dialogexport.h"
-#include "xoptions.h"
+#include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 #include "../global.h"
+#include "dialogabout.h"
+#include "dialogexport.h"
+#include "dialogoptions.h"
+#include "dialogprocess.h"
+#include "xoptions.h"
 
 namespace Ui
 {
@@ -45,7 +45,7 @@ class GuiMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit GuiMainWindow(QWidget *parent = 0);
+    explicit GuiMainWindow(QWidget *pParent=0);
     ~GuiMainWindow();
 
 private slots:
@@ -57,7 +57,7 @@ private slots:
     void _openFile(QString sFileName);
 
     void on_lineEditSearch_textChanged(const QString &arg1);
-    void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
+    void onCurrentChanged(const QModelIndex &current,const QModelIndex &previous);
 
     void handle();
     void on_tableViewSymbols_clicked(const QModelIndex &index);
