@@ -165,6 +165,8 @@ void GuiMainWindow::_openFile(QString sFileName)
             ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(1,QHeaderView::Stretch);
 
             connect(ui->tableViewSymbols->selectionModel(),SIGNAL(currentChanged(QModelIndex const&,QModelIndex const&)),this,SLOT(onCurrentChanged(QModelIndex const&,QModelIndex const&)));
+
+            setWindowTitle(sFileName);
         }
         else
         {
