@@ -32,7 +32,7 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
     g_xOptions.setName(X_OPTIONSFILE);
 
     g_xOptions.addID(XOptions::ID_VIEW_STYLE,"Fusion");
-    g_xOptions.addID(XOptions::ID_VIEW_QSS,"");
+//    g_xOptions.addID(XOptions::ID_VIEW_QSS,"");
     g_xOptions.addID(XOptions::ID_VIEW_LANG,"System");
     g_xOptions.addID(XOptions::ID_VIEW_STAYONTOP,false);
     g_xOptions.addID(XOptions::ID_FILE_SAVELASTDIRECTORY,true);
