@@ -3,7 +3,7 @@
 [+] XNTSV export
 [+] New options widget
 [+] Visual Studio independent MSDIA(thx: @mrexodia)
-[+] Fix some crashes(thx: @mrexodia)
+[+] Fix some crashes
 [+] New translations
 [+] Many bugs have been fixed.
 #######################################################################
