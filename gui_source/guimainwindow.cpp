@@ -36,7 +36,7 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
     g_xOptions.addID(XOptions::ID_VIEW_LANG,"System");
     g_xOptions.addID(XOptions::ID_VIEW_STAYONTOP,false);
     g_xOptions.addID(XOptions::ID_FILE_SAVELASTDIRECTORY,true);
-    g_xOptions.addID(XOptions::ID_FILE_CONTEXT,"*.pdb");
+    g_xOptions.addID(XOptions::ID_FILE_CONTEXT,".pdb");
 
     g_xOptions.load();
 
