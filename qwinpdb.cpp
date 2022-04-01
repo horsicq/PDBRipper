@@ -162,6 +162,8 @@ bool QWinPDB::loadFromFile(QString sFileName)
             case IMAGE_FILE_MACHINE_I386:   dwMachineType=CV_CFL_80386;     break;
             case IMAGE_FILE_MACHINE_IA64:   dwMachineType=CV_CFL_IA64;      break;
             case IMAGE_FILE_MACHINE_AMD64:  dwMachineType=CV_CFL_AMD64;     break;
+            case IMAGE_FILE_MACHINE_ARM:    dwMachineType=CV_CFL_ARMNT;     break; // TODO Check
+            case IMAGE_FILE_MACHINE_ARM64:  dwMachineType=CV_CFL_ARM64;     break;
         }
     }
 
