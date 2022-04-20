@@ -1792,7 +1792,14 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptio
         }
         else
         {
-            emit infoMessage(rgTags[dwSymTag]);
+            if(dwSymTag<=sizeof(rgTags)/sizeof(const char *))
+            {
+                emit infoMessage(rgTags[dwSymTag]);
+            }
+            else
+            {
+                emit infoMessage("Unknown TAG !!!");
+            }
         }
 
         if(bChildren)
