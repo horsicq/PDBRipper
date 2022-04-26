@@ -36,9 +36,15 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
     g_xOptions.addID(XOptions::ID_VIEW_LANG,"System");
     g_xOptions.addID(XOptions::ID_VIEW_STAYONTOP,false);
     g_xOptions.addID(XOptions::ID_FILE_SAVELASTDIRECTORY,true);
+    g_xOptions.addID(XOptions::ID_FILE_SAVERECENTFILES,true);
+    g_xOptions.addID(XOptions::ID_VIEW_FONT,"");
 //    g_xOptions.addID(XOptions::ID_FILE_CONTEXT,".pdb");
 
     g_xOptions.load();
+
+    connect(&g_xOptions,SIGNAL(openFile(QString)),this,SLOT(processFile(QString)));
+
+    createMenus();
 
     adjustWindow();
 
@@ -61,7 +67,7 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
 
     if(QCoreApplication::arguments().count()>1)
     {
-        _openFile(QCoreApplication::arguments().at(1));
+        processFile(QCoreApplication::arguments().at(1));
     }
 }
 
@@ -72,21 +78,151 @@ GuiMainWindow::~GuiMainWindow()
     if(pdbData.pWinPDB)
     {
         delete pdbData.pWinPDB;
+        pdbData.pWinPDB=nullptr;
     }
 
     delete ui;
 }
 
-void GuiMainWindow::on_actionOpen_triggered()
+void GuiMainWindow::createMenus()
+{
+    QMenu *pMenuFile=new QMenu(tr("File"),ui->menubar);
+    QMenu *pMenuAction=new QMenu(tr("Action"),ui->menubar);
+    QMenu *pMenuTools=new QMenu(tr("Tools"),ui->menubar);
+    QMenu *pMenuHelp=new QMenu(tr("Help"),ui->menubar);
+    QMenu *pMenuExport=new QMenu(tr("Export"),ui->menubar);
+
+    ui->menubar->addAction(pMenuFile->menuAction());
+    ui->menubar->addAction(pMenuAction->menuAction());
+    ui->menubar->addAction(pMenuTools->menuAction());
+    ui->menubar->addAction(pMenuHelp->menuAction());
+
+    QAction *pActionOpen=new QAction(tr("Open"),this);
+    QAction *pActionClose=new QAction(tr("Close"),this);
+    QAction *pActionExit=new QAction(tr("Exit"),this);
+    QAction *pActionExportCPP=new QAction(QString("C++"),this);
+    QAction *pActionExportXNTSV=new QAction(QString("XNTSV"),this);
+    QAction *pActionOptions=new QAction(tr("Options"),this);
+    QAction *pActionAbout=new QAction(tr("About"),this);
+
+    pMenuFile->addAction(pActionOpen);
+    pMenuFile->addMenu(g_xOptions.createRecentFilesMenu(this));
+    pMenuFile->addAction(pActionClose);
+    pMenuFile->addAction(pActionExit);
+    pMenuExport->addAction(pActionExportCPP);
+    pMenuExport->addAction(pActionExportXNTSV);
+    pMenuAction->addMenu(pMenuExport);
+    pMenuTools->addAction(pActionOptions);
+    pMenuHelp->addAction(pActionAbout);
+
+    connect(pActionOpen,SIGNAL(triggered()),this,SLOT(actionOpenSlot()));
+    connect(pActionClose,SIGNAL(triggered()),this,SLOT(actionCloseSlot()));
+    connect(pActionExit,SIGNAL(triggered()),this,SLOT(actionExitSlot()));
+    connect(pActionExportCPP,SIGNAL(triggered()),this,SLOT(actionCPPSlot()));
+    connect(pActionExportXNTSV,SIGNAL(triggered()),this,SLOT(actionXNTSVSlot()));
+    connect(pActionOptions,SIGNAL(triggered()),this,SLOT(actionOptionsSlot()));
+    connect(pActionAbout,SIGNAL(triggered()),this,SLOT(actionAboutSlot()));
+}
+
+void GuiMainWindow::actionOpenSlot()
 {
     QString sDirectory=g_xOptions.getLastDirectory();
 
     QString sFileName=QFileDialog::getOpenFileName(this,tr("Open file"),sDirectory,QString("PDB %1 (*.pdb);;%2 (*)").arg(tr("Files"),tr("All files")));
 
-    _openFile(sFileName);
+    processFile(sFileName);
 }
 
-void GuiMainWindow::on_actionOptions_triggered()
+void GuiMainWindow::actionCloseSlot()
+{
+    cleanUp();
+}
+
+void GuiMainWindow::actionExitSlot()
+{
+    this->close();
+}
+
+void GuiMainWindow::setHandleOptions(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
+{
+    ui->checkBoxShowComments->setChecked(pHandleOptions->bShowComments);
+    ui->checkBoxFixTypes->setChecked(pHandleOptions->bFixTypes);
+    ui->checkBoxAddAlignment->setChecked(pHandleOptions->bAddAlignment);
+
+    int nCount=ui->comboBoxFixOffsets->count();
+
+    for(int i=0;i<nCount;i++)
+    {
+        if(ui->comboBoxFixOffsets->itemData(i).toUInt()==pHandleOptions->fixOffsets)
+        {
+            ui->comboBoxFixOffsets->setCurrentIndex(i);
+
+            break;
+        }
+    }
+}
+
+QWinPDB::HANDLE_OPTIONS GuiMainWindow::getHandleOptions()
+{
+    QWinPDB::HANDLE_OPTIONS result={};
+
+    result.bShowComments=ui->checkBoxShowComments->isChecked();
+    result.bFixTypes=ui->checkBoxFixTypes->isChecked();
+    result.bAddAlignment=ui->checkBoxAddAlignment->isChecked();
+    result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
+
+    return result;
+}
+
+void GuiMainWindow::on_comboBoxFixOffsets_currentIndexChanged(int index)
+{
+    Q_UNUSED(index);
+
+    handle();
+}
+
+void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
+{
+    Q_UNUSED(checked)
+
+    handle();
+}
+
+void GuiMainWindow::actionCPPSlot()
+{
+    if(pdbData.pWinPDB)
+    {
+        pdbData.handleOptions.bAddAlignment=false;
+        pdbData.handleOptions.bFixTypes=false;
+        pdbData.handleOptions.bShowComments=false;
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
+        pdbData.handleOptions.sortType=QWinPDB::ST_DEP;
+        pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
+
+        DialogExport dialogExport(this,&pdbData);
+
+        dialogExport.exec();
+    }
+}
+
+void GuiMainWindow::actionXNTSVSlot()
+{
+    if(pdbData.pWinPDB)
+    {
+        pdbData.handleOptions.bAddAlignment=false;
+        pdbData.handleOptions.bFixTypes=true;
+        pdbData.handleOptions.bShowComments=false;
+        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
+        pdbData.handleOptions.sortType=QWinPDB::ST_NAME;
+        pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
+
+        DialogExport dialogExport(this,&pdbData);
+
+        dialogExport.exec();
+    }
+}
+
+void GuiMainWindow::actionOptionsSlot()
 {
     DialogOptions dialogOptions(this,&g_xOptions);
     dialogOptions.exec();
@@ -94,7 +230,7 @@ void GuiMainWindow::on_actionOptions_triggered()
     adjustWindow();
 }
 
-void GuiMainWindow::on_actionAbout_triggered()
+void GuiMainWindow::actionAboutSlot()
 {
     DialogAbout dialogAbout(this);
 
@@ -103,32 +239,20 @@ void GuiMainWindow::on_actionAbout_triggered()
 
 void GuiMainWindow::adjustWindow()
 {
-    g_xOptions.adjustStayOnTop(this);
+    g_xOptions.adjustWindow(this);
 }
 
-void GuiMainWindow::_openFile(QString sFileName)
+void GuiMainWindow::processFile(QString sFileName)
 {
     if((sFileName!="")&&(QFileInfo(sFileName).isFile()))
     {
-        g_xOptions.setLastDirectory(QFileInfo(sFileName).absolutePath());
+        g_xOptions.setLastFileName(sFileName);
 
-        if(pdbData.pWinPDB)
-        {
-            delete pdbData.pWinPDB;
-        }
+        cleanUp();
 
         pdbData.pWinPDB=new QWinPDB;
 
         connect(pdbData.pWinPDB,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
-
-        QAbstractItemModel *pOldModel=pFilter->sourceModel();
-
-        pFilter->setSourceModel(0);
-
-        delete pOldModel;
-
-        ui->lineEditSearch->clear();
-        ui->textBrowserResult->clear();
 
         if(pdbData.pWinPDB->loadFromFile(sFileName))
         {
@@ -173,6 +297,24 @@ void GuiMainWindow::_openFile(QString sFileName)
             QMessageBox::critical(this,tr("Error"),QString("%1: %2").arg(tr("Cannot open file")).arg(sFileName));
         }
     }
+}
+
+void GuiMainWindow::cleanUp()
+{
+    if(pdbData.pWinPDB)
+    {
+        delete pdbData.pWinPDB;
+        pdbData.pWinPDB=nullptr;
+    }
+
+    QAbstractItemModel *pOldModel=pFilter->sourceModel();
+
+    pFilter->setSourceModel(0);
+
+    delete pOldModel;
+
+    ui->lineEditSearch->clear();
+    ui->textBrowserResult->clear();
 }
 
 void GuiMainWindow::on_lineEditSearch_textChanged(const QString &arg1)
@@ -226,95 +368,11 @@ void GuiMainWindow::on_checkBoxShowComments_toggled(bool checked)
     handle();
 }
 
-void GuiMainWindow::setHandleOptions(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
-{
-    ui->checkBoxShowComments->setChecked(pHandleOptions->bShowComments);
-    ui->checkBoxFixTypes->setChecked(pHandleOptions->bFixTypes);
-    ui->checkBoxAddAlignment->setChecked(pHandleOptions->bAddAlignment);
-
-    int nCount=ui->comboBoxFixOffsets->count();
-
-    for(int i=0;i<nCount;i++)
-    {
-        if(ui->comboBoxFixOffsets->itemData(i).toUInt()==pHandleOptions->fixOffsets)
-        {
-            ui->comboBoxFixOffsets->setCurrentIndex(i);
-
-            break;
-        }
-    }
-}
-
-QWinPDB::HANDLE_OPTIONS GuiMainWindow::getHandleOptions()
-{
-    QWinPDB::HANDLE_OPTIONS result={};
-
-    result.bShowComments=ui->checkBoxShowComments->isChecked();
-    result.bFixTypes=ui->checkBoxFixTypes->isChecked();
-    result.bAddAlignment=ui->checkBoxAddAlignment->isChecked();
-    result.fixOffsets=(QWinPDB::FO)ui->comboBoxFixOffsets->currentData().toUInt();
-
-    return result;
-}
-
-void GuiMainWindow::on_comboBoxFixOffsets_currentIndexChanged(int index)
-{
-    Q_UNUSED(index);
-
-    handle();
-}
-
-void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
-{
-    Q_UNUSED(checked)
-
-    handle();
-}
-
-void GuiMainWindow::on_actionCPP_triggered()
-{
-    if(pdbData.pWinPDB)
-    {
-        pdbData.handleOptions.bAddAlignment=false;
-        pdbData.handleOptions.bFixTypes=false;
-        pdbData.handleOptions.bShowComments=false;
-        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
-        pdbData.handleOptions.sortType=QWinPDB::ST_DEP;
-        pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
-
-        DialogExport dialogExport(this,&pdbData);
-
-        dialogExport.exec();
-    }
-}
-
-void GuiMainWindow::on_actionXNTSV_triggered()
-{
-    if(pdbData.pWinPDB)
-    {
-        pdbData.handleOptions.bAddAlignment=false;
-        pdbData.handleOptions.bFixTypes=true;
-        pdbData.handleOptions.bShowComments=false;
-        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
-        pdbData.handleOptions.sortType=QWinPDB::ST_NAME;
-        pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
-
-        DialogExport dialogExport(this,&pdbData);
-
-        dialogExport.exec();
-    }
-}
-
 void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
 {
     Q_UNUSED(checked)
 
     handle();
-}
-
-void GuiMainWindow::on_actionQuit_triggered()
-{
-    this->close();
 }
 
 void GuiMainWindow::errorMessage(QString sText)
@@ -351,7 +409,7 @@ void GuiMainWindow::dropEvent(QDropEvent *event)
                 sFileName=fiLink.symLinkTarget();
             }
 
-            _openFile(sFileName);
+            processFile(sFileName);
         }
     }
 }

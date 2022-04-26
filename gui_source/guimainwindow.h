@@ -49,12 +49,19 @@ public:
     ~GuiMainWindow();
 
 private slots:
-    void on_actionOpen_triggered();
-    void on_actionOptions_triggered();
-    void on_actionAbout_triggered();
+    void createMenus();
+    void actionOpenSlot();
+    void actionCloseSlot();
+    void actionExitSlot();
+    void actionCPPSlot();
+    void actionXNTSVSlot();
+    void actionOptionsSlot();
+    void actionAboutSlot();
+
     void adjustWindow();
 
-    void _openFile(QString sFileName);
+    void processFile(QString sFileName);
+    void cleanUp();
 
     void on_lineEditSearch_textChanged(const QString &arg1);
     void onCurrentChanged(const QModelIndex &current,const QModelIndex &previous);
@@ -68,11 +75,7 @@ private slots:
 
     void on_comboBoxFixOffsets_currentIndexChanged(int index);
     void on_checkBoxAddAlignment_toggled(bool checked);
-    void on_actionCPP_triggered();
-    void on_actionXNTSV_triggered();
-
     void on_checkBoxFixTypes_toggled(bool checked);
-    void on_actionQuit_triggered();
 
     void errorMessage(QString sText);
 
