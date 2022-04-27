@@ -27,29 +27,10 @@ DialogOptions::DialogOptions(QWidget *parent, XOptions *pOptions) :
 {
     ui->setupUi(this);
 
-    this->g_pOptions=pOptions;
-
     ui->widgetOptions->setOptions(pOptions,X_APPLICATIONDISPLAYNAME);
 }
 
 DialogOptions::~DialogOptions()
 {
     delete ui;
-}
-
-void DialogOptions::on_pushButtonOK_clicked()
-{
-    ui->widgetOptions->save();
-
-    if(g_pOptions->isRestartNeeded())
-    {
-        QMessageBox::information(this,tr("Information"),tr("Please restart the application"));
-    }
-
-    this->close();
-}
-
-void DialogOptions::on_pushButtonCancel_clicked()
-{
-    this->close();
 }

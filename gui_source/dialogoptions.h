@@ -36,29 +36,12 @@ class DialogOptions : public QDialog
 {
     Q_OBJECT
 
-    enum OPTION_PAGES
-    {
-        OP_SCAN=0,
-        OP_APPEARANCE,
-        OP_CONTEXT
-    };
-
 public:
     explicit DialogOptions(QWidget *parent,XOptions *pOptions);
     ~DialogOptions();
 
-    static bool checkContext(QString sType);
-    static void clearContext(QString sType);
-    static void registerContext(QString sType);
-    static bool setContextState(QString sType,bool bState);
-
-private slots:
-    void on_pushButtonOK_clicked();
-    void on_pushButtonCancel_clicked();
-
 private:
     Ui::DialogOptions *ui;
-    XOptions *g_pOptions;
 };
 
 #endif // DIALOGOPTIONS_H
