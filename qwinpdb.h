@@ -510,7 +510,8 @@ public:
 
     enum ST
     {
-        ST_ID=0,
+        ST_NO=0,
+        ST_ID,
         ST_NAME,
         ST_DEP
     };
@@ -592,6 +593,7 @@ public:
         RECORD_CALLSITE _callsite;
 
         QList<ELEM> listChildren;
+        bool bInvalid;
     };
 
     struct ELEM_INFO
@@ -605,7 +607,7 @@ public:
     };
 
     ELEM getElem(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
-    ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions,int nLevel);
+    ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq);
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
     QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);

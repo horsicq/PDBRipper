@@ -80,7 +80,7 @@ QWinPDB::HANDLE_OPTIONS QWinPDB::getDefaultHandleOptions()
     result.bShowComments=false;
 //    result.fixOffsets=FO_STRUCTSANDUNIONS;
     result.fixOffsets=FO_NO;
-    result.sortType=ST_ID;
+    result.sortType=ST_NO;
     result.exportType=ET_CPLUSPLUS;
 
     return result;
@@ -1201,37 +1201,42 @@ bool QWinPDB::getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol)
 {
     bool bResult=false;
 
-    IDiaEnumSymbols *pEnumSymbols;
-    LONG nCount=0;
-    if(pGlobal->findChildren(SymTagNull,NULL,nsNone,&pEnumSymbols)==S_OK)
+    if(pDiaSession->symbolById(dwID,ppSymbol)==S_OK)
     {
-        if(pEnumSymbols->get_Count(&nCount)==S_OK)
-        {
-            if(nCount)
-            {
-                ULONG celt=0;
-//                ULONG iMod=1;
-                while(SUCCEEDED(pEnumSymbols->Next(1,ppSymbol,&celt))&&(celt==1))
-                {
-                    DWORD _dwID=0;
-
-                    if(SUCCEEDED((*ppSymbol)->get_symIndexId(&_dwID)))
-                    {
-                        if(_dwID==dwID)
-                        {
-                            bResult=true;
-
-                            break;
-                        }
-                    }
-
-                    (*ppSymbol)->Release();
-                }
-            }
-        }
-
-        pEnumSymbols->Release();
+        bResult=true;
     }
+
+//    IDiaEnumSymbols *pEnumSymbols;
+//    LONG nCount=0;
+//    if(pGlobal->findChildren(SymTagNull,NULL,nsNone,&pEnumSymbols)==S_OK)
+//    {
+//        if(pEnumSymbols->get_Count(&nCount)==S_OK)
+//        {
+//            if(nCount)
+//            {
+//                ULONG celt=0;
+////                ULONG iMod=1;
+//                while(SUCCEEDED(pEnumSymbols->Next(1,ppSymbol,&celt))&&(celt==1))
+//                {
+//                    DWORD _dwID=0;
+
+//                    if(SUCCEEDED((*ppSymbol)->get_symIndexId(&_dwID)))
+//                    {
+//                        if(_dwID==dwID)
+//                        {
+//                            bResult=true;
+
+//                            break;
+//                        }
+//                    }
+
+//                    (*ppSymbol)->Release();
+//                }
+//            }
+//        }
+
+//        pEnumSymbols->Release();
+//    }
 
     return bResult;
 }
@@ -1696,7 +1701,9 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptio
 
     if(getSymbolByID(nID,&pParent))
     {
-        result=_getElem(pParent,pHandleOptions,0);
+        QSet<quint32> stUniq;
+
+        result=_getElem(pParent,pHandleOptions,0,&stUniq);
 
         pParent->Release();
     }
@@ -1704,13 +1711,19 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptio
     return result;
 }
 
-QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,int nLevel)
+QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq)
 {
     ELEM result={};
 
-    if(nLevel<100) // Limit
+    result.baseInfo=getBaseInfo(pParent);
+
+    if(pStUniq->contains(result.baseInfo.nID))
     {
-        result.baseInfo=getBaseInfo(pParent);
+        result.bInvalid=true;
+    }
+    else
+    {
+        pStUniq->insert(result.baseInfo.nID);
 
         bool bChildren=true;
 
@@ -1820,9 +1833,14 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptio
 
                         while(SUCCEEDED(pEnumSymbols->Next(1,&pSymbol,&celt))&&(celt==1))
                         {
-                            ELEM elemChild=_getElem(pSymbol,pHandleOptions,nLevel+1);
+                            ELEM elemChild=_getElem(pSymbol,pHandleOptions,nLevel+1,pStUniq);
 
                             bool bAdd=true;
+
+                            if(elemChild.bInvalid)
+                            {
+                                bAdd=false;
+                            }
 
                             if(elemChild.elemType==ELEM_TYPE_VTABLE)
                             {
@@ -1900,7 +1918,6 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptio
         }
     }
 
-    // mb TODO ErrorMessage of limit !
     return result;
 }
 

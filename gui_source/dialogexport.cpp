@@ -42,6 +42,7 @@ DialogExport::DialogExport(QWidget *parent,PDBProcess::PDBDATA *pData) :
         ui->groupBoxOptions->setEnabled(false);
     }
 
+    ui->comboBoxSortType->addItem(tr("No"),QWinPDB::ST_NO);
     ui->comboBoxSortType->addItem(QString("ID"),QWinPDB::ST_ID);
     ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_NAME);
     ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_DEP);
