@@ -111,7 +111,7 @@ int main(int argc,char *argv[])
     }
     else
     {
-        pdbData.handleOptions.sortType=QWinPDB::ST_ID; // Default
+        pdbData.handleOptions.sortType=QWinPDB::ST_NO; // Default
     }
 
     if(parser.isSet(clExportCpp))
@@ -155,7 +155,7 @@ int main(int argc,char *argv[])
 
             if(sOutputFileName=="")
             {
-                consoleOutput.infoMessage(pdbData.sString);
+                consoleOutput.infoMessage("No output file");
             }
         }
         else

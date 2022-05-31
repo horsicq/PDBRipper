@@ -172,7 +172,7 @@ public:
         DWORD _token;
         DWORD _typeId;
         BOOL _unalignedType;
-        QString _undecoratedName;
+//        QString _undecoratedName;
 //        QString _undecoratedNameEx;
         BOOL _virtual;
         ULONGLONG _virtualAddress;
@@ -494,6 +494,7 @@ public:
         DWORD dwID;
         QString sName;
         SYMBOL_TYPE type;
+        QSet<DWORD> stTypeIds;
     };
 
     struct STATS
@@ -613,7 +614,7 @@ public:
     QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);
     ELEM_INFO getElemInfo(const ELEM *pElem,HANDLE_OPTIONS *pHandleOptions,int nLevel,bool bIsClass);
     ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
-    QString exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
+    bool exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
     ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
 
 private:

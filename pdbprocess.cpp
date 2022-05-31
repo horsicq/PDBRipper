@@ -29,6 +29,7 @@ PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(pare
     connect(pData->pWinPDB,SIGNAL(setProgressMinimum(int)),this,SIGNAL(setProgressMinimum(int)));
     connect(pData->pWinPDB,SIGNAL(setProgressMaximum(int)),this,SIGNAL(setProgressMaximum(int)));
     connect(pData->pWinPDB,SIGNAL(setProgressValue(int)),this,SIGNAL(setProgressValue(int)));
+    connect(pData->pWinPDB,SIGNAL(errorMessage(QString)),this,SIGNAL(errorMessage(QString)));
 }
 
 void PDBProcess::process()
@@ -39,26 +40,7 @@ void PDBProcess::process()
     }
     else if(g_type==TYPE_EXPORT)
     {
-        g_pData->sString=g_pData->pWinPDB->exportString(&(g_pData->stats),&(g_pData->handleOptions));
-
-        if(g_pData->handleOptions.sResultFileName!="")
-        {
-            QFile file;
-            file.setFileName(g_pData->handleOptions.sResultFileName);
-
-            if(file.open(QIODevice::ReadWrite))
-            {
-                file.resize(0);
-                file.write(g_pData->sString.toLatin1().data(),g_pData->sString.length());
-                file.close();
-
-                emit infoMessage(QString("%1: %2").arg(tr("File saved")).arg(g_pData->handleOptions.sResultFileName));
-            }
-            else
-            {
-                emit errorMessage(QString("%1: %2").arg(tr("Cannot save file")).arg(g_pData->handleOptions.sResultFileName));
-            }
-        }
+        g_pData->pWinPDB->exportString(&(g_pData->stats),&(g_pData->handleOptions));
     }
 }
 

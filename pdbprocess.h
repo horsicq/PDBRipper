@@ -40,7 +40,6 @@ public:
     {
         QWinPDB *pWinPDB;
         QWinPDB::STATS stats;
-        QString sString;
         QWinPDB::HANDLE_OPTIONS handleOptions;
         QString sPDBFileName;
     };

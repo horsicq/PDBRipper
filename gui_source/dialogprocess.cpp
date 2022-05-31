@@ -36,10 +36,10 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
         setWindowTitle(tr("Import"));
     }
 
-    thread=new QThread;
+    pThread=new QThread;
 
     pPDBProcess=new PDBProcess(0,pData,type);
-    pPDBProcess->moveToThread(thread);
+    pPDBProcess->moveToThread(pThread);
 
     connect(pPDBProcess,SIGNAL(completed()),this,SLOT(onCompleted()));
     connect(pPDBProcess,SIGNAL(setProgressMinimum(int)),this,SLOT(onSetProgressMinimum(int)));
@@ -50,8 +50,8 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
     connect(pPDBProcess,SIGNAL(infoMessage(QString)),this,SIGNAL(infoMessage(QString)));
 
     bIsRun=true;
-    connect(thread, SIGNAL(started()), pPDBProcess, SLOT(process()));
-    thread->start();
+    connect(pThread, SIGNAL(started()), pPDBProcess, SLOT(process()));
+    pThread->start();
 
     nReturnCode=QDialog::Accepted;
 }
@@ -63,11 +63,13 @@ DialogProcess::~DialogProcess()
         pPDBProcess->stop();
     }
 
-    thread->quit();
-    thread->wait();
+    pThread->quit();
+    pThread->wait();
 
     delete ui;
-    delete thread;
+
+    delete pThread;
+    delete pPDBProcess;
 }
 
 void DialogProcess::on_pushButtonCancel_clicked()

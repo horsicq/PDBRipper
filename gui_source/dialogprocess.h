@@ -54,7 +54,7 @@ signals:
 
 private:
     Ui::DialogProcess *ui;
-    QThread *thread;
+    QThread *pThread;
     PDBProcess *pPDBProcess;
     bool bIsRun;
     int nReturnCode;

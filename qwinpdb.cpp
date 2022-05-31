@@ -186,14 +186,14 @@ QWinPDB::VALUE QWinPDB::getValue(IDiaSymbol *pSymbol)
         vResult.bIsValid=true;
         switch(value.vt)
         {
-            case VT_UI1:        vResult.vValue=value.bVal;               break;
-            case VT_UI2:        vResult.vValue=value.uiVal;              break;
-            case VT_UI4:        vResult.vValue=(quint32)value.ulVal;     break;
+            case VT_UI1:        vResult.vValue=value.bVal;                  break;
+            case VT_UI2:        vResult.vValue=value.uiVal;                 break;
+            case VT_UI4:        vResult.vValue=(quint32)value.ulVal;        break;
             case VT_UINT:       vResult.vValue=value.uintVal;               break;
-            case VT_INT:        vResult.vValue=value.intVal;             break;
-            case VT_I1:         vResult.vValue=value.cVal;               break;
-            case VT_I2:         vResult.vValue=value.iVal;               break;
-            case VT_I4:         vResult.vValue=value.lVal;               break;
+            case VT_INT:        vResult.vValue=value.intVal;                break;
+            case VT_I1:         vResult.vValue=value.cVal;                  break;
+            case VT_I2:         vResult.vValue=value.iVal;                  break;
+            case VT_I4:         vResult.vValue=value.lVal;                  break;
             default:            emit infoMessage(QString("Unknown VARIANT"));
         }
     }
@@ -269,7 +269,7 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol,QWinPDB
 {
     RECORD_FUNCTION result={};
 
-    BSTR bstring=nullptr;
+//    BSTR bstring=nullptr;
 
     pSymbol->get_access(&result._access);
     pSymbol->get_addressOffset(&result._addressOffset);
@@ -305,8 +305,8 @@ QWinPDB::RECORD_FUNCTION QWinPDB::_getRecordFunction(IDiaSymbol *pSymbol,QWinPDB
     pSymbol->get_token(&result._token);
     pSymbol->get_typeId(&result._typeId);
     pSymbol->get_unalignedType(&result._unalignedType);
-    if(pSymbol->get_undecoratedName(&bstring)==S_OK) {result._undecoratedName=QString::fromWCharArray(bstring);        SysFreeString(bstring);}
-    //if(pSymbol->get_undecoratedNameEx(==S_OK) {record._undecoratedNameEx=QString::fromWCharArray(bstring);      SysFreeString(bstring);}
+    //if(pSymbol->get_undecoratedName(&bstring)==S_OK) {result._undecoratedName=QString::fromWCharArray(bstring);SysFreeString(bstring);}   // Crash sometimes !!!
+    //if(pSymbol->get_undecoratedNameEx(==S_OK) {record._undecoratedNameEx=QString::fromWCharArray(bstring);      SysFreeString(bstring);}  // Crash sometimes !!!
     pSymbol->get_virtual(&result._virtual);
     pSymbol->get_virtualAddress(&result._virtualAddress);
     pSymbol->get_virtualBaseOffset(&result._virtualBaseOffset);
@@ -2372,188 +2372,236 @@ QWinPDB::ELEM_INFO QWinPDB::handleElement(quint32 nID, QWinPDB::HANDLE_OPTIONS *
     return QWinPDB::getElemInfo(&elem,pHandleOptions,0,false);
 }
 
-QString QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
+bool QWinPDB::exportString(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
-    QString sResult;
+    bool bResult=false;
 
     setProcessEnable(true);
 
-    QList<ELEM_INFO> listElemInfos;
+    QList<SYMBOL_RECORD> listSymbols=pStats->listSymbols;
+
+//    QList<ELEM_INFO> listElemInfos;
 
     if(!__bIsProcessStop)
     {
-        int nCount=pStats->listSymbols.count();
+//        int nCount=listSymbols.count();
 
-        emit setProgressMinimum(0);
-        emit setProgressMaximum(nCount);
+//        emit setProgressMinimum(0);
+//        emit setProgressMaximum(nCount);
 
-        int nCurrentIndex=0;
-        int nCurrentProcent=0;
-        int nProcent=nCount/1000;
+//        int nCurrentIndex=0;
+//        int nCurrentProcent=0;
+//        int nProcent=nCount/1000;
 
-        for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
-        {
-            ELEM_INFO elemInfo=handleElement(pStats->listSymbols.at(i).dwID,pHandleOptions);
+//        for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
+//        {
+//            ELEM_INFO elemInfo=handleElement(listSymbols.at(i).dwID,pHandleOptions);
 
-            if(elemInfo.bIsValid)
-            {
-                listElemInfos.append(elemInfo);
-            }
+//            if(elemInfo.bIsValid)
+//            {
+//                listElemInfos.append(elemInfo);
+//            }
 
-            if(nCurrentIndex>nCurrentProcent*nProcent)
-            {
-                nCurrentProcent++;
-                emit setProgressValue(nCurrentIndex);
-            }
+//            if(nCurrentIndex>nCurrentProcent*nProcent)
+//            {
+//                nCurrentProcent++;
+//                emit setProgressValue(nCurrentIndex);
+//            }
 
-            nCurrentIndex++;
+//            nCurrentIndex++;
 
-            emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
-        }
+//            emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
+//        }
     }
 
     if(!__bIsProcessStop)
     {
-        emit infoMessage(tr("Sort elements"));
+//        emit infoMessage(tr("Sort elements"));
 
-        if(pHandleOptions->sortType==ST_ID)
-        {
-            qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoID);
-        }
-        else if(pHandleOptions->sortType==ST_NAME)
-        {
-            qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoName);
-        }
-        else if(pHandleOptions->sortType==ST_DEP)
-        {
-            qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoDeps);
-        }
+//        if(pHandleOptions->sortType==ST_ID)
+//        {
+//            qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoID);
+//        }
+//        else if(pHandleOptions->sortType==ST_NAME)
+//        {
+//            qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoName);
+//        }
+//        else if(pHandleOptions->sortType==ST_DEP)
+//        {
+//            qSort(listElemInfos.begin(),listElemInfos.end(),sortElemInfoDeps);
+//        }
     }
 
-    if(pHandleOptions->exportType==ET_CPLUSPLUS)
+    if(pHandleOptions->sResultFileName!="")
     {
-        QString sExportName=QFileInfo(pHandleOptions->sResultFileName).completeBaseName().toUpper();
+        QFile file;
+        file.setFileName(pHandleOptions->sResultFileName);
 
-        sExportName=sExportName.replace(".","_");
-
-        if(sExportName=="")
+        if(file.open(QIODevice::ReadWrite|QIODevice::Append))
         {
-            sExportName="_EXPORT_H";
-        }
-        else
-        {
-            sExportName="_"+sExportName;
-        }
+            file.seek(0);
+            file.resize(0);
 
-        sResult+=QString("#ifndef %1\r\n").arg(sExportName);
-        sResult+=QString("#define %1\r\n").arg(sExportName);
-        sResult+="\r\n";
-        sResult+=QString("// File generated by %1 v%2 (http://www.ntinfo.biz)\r\n").arg(X_APPLICATIONNAME).arg(X_APPLICATIONVERSION);
-        sResult+=QString("// Bugreports : horsicq@gmail.com\r\n");
-        sResult+="\r\n";
-
-        int nCount=listElemInfos.count();
-
-        emit setProgressMinimum(0);
-        emit setProgressMaximum(nCount);
-
-        int nCurrentIndex=0;
-        int nCurrentProcent=0;
-        int nProcent=nCount/1000;
-
-        if(nCount)
-        {
-            for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
+            if(pHandleOptions->exportType==ET_CPLUSPLUS)
             {
-                sResult+=listElemInfos.at(i).sText;
-                sResult+="\r\n";
-                sResult+="\r\n";
+                QString sExportName=QFileInfo(pHandleOptions->sResultFileName).completeBaseName().toUpper();
 
-                if(nCurrentIndex>nCurrentProcent*nProcent)
+                sExportName=sExportName.replace(".","_");
+
+                if(sExportName=="")
                 {
-                    nCurrentProcent++;
-                    emit setProgressValue(nCurrentIndex);
+                    sExportName="_EXPORT_H";
+                }
+                else
+                {
+                    sExportName="_"+sExportName;
                 }
 
-                nCurrentIndex++;
-            }
-        }
-
-        sResult+=QString("#endif\r\n");
-    }
-    else if(pHandleOptions->exportType==ET_XNTSV)
-    {
-        int nCount=listElemInfos.count();
-
-        emit setProgressMinimum(0);
-        emit setProgressMaximum(nCount);
-
-        int nCurrentIndex=0;
-        int nCurrentProcent=0;
-        int nProcent=nCount/1000;
-
-        QFileInfo fileInfo(pHandleOptions->sResultFileName);
-
-        QString sFilePrefix=fileInfo.absolutePath()+QDir::separator()+fileInfo.completeBaseName();
-        QDir().mkdir(sFilePrefix);
-
-        QJsonObject jsonMain;
-        jsonMain.insert("name",QJsonValue::fromVariant(QFileInfo(pHandleOptions->sResultFileName).completeBaseName()));
-
-        QJsonArray jsonArrayStructs;
-
-        if(nCount)
-        {
-            QSet<QString> stElems;
-
-            for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
-            {
-                if(nCurrentIndex>nCurrentProcent*nProcent)
                 {
-                    nCurrentProcent++;
-                    emit setProgressValue(nCurrentIndex);
+                    QString sResult;
+                    sResult+=QString("#ifndef %1\r\n").arg(sExportName);
+                    sResult+=QString("#define %1\r\n").arg(sExportName);
+                    sResult+="\r\n";
+                    sResult+=QString("// File generated by %1 v%2 (http://www.ntinfo.biz)\r\n").arg(X_APPLICATIONNAME).arg(X_APPLICATIONVERSION);
+                    sResult+=QString("// Bugreports : horsicq@gmail.com\r\n");
+                    sResult+="\r\n";
+
+                    file.write(sResult.toUtf8().data());
                 }
 
-                QJsonObject jsonObject=listElemInfos.at(i).jsonObject;
+                int nCount=listSymbols.count();
 
-                QString sObjectName=jsonObject.value("name").toString();
+                emit setProgressMinimum(0);
+                emit setProgressMaximum(nCount);
 
-                if(!stElems.contains(sObjectName))
+                int nCurrentIndex=0;
+                int nCurrentProcent=0;
+                int nProcent=nCount/1000;
+
+                if(nCount)
                 {
-                    stElems.insert(sObjectName);
-
-                    jsonArrayStructs.append(jsonObject);
-
-                    QString sFileName=sFilePrefix+QDir::separator()+listElemInfos.at(i).sInfoFile;
-
-                    QFile(sFileName).remove();
-
-                    QFile file;
-                    file.setFileName(sFileName);
-
-                    if(file.open(QIODevice::ReadWrite))
+                    for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
                     {
-                        file.write(listElemInfos.at(i).sText.toLatin1().data());
 
-                        file.close();
+                        ELEM_INFO elemInfo=handleElement(listSymbols.at(i).dwID,pHandleOptions);
+
+                        QString sResult;
+
+                        sResult+=elemInfo.sText;
+                        sResult+="\r\n";
+                        sResult+="\r\n";
+
+                        if(nCurrentIndex>nCurrentProcent*nProcent)
+                        {
+                            nCurrentProcent++;
+                            emit setProgressValue(nCurrentIndex);
+                        }
+
+                        nCurrentIndex++;
+
+                        file.write(sResult.toUtf8().data());
+                        file.flush();
+
+                        emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
                     }
                 }
 
-                nCurrentIndex++;
+                {
+                    QString sResult;
+                    sResult+=QString("#endif\r\n");
+
+                    file.write(sResult.toUtf8().data());
+                }
             }
+            else if(pHandleOptions->exportType==ET_XNTSV)
+            {
+                int nCount=listSymbols.count();
+
+                emit setProgressMinimum(0);
+                emit setProgressMaximum(nCount);
+
+                int nCurrentIndex=0;
+                int nCurrentProcent=0;
+                int nProcent=nCount/1000;
+
+                QFileInfo fileInfo(pHandleOptions->sResultFileName);
+
+                QString sFilePrefix=fileInfo.absolutePath()+QDir::separator()+fileInfo.completeBaseName();
+                QDir().mkdir(sFilePrefix);
+
+                QJsonObject jsonMain;
+                jsonMain.insert("name",QJsonValue::fromVariant(QFileInfo(pHandleOptions->sResultFileName).completeBaseName()));
+
+                QJsonArray jsonArrayStructs;
+
+                if(nCount)
+                {
+                    QSet<QString> stElems;
+
+                    for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
+                    {
+                        if(nCurrentIndex>nCurrentProcent*nProcent)
+                        {
+                            nCurrentProcent++;
+                            emit setProgressValue(nCurrentIndex);
+                        }
+
+                        ELEM_INFO elemInfo=handleElement(listSymbols.at(i).dwID,pHandleOptions);
+
+                        QJsonObject jsonObject=elemInfo.jsonObject;
+
+                        QString sObjectName=jsonObject.value("name").toString();
+
+                        if(!stElems.contains(sObjectName))
+                        {
+                            stElems.insert(sObjectName);
+
+                            jsonArrayStructs.append(jsonObject);
+
+                            QString sFileName=sFilePrefix+QDir::separator()+elemInfo.sInfoFile;
+
+                            QFile(sFileName).remove();
+
+                            QFile file;
+                            file.setFileName(sFileName);
+
+                            if(file.open(QIODevice::ReadWrite))
+                            {
+                                file.write(elemInfo.sText.toUtf8().data());
+
+                                file.close();
+                            }
+                        }
+
+                        nCurrentIndex++;
+                    }
+                }
+
+                jsonMain.insert("structs",jsonArrayStructs);
+
+                QJsonDocument doc(jsonMain);
+                QString sResult=doc.toJson(QJsonDocument::Indented);
+
+                file.write(sResult.toUtf8().data());
+            }
+
+            bResult=true;
+
+            file.close();
+
+            emit infoMessage(QString("%1: %2").arg(tr("File saved")).arg(pHandleOptions->sResultFileName));
         }
-
-        jsonMain.insert("structs",jsonArrayStructs);
-
-        QJsonDocument doc(jsonMain);
-        sResult=doc.toJson(QJsonDocument::Indented);
+        else
+        {
+            emit errorMessage(QString("%1: %2").arg(tr("Cannot save file")).arg(pHandleOptions->sResultFileName));
+        }
     }
 
     setProcessEnable(true);
 
     emit completed();
 
-    return sResult;
+    return bResult;
 }
 
 QWinPDB::ELEM_BASEINFO QWinPDB::getBaseInfo(IDiaSymbol *pParent)
