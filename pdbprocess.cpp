@@ -26,9 +26,6 @@ PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(pare
     this->g_type=type;
 
     connect(pData->pWinPDB,SIGNAL(completed()),this,SIGNAL(completed()));
-    connect(pData->pWinPDB,SIGNAL(setProgressMinimum(int)),this,SIGNAL(setProgressMinimum(int)));
-    connect(pData->pWinPDB,SIGNAL(setProgressMaximum(int)),this,SIGNAL(setProgressMaximum(int)));
-    connect(pData->pWinPDB,SIGNAL(setProgressValue(int)),this,SIGNAL(setProgressValue(int)));
     connect(pData->pWinPDB,SIGNAL(errorMessage(QString)),this,SIGNAL(errorMessage(QString)));
 }
 
@@ -36,11 +33,11 @@ void PDBProcess::process()
 {
     if(g_type==TYPE_IMPORT)
     {
-        g_pData->stats=g_pData->pWinPDB->getStats();
+        g_pData->pWinPDB->getStats(&(g_pData->stats));
     }
     else if(g_type==TYPE_EXPORT)
     {
-        g_pData->pWinPDB->exportString(&(g_pData->stats),&(g_pData->handleOptions));
+        g_pData->pWinPDB->handleExport(&(g_pData->stats),&(g_pData->handleOptions));
     }
 }
 

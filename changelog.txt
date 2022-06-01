@@ -1,7 +1,8 @@
 2.03
 -----------------------------------------------------------------------
+[+] Speed ​​improved
 [+] New translations
-[+] Many bugs have been fixed.
+[+] Many bugs have been fixed
 #######################################################################
 2.02
 -----------------------------------------------------------------------
@@ -10,9 +11,9 @@
 [+] Visual Studio independent MSDIA(thx: @mrexodia)
 [+] Fix some crashes
 [+] New translations
-[+] Many bugs have been fixed.
+[+] Many bugs have been fixed
 #######################################################################
 2.01
 -----------------------------------------------------------------------
-[+] Many bugs have been fixed.
+[+] Many bugs have been fixed
 #######################################################################

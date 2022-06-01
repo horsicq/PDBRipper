@@ -50,9 +50,6 @@ public:
 
 signals:
     void completed();
-    void setProgressMinimum(int);
-    void setProgressMaximum(int);
-    void setProgressValue(int);
     void errorMessage(QString sText);
     void infoMessage(QString sText);
 

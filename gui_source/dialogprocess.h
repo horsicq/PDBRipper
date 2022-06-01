@@ -24,6 +24,7 @@
 #include <QDialog>
 #include <QThread>
 #include <QWidget>
+#include <QTimer>
 #include "../pdbprocess.h"
 
 namespace Ui
@@ -41,12 +42,10 @@ public:
 
 private slots:
     void on_pushButtonCancel_clicked();
+    void timerSlot();
 
 public slots:
     void onCompleted();
-    void onSetProgressMinimum(int nMin);
-    void onSetProgressMaximum(int nMax);
-    void onSetProgressValue(int nValue);
 
 signals:
     void errorMessage(QString sText);
@@ -58,6 +57,8 @@ private:
     PDBProcess *pPDBProcess;
     bool bIsRun;
     int nReturnCode;
+    QTimer *g_pTimer;
+    PDBProcess::PDBDATA *g_pData;
 };
 
 #endif // DIALOGPROCESS_H

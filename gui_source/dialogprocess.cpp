@@ -27,6 +27,8 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
 {
     ui->setupUi(this);
 
+    g_pData=pData;
+
     if(type==PDBProcess::TYPE_EXPORT)
     {
         setWindowTitle(tr("Export"));
@@ -42,9 +44,6 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
     pPDBProcess->moveToThread(pThread);
 
     connect(pPDBProcess,SIGNAL(completed()),this,SLOT(onCompleted()));
-    connect(pPDBProcess,SIGNAL(setProgressMinimum(int)),this,SLOT(onSetProgressMinimum(int)));
-    connect(pPDBProcess,SIGNAL(setProgressMaximum(int)),this,SLOT(onSetProgressMaximum(int)));
-    connect(pPDBProcess,SIGNAL(setProgressValue(int)),this,SLOT(onSetProgressValue(int)));
 
     connect(pPDBProcess,SIGNAL(errorMessage(QString)),this,SIGNAL(errorMessage(QString)));
     connect(pPDBProcess,SIGNAL(infoMessage(QString)),this,SIGNAL(infoMessage(QString)));
@@ -53,7 +52,14 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
     connect(pThread, SIGNAL(started()), pPDBProcess, SLOT(process()));
     pThread->start();
 
+    g_pTimer=new QTimer(this);
+    connect(g_pTimer,SIGNAL(timeout()),this,SLOT(timerSlot()));
+    g_pTimer->start(1000);
+
     nReturnCode=QDialog::Accepted;
+
+    ui->progressBarTotal->setMaximum(100);
+    ui->progressBarTotal->setValue(0);
 }
 
 DialogProcess::~DialogProcess()
@@ -83,22 +89,20 @@ void DialogProcess::on_pushButtonCancel_clicked()
     }
 }
 
+void DialogProcess::timerSlot()
+{
+    if(g_pData)
+    {
+        if(g_pData->stats.nTotal)
+        {
+            ui->progressBarTotal->setMaximum(g_pData->stats.nTotal);
+            ui->progressBarTotal->setValue(g_pData->stats.nCurrent);
+            ui->labelStatus->setText(g_pData->stats.sStatus);
+        }
+    }
+}
+
 void DialogProcess::onCompleted()
 {
     done(nReturnCode);
-}
-
-void DialogProcess::onSetProgressMinimum(int nMin)
-{
-    ui->progressBarTotal->setMinimum(nMin);
-}
-
-void DialogProcess::onSetProgressMaximum(int nMax)
-{
-    ui->progressBarTotal->setMaximum(nMax);
-}
-
-void DialogProcess::onSetProgressValue(int nValue)
-{
-    ui->progressBarTotal->setValue(nValue);
 }

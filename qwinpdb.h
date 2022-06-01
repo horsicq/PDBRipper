@@ -500,6 +500,9 @@ public:
     struct STATS
     {
         QList<SYMBOL_RECORD> listSymbols;
+        qint32 nTotal;
+        qint32 nCurrent;
+        QString sStatus;
     };
 
     enum FO
@@ -539,7 +542,7 @@ public:
     static HANDLE_OPTIONS getDefaultHandleOptions();
     bool loadFromFile(QString sFileName);
     PDB_INFO getAllTags(HANDLE_OPTIONS *pHandleOptions);
-    STATS getStats();
+    void getStats(QWinPDB::STATS *pStats);
     void stop();
     void setProcessEnable(bool bState);
 
@@ -614,7 +617,7 @@ public:
     QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);
     ELEM_INFO getElemInfo(const ELEM *pElem,HANDLE_OPTIONS *pHandleOptions,int nLevel,bool bIsClass);
     ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
-    bool exportString(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
+    bool handleExport(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
     ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
 
 private:
@@ -667,9 +670,6 @@ private:
 
 signals:
     void completed();
-    void setProgressMinimum(int);
-    void setProgressMaximum(int);
-    void setProgressValue(int);
     void errorMessage(QString sText);
     void infoMessage(QString sText);
 
