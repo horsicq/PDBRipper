@@ -83,6 +83,7 @@ public:
         int nBaseType;
 //        QString sType;
         QString sTypeName;
+        QString sUDTName;
         QString sName;
         int nSize;
         int nOffset;
@@ -494,7 +495,10 @@ public:
         DWORD dwID;
         QString sName;
         SYMBOL_TYPE type;
-        QSet<DWORD> stTypeIds;
+        // For Dep sorting
+        bool bIsSorted;
+        quint32 nHash;
+        QSet<quint32> stTypeHashes;
     };
 
     struct STATS
@@ -611,7 +615,7 @@ public:
     };
 
     ELEM getElem(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
-    ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq);
+    ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq,QSet<quint32> *pStTypeHashes);
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
     QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);
@@ -667,6 +671,16 @@ private:
 
     static QString _fixName(QString sName,quint32 nID);
     static QString getName(IDiaSymbol *pSymbol);
+
+    RECORD_BASETYPE _getRecordBaseType_fast(IDiaSymbol *pSymbol);
+    RECORD_UDT _getRecordUDT_fast(IDiaSymbol *pSymbol);
+    RECORD_POINTERTYPE _getRecordPointerType_fast(IDiaSymbol *pSymbol);
+    RECORD_ARRAYTYPE _getRecordArrayType_fast(IDiaSymbol *pSymbol);
+    RECORD_ENUM _getRecordEnum_fast(IDiaSymbol *pSymbol);
+    RECORD_FUNCTIONTYPE _getRecordFunctionType_fast(IDiaSymbol *pSymbol);
+    RECORD_FUNCTION _getRecordFunction_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_TYPEDEF _getRecordTypeDef_fast(IDiaSymbol *pSymbol);
+    RECORD_DATA _getRecordData_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
 
 signals:
     void completed();

@@ -97,7 +97,10 @@ void DialogProcess::timerSlot()
         {
             ui->progressBarTotal->setMaximum(g_pData->stats.nTotal);
             ui->progressBarTotal->setValue(g_pData->stats.nCurrent);
-            ui->labelStatus->setText(g_pData->stats.sStatus);
+
+            QString sStatus=g_pData->stats.sStatus.left(64);
+
+            ui->labelStatus->setText(sStatus);
         }
     }
 }
