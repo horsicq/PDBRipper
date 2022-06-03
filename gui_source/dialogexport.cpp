@@ -45,7 +45,13 @@ DialogExport::DialogExport(QWidget *parent,PDBProcess::PDBDATA *pData) :
     ui->comboBoxSortType->addItem(tr("No"),QWinPDB::ST_NO);
     ui->comboBoxSortType->addItem(QString("ID"),QWinPDB::ST_ID);
     ui->comboBoxSortType->addItem(tr("Name"),QWinPDB::ST_NAME);
-    ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_DEP);
+
+    qint32 nCount=pData->stats.listSymbols.count();
+
+    if(nCount<100000)
+    {
+        ui->comboBoxSortType->addItem(tr("Dependencies"),QWinPDB::ST_DEP);
+    }
 
     ui->comboBoxExportType->addItem(QString("C++"),QWinPDB::ET_CPLUSPLUS);
     ui->comboBoxExportType->addItem(QString("XNTSV"),QWinPDB::ET_XNTSV);

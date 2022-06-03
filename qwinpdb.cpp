@@ -1674,7 +1674,7 @@ QWinPDB::RECORD_TYPEDEF QWinPDB::_getRecordTypeDef_fast(IDiaSymbol *pSymbol)
 //    pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
 //    pSymbol->get_volatileType(&result._volatileType);
 
-    result._name=getName(pSymbol);
+//    result._name=getName(pSymbol);
 
     return result;
 }
@@ -1719,6 +1719,166 @@ QWinPDB::RECORD_DATA QWinPDB::_getRecordData_fast(IDiaSymbol *pSymbol, HANDLE_OP
     result.rtype.nAccess=result._access;
     result.rtype.nBitOffset=result._bitPosition;
     result.rtype.nBitSize=result._length;
+
+    return result;
+}
+
+QWinPDB::RECORD_BASECLASS QWinPDB::_getRecordBaseClass_fast(IDiaSymbol *pSymbol)
+{
+    RECORD_BASECLASS result={};
+
+    pSymbol->get_access(&result._access);
+//    pSymbol->get_classParentId(&result._classParentId);
+//    pSymbol->get_constructor(&result._constructor);
+//    pSymbol->get_constType(&result._constType);
+//    pSymbol->get_hasAssignmentOperator(&result._hasAssignmentOperator);
+//    pSymbol->get_hasCastOperator(&result._hasCastOperator);
+//    pSymbol->get_hasNestedTypes(&result._hasNestedTypes);
+//    pSymbol->get_indirectVirtualBaseClass(&result._indirectVirtualBaseClass);
+//    pSymbol->get_length(&result._length);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+//    pSymbol->get_nested(&result._nested);
+//    pSymbol->get_offset(&result._offset);
+//    pSymbol->get_overloadedOperator(&result._overloadedOperator);
+//    pSymbol->get_packed(&result._packed);
+//    pSymbol->get_scoped(&result._scoped);
+    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_typeId(&result._typeId);
+//    pSymbol->get_udtKind(&result._udtKind);
+//    pSymbol->get_unalignedType(&result._unalignedType);
+//    pSymbol->get_virtualBaseClass(&result._virtualBaseClass);
+//    pSymbol->get_virtualBaseDispIndex(&result._virtualBaseDispIndex);
+//    pSymbol->get_virtualBasePointerOffset(&result._virtualBasePointerOffset);
+//    pSymbol->get_virtualTableShapeId(&result._virtualTableShapeId);
+//    pSymbol->get_volatileType(&result._volatileType);
+
+    result._name=getName(pSymbol);
+
+    return result;
+}
+
+QWinPDB::RECORD_VTABLE QWinPDB::_getRecordVTable_fast(IDiaSymbol *pSymbol)
+{
+    RECORD_VTABLE result={};
+
+//    pSymbol->get_classParentId(&result._classParentId);
+//    pSymbol->get_constType(&result._constType);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_typeId(&result._typeId);
+//    pSymbol->get_unalignedType(&result._unalignedType);
+//    pSymbol->get_volatileType(&result._volatileType);
+
+    return result;
+}
+
+QWinPDB::RECORD_FUNCDEBUGSTART QWinPDB::_getRecordFuncDebugStart_fast(IDiaSymbol *pSymbol)
+{
+    RECORD_FUNCDEBUGSTART result={};
+
+//    pSymbol->get_addressOffset(&result._addressOffset);
+//    pSymbol->get_addressSection(&result._addressSection);
+//    pSymbol->get_customCallingConvention(&result._customCallingConvention);
+//    pSymbol->get_farReturn(&result._farReturn);
+//    pSymbol->get_interruptReturn(&result._interruptReturn);
+//    pSymbol->get_isStatic(&result._isStatic);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+//    pSymbol->get_locationType(&result._locationType);
+//    pSymbol->get_noInline(&result._noInline);
+//    pSymbol->get_noReturn(&result._noReturn);
+//    pSymbol->get_notReached(&result._notReached);
+//    pSymbol->get_offset(&result._offset);
+//    pSymbol->get_optimizedCodeDebugInfo(&result._optimizedCodeDebugInfo);
+//    pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
+//    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_symTag(&result._symTag);
+//    pSymbol->get_virtualAddress(&result._virtualAddress);
+
+    return result;
+}
+
+QWinPDB::RECORD_FUNCDEBUGEND QWinPDB::_getRecordFuncDebugEnd_fast(IDiaSymbol *pSymbol)
+{
+    RECORD_FUNCDEBUGEND result={};
+
+//    pSymbol->get_addressOffset(&result._addressOffset);
+//    pSymbol->get_addressSection(&result._addressSection);
+//    pSymbol->get_customCallingConvention(&result._customCallingConvention);
+//    pSymbol->get_farReturn(&result._farReturn);
+//    pSymbol->get_interruptReturn(&result._interruptReturn);
+//    pSymbol->get_isStatic(&result._isStatic);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+//    pSymbol->get_locationType(&result._locationType);
+//    pSymbol->get_noInline(&result._noInline);
+//    pSymbol->get_noReturn(&result._noReturn);
+//    pSymbol->get_notReached(&result._notReached);
+//    pSymbol->get_offset(&result._offset);
+//    pSymbol->get_optimizedCodeDebugInfo(&result._optimizedCodeDebugInfo);
+//    pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
+//    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_symTag(&result._symTag);
+//    pSymbol->get_virtualAddress(&result._virtualAddress);
+
+    return result;
+}
+
+QWinPDB::RECORD_CALLSITE QWinPDB::_getRecordCallSite_fast(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions)
+{
+    RECORD_CALLSITE result={};
+
+//    pSymbol->get_addressOffset(&result._addressOffset);
+//    pSymbol->get_addressSection(&result._addressSection);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+//    pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
+//    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_symTag(&result._symTag);
+
+//    result.rtype=getSymbolType(pSymbol,pHandleOptions);
+
+    return result;
+}
+
+QWinPDB::RECORD_LABEL QWinPDB::_getRecordLabel_fast(IDiaSymbol *pSymbol)
+{
+    RECORD_LABEL result={};
+
+//    pSymbol->get_addressOffset(&result._addressOffset);
+//    pSymbol->get_addressSection(&result._addressSection);
+//    pSymbol->get_customCallingConvention(&result._customCallingConvention);
+//    pSymbol->get_farReturn(&result._farReturn);
+//    pSymbol->get_interruptReturn(&result._interruptReturn);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+//    pSymbol->get_locationType(&result._locationType);
+//    pSymbol->get_noInline(&result._noInline);
+//    pSymbol->get_noReturn(&result._noReturn);
+//    pSymbol->get_notReached(&result._notReached);
+//    pSymbol->get_offset(&result._offset);
+//    pSymbol->get_optimizedCodeDebugInfo(&result._optimizedCodeDebugInfo);
+//    pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
+//    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_symTag(&result._symTag);
+//    pSymbol->get_virtualAddress(&result._virtualAddress);
+
+//    result._name=getName(pSymbol);
+
+    return result;
+}
+
+QWinPDB::RECORD_BLOCK QWinPDB::_getRecordBlock_fast(IDiaSymbol *pSymbol)
+{
+    RECORD_BLOCK result={};
+
+//    pSymbol->get_addressOffset(&result._addressOffset);
+//    pSymbol->get_addressSection(&result._addressSection);
+//    pSymbol->get_length(&result._length);
+//    pSymbol->get_lexicalParentId(&result._lexicalParentId);
+//    pSymbol->get_locationType(&result._locationType);
+//    pSymbol->get_relativeVirtualAddress(&result._relativeVirtualAddress);
+//    pSymbol->get_symIndexId(&result._symIndexId);
+//    pSymbol->get_symTag(&result._symTag);
+//    pSymbol->get_virtualAddress(&result._virtualAddress);
+
+//    result._name=getName(pSymbol);
 
     return result;
 }
@@ -2062,40 +2222,40 @@ QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptio
         else if(dwSymTag==SymTagBaseClass)
         {
             result.elemType=ELEM_TYPE_BASECLASS;
-            result._baseclass=_getRecordBaseClass(pParent);
+            result._baseclass=_getRecordBaseClass_fast(pParent);
             bChildren=false;
         }
         else if(dwSymTag==SymTagVTable)
         {
             result.elemType=ELEM_TYPE_VTABLE;
-            result._vtable=_getRecordVTable(pParent);
+            result._vtable=_getRecordVTable_fast(pParent);
         }
         else if(dwSymTag==SymTagFuncDebugStart)
         {
             result.elemType=ELEM_TYPE_FUNCDEBUGSTART;
-            result._funcdebugstart=_getRecordFuncDebugStart(pParent);
+            result._funcdebugstart=_getRecordFuncDebugStart_fast(pParent);
         }
         else if(dwSymTag==SymTagFuncDebugEnd)
         {
             result.elemType=ELEM_TYPE_FUNCDEBUGEND;
-            result._funcdebugend=_getRecordFuncDebugEnd(pParent);
+            result._funcdebugend=_getRecordFuncDebugEnd_fast(pParent);
         }
         else if(dwSymTag==SymTagCallSite)
         {
     //        _checkSymbol(pParent);
 
             result.elemType=ELEM_TYPE_CALLSITE;
-            result._callsite=_getRecordCallSite(pParent,pHandleOptions);
+            result._callsite=_getRecordCallSite_fast(pParent,pHandleOptions);
         }
         else if(dwSymTag==SymTagLabel)
         {
             result.elemType=ELEM_TYPE_LABEL;
-            result._label=_getRecordLabel(pParent);
+            result._label=_getRecordLabel_fast(pParent);
         }
         else if(dwSymTag==SymTagBlock)
         {
             result.elemType=ELEM_TYPE_BLOCK;
-            result._block=_getRecordBlock(pParent);
+            result._block=_getRecordBlock_fast(pParent);
         }
         else
         {
@@ -2457,6 +2617,11 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
 
         if(pElem->elemType==ELEM_TYPE_ENUM)
         {
+            if(nLevel==0)
+            {
+                result.sElementName=QString("enum %1").arg(pElem->_enum._name);
+            }
+
             result.sText+=_getTab(nLevel)+QString("enum %1\r\n").arg(pElem->_enum._name);
             result.sText+=_getTab(nLevel)+"{\r\n";
 
@@ -2477,6 +2642,11 @@ QWinPDB::ELEM_INFO QWinPDB::getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHand
         }
         else if((pElem->elemType==ELEM_TYPE_UDT)||(pElem->elemType==ELEM_TYPE_FAKEUNION)||(pElem->elemType==ELEM_TYPE_FAKESTRUCT))
         {
+            if(nLevel==0)
+            {
+                result.sElementName=QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
+            }
+
             result.sText+=_getTab(nLevel)+QString("%1 %2").arg(pElem->_udt.sType).arg(pElem->_udt._name);
 
             QList<QString> listBaseClasses;
@@ -2698,12 +2868,16 @@ bool QWinPDB::handleExport(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHan
     {
         if(pHandleOptions->sortType==ST_DEP)
         {
+            QList<SYMBOL_RECORD> _listSymbols;
+
             int nCount=listSymbols.count();
 
             pStats->nTotal=nCount;
 
             if(nCount)
             {
+                QSet<quint32> stCurrent;
+
                 for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
                 {
                     IDiaSymbol *pParent=nullptr;
@@ -2715,7 +2889,9 @@ bool QWinPDB::handleExport(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHan
 
                         QWinPDB::ELEM elem=_getElem(pParent,pHandleOptions,0,&stUniq,&stTypeHashes);
 
-                        listSymbols[i].nHash=stringHash(elem.baseInfo.sName);
+                        quint32 nHash=stringHash(elem.baseInfo.sName);
+
+                        listSymbols[i].nHash=nHash;
                         listSymbols[i].stTypeHashes=stTypeHashes;
 
                         emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elem.baseInfo.sName));
@@ -2724,8 +2900,17 @@ bool QWinPDB::handleExport(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHan
                         pStats->sStatus=elem.baseInfo.sName;
 
                         pParent->Release();
+
+                        if(!stCurrent.contains(nHash))
+                        {
+                            stCurrent.insert(nHash);
+
+                            _listSymbols.append(listSymbols[i]);
+                        }
                     }
                 }
+
+                listSymbols=_listSymbols;
 
                 pStats->nCurrent=0;
             }
@@ -2842,8 +3027,32 @@ bool QWinPDB::handleExport(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHan
 
                 pStats->nTotal=nCount;
 
+                if(pHandleOptions->sortType==ST_DEP)
+                {
+                    pStats->nCurrent=0;
+
+                    for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
+                    {
+                        ELEM_INFO elemInfo=handleElement(listSymbols.at(i).dwID,pHandleOptions);
+
+                        QString sResult;
+
+                        sResult+=elemInfo.sElementName+";\r\n";
+
+                        file.write(sResult.toUtf8().data());
+                        file.flush();
+
+                        emit infoMessage(QString("[%1/%2] %3: %4").arg(i+1).arg(nCount).arg(tr("Get element")).arg(elemInfo.baseInfo.sName));
+
+                        pStats->nCurrent++;
+                        pStats->sStatus=elemInfo.baseInfo.sName;
+                    }
+                }
+
                 if(nCount)
                 {
+                    pStats->nCurrent=0;
+
                     for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
                     {
                         ELEM_INFO elemInfo=handleElement(listSymbols.at(i).dwID,pHandleOptions);

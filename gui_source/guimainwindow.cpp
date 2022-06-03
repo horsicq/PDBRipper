@@ -27,7 +27,7 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(QString("%1 v%2").arg(X_APPLICATIONDISPLAYNAME,X_APPLICATIONVERSION));
+    setWindowTitle(XOptions::getTitle(X_APPLICATIONDISPLAYNAME,X_APPLICATIONVERSION));
 
     g_xOptions.setName(X_OPTIONSFILE);
 
@@ -315,6 +315,8 @@ void GuiMainWindow::cleanUp()
 
     ui->lineEditSearch->clear();
     ui->textBrowserResult->clear();
+
+    setWindowTitle(XOptions::getTitle(X_APPLICATIONDISPLAYNAME,X_APPLICATIONVERSION));
 }
 
 void GuiMainWindow::on_lineEditSearch_textChanged(const QString &arg1)

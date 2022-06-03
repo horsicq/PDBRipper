@@ -496,7 +496,6 @@ public:
         QString sName;
         SYMBOL_TYPE type;
         // For Dep sorting
-        bool bIsSorted;
         quint32 nHash;
         QSet<quint32> stTypeHashes;
     };
@@ -609,6 +608,7 @@ public:
         bool bIsValid;
         ELEM_BASEINFO baseInfo;
         QString sText;
+        QString sElementName;
         QString sInfoFile;
         QJsonObject jsonObject;
         QList<ELEM_BASEINFO> listChildrenBaseInfos;
@@ -681,6 +681,13 @@ private:
     RECORD_FUNCTION _getRecordFunction_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
     RECORD_TYPEDEF _getRecordTypeDef_fast(IDiaSymbol *pSymbol);
     RECORD_DATA _getRecordData_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_BASECLASS _getRecordBaseClass_fast(IDiaSymbol *pSymbol);
+    RECORD_VTABLE _getRecordVTable_fast(IDiaSymbol *pSymbol);
+    RECORD_FUNCDEBUGSTART _getRecordFuncDebugStart_fast(IDiaSymbol *pSymbol);
+    RECORD_FUNCDEBUGEND _getRecordFuncDebugEnd_fast(IDiaSymbol *pSymbol);
+    RECORD_CALLSITE _getRecordCallSite_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_LABEL _getRecordLabel_fast(IDiaSymbol *pSymbol);
+    RECORD_BLOCK _getRecordBlock_fast(IDiaSymbol *pSymbol);
 
 signals:
     void completed();
