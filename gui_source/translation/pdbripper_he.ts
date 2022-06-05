@@ -75,16 +75,16 @@
         <translation>אישור</translation>
     </message>
     <message>
+        <source>No</source>
+        <translation>לא</translation>
+    </message>
+    <message>
         <source>Name</source>
         <translation>שם</translation>
     </message>
     <message>
         <source>Dependencies</source>
         <translation>תלות</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>לא</translation>
     </message>
     <message>
         <source>Struct and unions</source>
@@ -121,22 +121,6 @@
         <source>Options</source>
         <translation>אפשרויות</translation>
     </message>
-    <message>
-        <source>OK</source>
-        <translation>אישור</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>בטל</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>מידע</translation>
-    </message>
-    <message>
-        <source>Please restart the application</source>
-        <translation>אנא הפעל את התוכנית מחדש</translation>
-    </message>
 </context>
 <context>
     <name>DialogProcess</name>
@@ -168,12 +152,12 @@
         <translation>נקה</translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation>סגור</translation>
+        <source>Default</source>
+        <translation>בְּרִירַת מֶחדָל</translation>
     </message>
     <message>
-        <source>Group</source>
-        <translation>קְבוּצָה</translation>
+        <source>Close</source>
+        <translation>סגור</translation>
     </message>
     <message>
         <source>Name</source>
@@ -223,38 +207,6 @@
         <translation>תיקון קיזוזים</translation>
     </message>
     <message>
-        <source>File</source>
-        <translation>קובץ</translation>
-    </message>
-    <message>
-        <source>Action</source>
-        <translation>פעולה</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>יצא</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>עזרה</translation>
-    </message>
-    <message>
-        <source>Tools</source>
-        <translation>כלים</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>פתח</translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation>אודות</translation>
-    </message>
-    <message>
-        <source>Quit</source>
-        <translation>לְהַפְסִיק</translation>
-    </message>
-    <message>
         <source>No</source>
         <translation>לא</translation>
     </message>
@@ -265,6 +217,42 @@
     <message>
         <source>All</source>
         <translation>הכל</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>קובץ</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>פעולה</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>כלים</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>עזרה</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>יצא</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>פתח</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>סגור</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation>יציאה</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>אודות</translation>
     </message>
     <message>
         <source>Open file</source>
@@ -289,17 +277,6 @@
     <message>
         <source>Cannot open file</source>
         <translation>לא ניתן לפתוח את הקובץ</translation>
-    </message>
-</context>
-<context>
-    <name>PDBProcess</name>
-    <message>
-        <source>File saved</source>
-        <translation>הקובץ נשמר</translation>
-    </message>
-    <message>
-        <source>Cannot save file</source>
-        <translation>לא ניתן לשמור את הקובץ</translation>
     </message>
 </context>
 <context>
@@ -332,12 +309,28 @@
         <source>Sort elements</source>
         <translation>מיין אלמנטים</translation>
     </message>
+    <message>
+        <source>File saved</source>
+        <translation>הקובץ נשמר</translation>
+    </message>
+    <message>
+        <source>Cannot save file</source>
+        <translation>לא ניתן לשמור את הקובץ</translation>
+    </message>
 </context>
 <context>
     <name>XOptions</name>
     <message>
         <source>Automatic</source>
         <translation>אוֹטוֹמָטִי</translation>
+    </message>
+    <message>
+        <source>Recent files</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>נקה</translation>
     </message>
 </context>
 <context>
@@ -363,6 +356,10 @@
         <translation>הצג לוגו</translation>
     </message>
     <message>
+        <source>Font</source>
+        <translation>גוֹפָן</translation>
+    </message>
+    <message>
         <source>Save last directory</source>
         <translation>שמור תיקייה אחרונה</translation>
     </message>
@@ -371,8 +368,24 @@
         <translation>שמור גיבוי</translation>
     </message>
     <message>
+        <source>Save history</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Add to context menu</source>
         <translation>הוסף לתפריט ההקשר</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>בְּרִירַת מֶחדָל</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>אישור</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>בטל</translation>
     </message>
     <message>
         <source>Appearance</source>
@@ -390,12 +403,144 @@
         <source>Please run the program as an administrator</source>
         <translation>אנא הפעל את התוכנית כמנהל מערכת</translation>
     </message>
+    <message>
+        <source>Information</source>
+        <translation>מידע</translation>
+    </message>
+    <message>
+        <source>Please restart the application</source>
+        <translation>אנא הפעל את התוכנית מחדש</translation>
+    </message>
 </context>
 <context>
     <name>XShortcuts</name>
     <message>
-        <source>Unknown</source>
-        <translation>לא ידוע</translation>
+        <source>Action</source>
+        <translation>פעולה</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>קובץ</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation>נוף</translation>
+    </message>
+    <message>
+        <source>String</source>
+        <translation>מחרוזת</translation>
+    </message>
+    <message>
+        <source>Strings</source>
+        <translation>מחרוזות</translation>
+    </message>
+    <message>
+        <source>Signature</source>
+        <translation>חתימה</translation>
+    </message>
+    <message>
+        <source>Signatures</source>
+        <translation>חתימות</translation>
+    </message>
+    <message>
+        <source>Struct</source>
+        <translation>מבנים</translation>
+    </message>
+    <message>
+        <source>Hex</source>
+        <translation>הקס</translation>
+    </message>
+    <message>
+        <source>Disasm</source>
+        <translation>פירוק לפקודות</translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation>לנפות</translation>
+    </message>
+    <message>
+        <source>Debugger</source>
+        <translation>מנפה שגיאות</translation>
+    </message>
+    <message>
+        <source>Register</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Stack</source>
+        <translation>לַעֲרוֹם</translation>
+    </message>
+    <message>
+        <source>Archive</source>
+        <translation>ארכיון</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation>טבלה</translation>
+    </message>
+    <message>
+        <source>Process</source>
+        <translation>תהליך</translation>
+    </message>
+    <message>
+        <source>Memory</source>
+        <translation>זיכרון</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>העתק</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>עריכה</translation>
+    </message>
+    <message>
+        <source>Find</source>
+        <translation>חפש</translation>
+    </message>
+    <message>
+        <source>Go to</source>
+        <translation>מעבר אל</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>כלים</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>עזרה</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>בחר</translation>
+    </message>
+    <message>
+        <source>Follow in</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Show in</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Breakpoint</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Modules</source>
+        <translation>מודולים</translation>
+    </message>
+    <message>
+        <source>Memory map</source>
+        <translation>מפת זיכרון</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>ערך</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>הופעה</translation>
     </message>
     <message>
         <source>Open</source>
@@ -406,8 +551,8 @@
         <translation>שמור</translation>
     </message>
     <message>
-        <source>Save As</source>
-        <translation>שמור כ</translation>
+        <source>Save as</source>
+        <translation></translation>
     </message>
     <message>
         <source>Close</source>
@@ -422,104 +567,40 @@
         <translation>יציאה</translation>
     </message>
     <message>
-        <source>Copy</source>
-        <translation>העתק</translation>
+        <source>Dump to file</source>
+        <translation>יצא כקובץ הרצה לקובץ</translation>
     </message>
     <message>
-        <source>Show</source>
-        <translation>הופעה</translation>
+        <source>Address</source>
+        <translation>כתובת</translation>
     </message>
     <message>
-        <source>Copy string</source>
-        <translation>העתק מחרוזת</translation>
+        <source>Entry point</source>
+        <translation>כתובת תחילת הריצה</translation>
     </message>
     <message>
-        <source>Copy offset</source>
-        <translation>העתק היסט כתובת </translation>
+        <source>Offset</source>
+        <translation>היסט</translation>
     </message>
     <message>
-        <source>Copy size</source>
-        <translation>העתק גודל</translation>
-    </message>
-    <message>
-        <source>Hex</source>
-        <translation>הקס</translation>
+        <source>Size</source>
+        <translation>גודל</translation>
     </message>
     <message>
         <source>Demangle</source>
         <translation>להסיר</translation>
     </message>
     <message>
-        <source>Copy name</source>
-        <translation>העתק שם</translation>
+        <source>Name</source>
+        <translation>שם</translation>
     </message>
     <message>
-        <source>Copy signature</source>
-        <translation>העתק חתימה</translation>
+        <source>Next</source>
+        <translation></translation>
     </message>
     <message>
-        <source>Copy address</source>
-        <translation>העתק כתובת</translation>
-    </message>
-    <message>
-        <source>Dump to file</source>
-        <translation>יצא כקובץ הרצה לקובץ</translation>
-    </message>
-    <message>
-        <source>Go to address</source>
-        <translation>מעבר לכתובת</translation>
-    </message>
-    <message>
-        <source>Go to offset</source>
-        <translation>עבור לקיזוז</translation>
-    </message>
-    <message>
-        <source>Signature</source>
-        <translation>חתימה</translation>
-    </message>
-    <message>
-        <source>Signatures</source>
-        <translation>חתימות</translation>
-    </message>
-    <message>
-        <source>Find</source>
-        <translation>חפש</translation>
-    </message>
-    <message>
-        <source>Find next</source>
-        <translation>חפש את הבא</translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation>בחר הכל</translation>
-    </message>
-    <message>
-        <source>Copy as hex</source>
-        <translation>העתק בפורמט הקסה-דצימלי</translation>
-    </message>
-    <message>
-        <source>Copy cursor offset</source>
-        <translation>קיזוז סמן העתק</translation>
-    </message>
-    <message>
-        <source>Copy cursor address</source>
-        <translation>העתק את כתובת הסמן</translation>
-    </message>
-    <message>
-        <source>Disasm</source>
-        <translation>פירוק לפקודות</translation>
-    </message>
-    <message>
-        <source>Memory map</source>
-        <translation>מפת זיכרון</translation>
-    </message>
-    <message>
-        <source>Go to entry point</source>
-        <translation>עבור לנקודת הכניסה</translation>
-    </message>
-    <message>
-        <source>Hex signature</source>
-        <translation>חתימה משושה</translation>
+        <source>All</source>
+        <translation>הכל</translation>
     </message>
     <message>
         <source>Attach</source>
@@ -534,10 +615,6 @@
         <translation>מעבד</translation>
     </message>
     <message>
-        <source>Actions</source>
-        <translation>פעולות</translation>
-    </message>
-    <message>
         <source>Log</source>
         <translation>יומן אירועים</translation>
     </message>
@@ -546,8 +623,8 @@
         <translation>נקודות שבירה</translation>
     </message>
     <message>
-        <source>Call stack</source>
-        <translation>ערימת שיחות</translation>
+        <source>Callstack</source>
+        <translation></translation>
     </message>
     <message>
         <source>Threads</source>
@@ -556,6 +633,38 @@
     <message>
         <source>Handles</source>
         <translation>ידיות</translation>
+    </message>
+    <message>
+        <source>Symbols</source>
+        <translation>סמלים</translation>
+    </message>
+    <message>
+        <source>Shortcuts</source>
+        <translation>קיצורי דרך</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>אפשרויות</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>אודות</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>שם קובץ</translation>
+    </message>
+    <message>
+        <source>Structs</source>
+        <translation>מבנים</translation>
+    </message>
+    <message>
+        <source>Viewer</source>
+        <translation>צוֹפֶה</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation></translation>
     </message>
     <message>
         <source>Run</source>
@@ -586,8 +695,8 @@
         <translation>לְמַתֵג</translation>
     </message>
     <message>
-        <source>Copy filename</source>
-        <translation>העתק את שם הקובץ</translation>
+        <source>Scan</source>
+        <translation>סרוק</translation>
     </message>
     <message>
         <source>Entropy</source>
@@ -596,70 +705,6 @@
     <message>
         <source>Hash</source>
         <translation>פונקציית גיבוב</translation>
-    </message>
-    <message>
-        <source>Scan</source>
-        <translation>סרוק</translation>
-    </message>
-    <message>
-        <source>Strings</source>
-        <translation>מחרוזות</translation>
-    </message>
-    <message>
-        <source>Structs</source>
-        <translation>מבנים</translation>
-    </message>
-    <message>
-        <source>Viewer</source>
-        <translation>צוֹפֶה</translation>
-    </message>
-    <message>
-        <source>Modules</source>
-        <translation>מודולים</translation>
-    </message>
-    <message>
-        <source>Action</source>
-        <translation>פעולה</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>קובץ</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation>נוף</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation>לנפות</translation>
-    </message>
-    <message>
-        <source>Debugger</source>
-        <translation>מנפה שגיאות</translation>
-    </message>
-    <message>
-        <source>Registers</source>
-        <translation>רושמים</translation>
-    </message>
-    <message>
-        <source>Stack</source>
-        <translation>לַעֲרוֹם</translation>
-    </message>
-    <message>
-        <source>Archive</source>
-        <translation>ארכיון</translation>
-    </message>
-    <message>
-        <source>Table</source>
-        <translation>טבלה</translation>
-    </message>
-    <message>
-        <source>Process</source>
-        <translation>תהליך</translation>
-    </message>
-    <message>
-        <source>Memory</source>
-        <translation>זיכרון</translation>
     </message>
 </context>
 <context>

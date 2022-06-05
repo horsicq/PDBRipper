@@ -75,16 +75,16 @@
         <translation>OK</translation>
     </message>
     <message>
+        <source>No</source>
+        <translation>No</translation>
+    </message>
+    <message>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
         <source>Dependencies</source>
         <translation>Dependencias</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>No</translation>
     </message>
     <message>
         <source>Struct and unions</source>
@@ -121,22 +121,6 @@
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Información</translation>
-    </message>
-    <message>
-        <source>Please restart the application</source>
-        <translation>Por favor, reinicie la aplicación</translation>
-    </message>
 </context>
 <context>
     <name>DialogProcess</name>
@@ -168,12 +152,12 @@
         <translation>Limpiar</translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation>Cerrar</translation>
+        <source>Default</source>
+        <translation>Por defecto</translation>
     </message>
     <message>
-        <source>Group</source>
-        <translation>Grupo</translation>
+        <source>Close</source>
+        <translation>Cerrar</translation>
     </message>
     <message>
         <source>Name</source>
@@ -223,38 +207,6 @@
         <translation>Corregir desplazamientos</translation>
     </message>
     <message>
-        <source>File</source>
-        <translation>Archivo</translation>
-    </message>
-    <message>
-        <source>Action</source>
-        <translation>Acción</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>Exportar</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>Ayuda</translation>
-    </message>
-    <message>
-        <source>Tools</source>
-        <translation>Herramientas</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Abrir</translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation>Acerca de</translation>
-    </message>
-    <message>
-        <source>Quit</source>
-        <translation>Salir</translation>
-    </message>
-    <message>
         <source>No</source>
         <translation>No</translation>
     </message>
@@ -265,6 +217,42 @@
     <message>
         <source>All</source>
         <translation>Todos</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>Archivo</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>Acción</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Herramientas</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Ayuda</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exportar</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Abrir</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Cerrar</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation>Salir</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <source>Open file</source>
@@ -289,17 +277,6 @@
     <message>
         <source>Cannot open file</source>
         <translation>No se puede abrir el archivo</translation>
-    </message>
-</context>
-<context>
-    <name>PDBProcess</name>
-    <message>
-        <source>File saved</source>
-        <translation>Archivo guardado</translation>
-    </message>
-    <message>
-        <source>Cannot save file</source>
-        <translation>No se puede guardar el archivo</translation>
     </message>
 </context>
 <context>
@@ -332,12 +309,28 @@
         <source>Sort elements</source>
         <translation>Ordenar elementos</translation>
     </message>
+    <message>
+        <source>File saved</source>
+        <translation>Archivo guardado</translation>
+    </message>
+    <message>
+        <source>Cannot save file</source>
+        <translation>No se puede guardar el archivo</translation>
+    </message>
 </context>
 <context>
     <name>XOptions</name>
     <message>
         <source>Automatic</source>
         <translation>Automático</translation>
+    </message>
+    <message>
+        <source>Recent files</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Limpiar</translation>
     </message>
 </context>
 <context>
@@ -363,6 +356,10 @@
         <translation>Mostrar logo</translation>
     </message>
     <message>
+        <source>Font</source>
+        <translation>Fuente</translation>
+    </message>
+    <message>
         <source>Save last directory</source>
         <translation>Guardar último directorio</translation>
     </message>
@@ -371,8 +368,24 @@
         <translation>Guardar copia de seguridad</translation>
     </message>
     <message>
+        <source>Save history</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Add to context menu</source>
         <translation>Añadir al menú contextual</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Por defecto</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Appearance</source>
@@ -390,12 +403,144 @@
         <source>Please run the program as an administrator</source>
         <translation>Por favor, ejecute el programa como administrador</translation>
     </message>
+    <message>
+        <source>Information</source>
+        <translation>Información</translation>
+    </message>
+    <message>
+        <source>Please restart the application</source>
+        <translation>Por favor, reinicie la aplicación</translation>
+    </message>
 </context>
 <context>
     <name>XShortcuts</name>
     <message>
-        <source>Unknown</source>
-        <translation>Desconocido</translation>
+        <source>Action</source>
+        <translation>Acción</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>Archivo</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation>Vista</translation>
+    </message>
+    <message>
+        <source>String</source>
+        <translation>Texto</translation>
+    </message>
+    <message>
+        <source>Strings</source>
+        <translation>Textos</translation>
+    </message>
+    <message>
+        <source>Signature</source>
+        <translation>Firma</translation>
+    </message>
+    <message>
+        <source>Signatures</source>
+        <translation>Firmas</translation>
+    </message>
+    <message>
+        <source>Struct</source>
+        <translation>Estructuras</translation>
+    </message>
+    <message>
+        <source>Hex</source>
+        <translation>Hex</translation>
+    </message>
+    <message>
+        <source>Disasm</source>
+        <translation>Desensamblar</translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation>Depurar</translation>
+    </message>
+    <message>
+        <source>Debugger</source>
+        <translation>Depurador</translation>
+    </message>
+    <message>
+        <source>Register</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Stack</source>
+        <translation>Pila</translation>
+    </message>
+    <message>
+        <source>Archive</source>
+        <translation>Archivo</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation>Tabla</translation>
+    </message>
+    <message>
+        <source>Process</source>
+        <translation>Proceso</translation>
+    </message>
+    <message>
+        <source>Memory</source>
+        <translation>Memoria</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Copiar</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Editar</translation>
+    </message>
+    <message>
+        <source>Find</source>
+        <translation>Buscar</translation>
+    </message>
+    <message>
+        <source>Go to</source>
+        <translation>Ir a</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Herramientas</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Ayuda</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>Seleccionar</translation>
+    </message>
+    <message>
+        <source>Follow in</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Show in</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Breakpoint</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Modules</source>
+        <translation>Módulos</translation>
+    </message>
+    <message>
+        <source>Memory map</source>
+        <translation>Mapa de memoria</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>Valor</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <source>Open</source>
@@ -406,8 +551,8 @@
         <translation>Guardar</translation>
     </message>
     <message>
-        <source>Save As</source>
-        <translation>Guardar como</translation>
+        <source>Save as</source>
+        <translation></translation>
     </message>
     <message>
         <source>Close</source>
@@ -422,104 +567,40 @@
         <translation>Salir</translation>
     </message>
     <message>
-        <source>Copy</source>
-        <translation>Copiar</translation>
+        <source>Dump to file</source>
+        <translation>Volcar a archivo</translation>
     </message>
     <message>
-        <source>Show</source>
-        <translation>Mostrar</translation>
+        <source>Address</source>
+        <translation>Dirección</translation>
     </message>
     <message>
-        <source>Copy string</source>
-        <translation>Copiar texto</translation>
+        <source>Entry point</source>
+        <translation>Punto de entrada</translation>
     </message>
     <message>
-        <source>Copy offset</source>
-        <translation>Copiar desplazamiento</translation>
+        <source>Offset</source>
+        <translation>Desplazamiento</translation>
     </message>
     <message>
-        <source>Copy size</source>
-        <translation>Copiar tamaño</translation>
-    </message>
-    <message>
-        <source>Hex</source>
-        <translation>Hex</translation>
+        <source>Size</source>
+        <translation>Tamaño</translation>
     </message>
     <message>
         <source>Demangle</source>
         <translation>Demangle</translation>
     </message>
     <message>
-        <source>Copy name</source>
-        <translation>Copiar nombre</translation>
+        <source>Name</source>
+        <translation>Nombre</translation>
     </message>
     <message>
-        <source>Copy signature</source>
-        <translation>Copiar firma</translation>
+        <source>Next</source>
+        <translation></translation>
     </message>
     <message>
-        <source>Copy address</source>
-        <translation>Copiar dirección</translation>
-    </message>
-    <message>
-        <source>Dump to file</source>
-        <translation>Volcar a archivo</translation>
-    </message>
-    <message>
-        <source>Go to address</source>
-        <translation>Ir a la dirección</translation>
-    </message>
-    <message>
-        <source>Go to offset</source>
-        <translation>Ir al desplazamiento</translation>
-    </message>
-    <message>
-        <source>Signature</source>
-        <translation>Firma</translation>
-    </message>
-    <message>
-        <source>Signatures</source>
-        <translation>Firmas</translation>
-    </message>
-    <message>
-        <source>Find</source>
-        <translation>Buscar</translation>
-    </message>
-    <message>
-        <source>Find next</source>
-        <translation>Buscar siguiente</translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation>Seleccionar todo</translation>
-    </message>
-    <message>
-        <source>Copy as hex</source>
-        <translation>Copiar como hexadecimal</translation>
-    </message>
-    <message>
-        <source>Copy cursor offset</source>
-        <translation>Copiar desplazamiento del cursor</translation>
-    </message>
-    <message>
-        <source>Copy cursor address</source>
-        <translation>Copiar dirección del cursor</translation>
-    </message>
-    <message>
-        <source>Disasm</source>
-        <translation>Desensamblar</translation>
-    </message>
-    <message>
-        <source>Memory map</source>
-        <translation>Mapa de memoria</translation>
-    </message>
-    <message>
-        <source>Go to entry point</source>
-        <translation>Ir al punto de entrada</translation>
-    </message>
-    <message>
-        <source>Hex signature</source>
-        <translation>Firma hexadecimal</translation>
+        <source>All</source>
+        <translation>Todos</translation>
     </message>
     <message>
         <source>Attach</source>
@@ -534,10 +615,6 @@
         <translation>CPU</translation>
     </message>
     <message>
-        <source>Actions</source>
-        <translation>Acciones</translation>
-    </message>
-    <message>
         <source>Log</source>
         <translation>Log</translation>
     </message>
@@ -546,8 +623,8 @@
         <translation>Puntos de parada</translation>
     </message>
     <message>
-        <source>Call stack</source>
-        <translation>Pila de llamadas</translation>
+        <source>Callstack</source>
+        <translation></translation>
     </message>
     <message>
         <source>Threads</source>
@@ -556,6 +633,38 @@
     <message>
         <source>Handles</source>
         <translation>Manipuladores</translation>
+    </message>
+    <message>
+        <source>Symbols</source>
+        <translation>Símbolos</translation>
+    </message>
+    <message>
+        <source>Shortcuts</source>
+        <translation>Atajos</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Opciones</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Acerca de</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Nombre de archivo</translation>
+    </message>
+    <message>
+        <source>Structs</source>
+        <translation>Estructuras</translation>
+    </message>
+    <message>
+        <source>Viewer</source>
+        <translation>Visor</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation></translation>
     </message>
     <message>
         <source>Run</source>
@@ -586,8 +695,8 @@
         <translation>Alternar</translation>
     </message>
     <message>
-        <source>Copy filename</source>
-        <translation>Copiar nombre del archivo</translation>
+        <source>Scan</source>
+        <translation>Escanear</translation>
     </message>
     <message>
         <source>Entropy</source>
@@ -596,70 +705,6 @@
     <message>
         <source>Hash</source>
         <translation>Hash</translation>
-    </message>
-    <message>
-        <source>Scan</source>
-        <translation>Escanear</translation>
-    </message>
-    <message>
-        <source>Strings</source>
-        <translation>Textos</translation>
-    </message>
-    <message>
-        <source>Structs</source>
-        <translation>Estructuras</translation>
-    </message>
-    <message>
-        <source>Viewer</source>
-        <translation>Visor</translation>
-    </message>
-    <message>
-        <source>Modules</source>
-        <translation>Módulos</translation>
-    </message>
-    <message>
-        <source>Action</source>
-        <translation>Acción</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Archivo</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation>Vista</translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation>Depurar</translation>
-    </message>
-    <message>
-        <source>Debugger</source>
-        <translation>Depurador</translation>
-    </message>
-    <message>
-        <source>Registers</source>
-        <translation>Registros</translation>
-    </message>
-    <message>
-        <source>Stack</source>
-        <translation>Pila</translation>
-    </message>
-    <message>
-        <source>Archive</source>
-        <translation>Archivo</translation>
-    </message>
-    <message>
-        <source>Table</source>
-        <translation>Tabla</translation>
-    </message>
-    <message>
-        <source>Process</source>
-        <translation>Proceso</translation>
-    </message>
-    <message>
-        <source>Memory</source>
-        <translation>Memoria</translation>
     </message>
 </context>
 <context>
