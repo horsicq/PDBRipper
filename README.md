@@ -27,3 +27,7 @@ Clone project: git clone --recursive https://github.com/horsicq/PDBRipper.git
 Edit build_win32.bat ( check VS_PATH,  SEVENZIP_PATH, QT_PATH variables)
 
 Run build_win32.bat
+
+## Special Thanks
+
+- [PELock Software Protection & Reverse Engineering](https://www.pelock.com)
