@@ -111,8 +111,8 @@ quint32 stringHash(QString sString)
 QWinPDB::QWinPDB(QObject *parent) : QObject(parent)
 {
     g_pDiaDataSource=nullptr;
-    pGlobal=nullptr;
-    pDiaSession=nullptr;
+    g_pGlobal=nullptr;
+    g_pDiaSession=nullptr;
     setProcessEnable(true);
 }
 
@@ -166,7 +166,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
         return false;
     }
 
-    hr=g_pDiaDataSource->openSession(&pDiaSession);
+    hr=g_pDiaDataSource->openSession(&g_pDiaSession);
 
     if(FAILED(hr))
     {
@@ -176,11 +176,11 @@ bool QWinPDB::loadFromFile(QString sFileName)
     }
 
     // TODO Exe info
-    hr=pDiaSession->get_globalScope(&pGlobal);
+    hr=g_pDiaSession->get_globalScope(&g_pGlobal);
 
     BSTR bstrName;
 
-    if(pGlobal->get_name(&bstrName)!=S_OK)
+    if(g_pGlobal->get_name(&bstrName)!=S_OK)
     {
         emit errorMessage(tr("Cannot get PDB name"));
 
@@ -188,7 +188,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
     }
 
     DWORD dwAge;
-    hr=pGlobal->get_age(&dwAge);
+    hr=g_pGlobal->get_age(&dwAge);
 
     if(hr!=S_OK)
     {
@@ -200,7 +200,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
     DWORD dwTemp=0;
 
     dwMachineType=CV_CFL_80386;
-    if(pGlobal->get_machineType(&dwTemp)==S_OK)
+    if(g_pGlobal->get_machineType(&dwTemp)==S_OK)
     {
         switch(dwTemp)
         {
@@ -1247,7 +1247,7 @@ bool QWinPDB::getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol)
 {
     bool bResult=false;
 
-    if(pDiaSession->symbolById(dwID,ppSymbol)==S_OK)
+    if(g_pDiaSession->symbolById(dwID,ppSymbol)==S_OK)
     {
         bResult=true;
     }
@@ -1895,7 +1895,7 @@ QWinPDB::PDB_INFO QWinPDB::getAllTags(QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 
     IDiaEnumSymbols *pEnumSymbols;
     LONG nCount;
-    if(pGlobal->findChildren(SymTagNull, NULL, nsNone, &pEnumSymbols)==S_OK)
+    if(g_pGlobal->findChildren(SymTagNull, NULL, nsNone, &pEnumSymbols)==S_OK)
     {
         if(pEnumSymbols->get_Count(&nCount)==S_OK)
         {
@@ -2044,7 +2044,7 @@ void QWinPDB::getStats(QWinPDB::STATS *pStats)
     IDiaEnumSymbols *pEnumSymbols;
     LONG nCount;
 //    if(pGlobal->findChildren(SymTagUDT, nullptr, nsNone, &pEnumSymbols)==S_OK)
-    if(pGlobal->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
+    if(g_pGlobal->findChildren(SymTagNull,nullptr,nsNone,&pEnumSymbols)==S_OK)
     {
         if(pEnumSymbols->get_Count(&nCount)==S_OK)
         {
@@ -3185,16 +3185,16 @@ QWinPDB::ELEM_BASEINFO QWinPDB::getBaseInfo(IDiaSymbol *pParent)
 
 void QWinPDB::cleanup()
 {
-    if(pGlobal)
+    if(g_pGlobal)
     {
-        pGlobal->Release();
-        pGlobal=nullptr;
+        g_pGlobal->Release();
+        g_pGlobal=nullptr;
     }
 
-    if(pDiaSession)
+    if(g_pDiaSession)
     {
-        pDiaSession->Release();
-        pDiaSession=nullptr;
+        g_pDiaSession->Release();
+        g_pDiaSession=nullptr;
     }
 
     if(g_pDiaDataSource)

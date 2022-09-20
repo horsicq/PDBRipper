@@ -696,8 +696,8 @@ signals:
 
 private:
     IDiaDataSource *g_pDiaDataSource;
-    IDiaSession *pDiaSession;
-    IDiaSymbol *pGlobal;
+    IDiaSession *g_pDiaSession;
+    IDiaSymbol *g_pGlobal;
     DWORD dwMachineType;
     bool __bIsProcessStop;
 };
