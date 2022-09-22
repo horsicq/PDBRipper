@@ -7,3 +7,6 @@
 [submodule "build_tools"]
 	path = build_tools
 	url = https://github.com/horsicq/build_tools
+[submodule "XWinPDB"]
+	path = XWinPDB
+	url = https://github.com/horsicq/XWinPDB
