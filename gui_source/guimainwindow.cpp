@@ -50,10 +50,10 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
 
     setAcceptDrops(true);
 
-    pdbData.pWinPDB=0;
+    g_pdbData.pWinPDB=0;
 
-    pFilter=new QSortFilterProxyModel(this);
-    ui->tableViewSymbols->setModel(pFilter);
+    g_pFilter=new QSortFilterProxyModel(this);
+    ui->tableViewSymbols->setModel(g_pFilter);
 
     QSignalBlocker blocker(ui->comboBoxFixOffsets);
 
@@ -61,9 +61,9 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) :
     ui->comboBoxFixOffsets->addItem(tr("Struct and unions"),QWinPDB::FO_STRUCTSANDUNIONS);
     ui->comboBoxFixOffsets->addItem(tr("All"),QWinPDB::FO_ALL);
 
-    pdbData.handleOptions=QWinPDB::getDefaultHandleOptions();
+    g_pdbData.handleOptions=QWinPDB::getDefaultHandleOptions();
 
-    setHandleOptions(&(pdbData.handleOptions));
+    setHandleOptions(&(g_pdbData.handleOptions));
 
     if(QCoreApplication::arguments().count()>1)
     {
@@ -75,10 +75,10 @@ GuiMainWindow::~GuiMainWindow()
 {
     g_xOptions.save();
 
-    if(pdbData.pWinPDB)
+    if(g_pdbData.pWinPDB)
     {
-        delete pdbData.pWinPDB;
-        pdbData.pWinPDB=nullptr;
+        delete g_pdbData.pWinPDB;
+        g_pdbData.pWinPDB=nullptr;
     }
 
     delete ui;
@@ -190,16 +190,16 @@ void GuiMainWindow::on_checkBoxAddAlignment_toggled(bool checked)
 
 void GuiMainWindow::actionCPPSlot()
 {
-    if(pdbData.pWinPDB)
+    if(g_pdbData.pWinPDB)
     {
-        pdbData.handleOptions.bAddAlignment=false;
-        pdbData.handleOptions.bFixTypes=false;
-        pdbData.handleOptions.bShowComments=false;
-        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
-        pdbData.handleOptions.sortType=QWinPDB::ST_NO;
-        pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
+        g_pdbData.handleOptions.bAddAlignment=false;
+        g_pdbData.handleOptions.bFixTypes=false;
+        g_pdbData.handleOptions.bShowComments=false;
+        g_pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
+        g_pdbData.handleOptions.sortType=QWinPDB::ST_NO;
+        g_pdbData.handleOptions.exportType=QWinPDB::ET_CPLUSPLUS;
 
-        DialogExport dialogExport(this,&pdbData);
+        DialogExport dialogExport(this,&g_pdbData);
 
         dialogExport.exec();
     }
@@ -207,16 +207,16 @@ void GuiMainWindow::actionCPPSlot()
 
 void GuiMainWindow::actionXNTSVSlot()
 {
-    if(pdbData.pWinPDB)
+    if(g_pdbData.pWinPDB)
     {
-        pdbData.handleOptions.bAddAlignment=false;
-        pdbData.handleOptions.bFixTypes=true;
-        pdbData.handleOptions.bShowComments=false;
-        pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
-        pdbData.handleOptions.sortType=QWinPDB::ST_NAME;
-        pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
+        g_pdbData.handleOptions.bAddAlignment=false;
+        g_pdbData.handleOptions.bFixTypes=true;
+        g_pdbData.handleOptions.bShowComments=false;
+        g_pdbData.handleOptions.fixOffsets=QWinPDB::FO_NO;
+        g_pdbData.handleOptions.sortType=QWinPDB::ST_NAME;
+        g_pdbData.handleOptions.exportType=QWinPDB::ET_XNTSV;
 
-        DialogExport dialogExport(this,&pdbData);
+        DialogExport dialogExport(this,&g_pdbData);
 
         dialogExport.exec();
     }
@@ -250,18 +250,18 @@ void GuiMainWindow::processFile(QString sFileName)
 
         cleanUp();
 
-        pdbData.pWinPDB=new QWinPDB;
+        g_pdbData.pWinPDB=new QWinPDB;
 
-        connect(pdbData.pWinPDB,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
+        connect(g_pdbData.pWinPDB,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
 
-        if(pdbData.pWinPDB->loadFromFile(sFileName))
+        if(g_pdbData.pWinPDB->loadFromFile(sFileName))
         {
-            pdbData.sPDBFileName=sFileName;
+            g_pdbData.sPDBFileName=sFileName;
 
-            DialogProcess dp(this,&pdbData,PDBProcess::TYPE_IMPORT);
+            DialogProcess dp(this,&g_pdbData,PDBProcess::TYPE_IMPORT);
             dp.exec();
 
-            int nCount=pdbData.stats.listSymbols.count();
+            int nCount=g_pdbData.stats.listSymbols.count();
 
             QStandardItemModel *pModel=new QStandardItemModel(nCount,2,this);
 
@@ -271,19 +271,19 @@ void GuiMainWindow::processFile(QString sFileName)
             for(int i = 0;i<nCount;i++)
             {
                 QStandardItem *itemID = new QStandardItem;
-                itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).dwID),Qt::DisplayRole);
-                itemID->setData((quint32)(pdbData.stats.listSymbols.at(i).type),Qt::UserRole+1);
+                itemID->setData((quint32)(g_pdbData.stats.listSymbols.at(i).dwID),Qt::DisplayRole);
+                itemID->setData((quint32)(g_pdbData.stats.listSymbols.at(i).type),Qt::UserRole+1);
                 itemID->setTextAlignment(Qt::AlignRight);
                 pModel->setItem(i,0,itemID);
 
                 QStandardItem *itemSymbol = new QStandardItem;
-                itemSymbol->setText(pdbData.stats.listSymbols.at(i).sName);
+                itemSymbol->setText(g_pdbData.stats.listSymbols.at(i).sName);
                 pModel->setItem(i,1,itemSymbol);
             }
 
 //            ui->tableViewSymbols->setModel(model);
 
-            pFilter->setSourceModel(pModel);
+            g_pFilter->setSourceModel(pModel);
 
             ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
             ui->tableViewSymbols->horizontalHeader()->setSectionResizeMode(1,QHeaderView::Stretch);
@@ -301,15 +301,15 @@ void GuiMainWindow::processFile(QString sFileName)
 
 void GuiMainWindow::cleanUp()
 {
-    if(pdbData.pWinPDB)
+    if(g_pdbData.pWinPDB)
     {
-        delete pdbData.pWinPDB;
-        pdbData.pWinPDB=nullptr;
+        delete g_pdbData.pWinPDB;
+        g_pdbData.pWinPDB=nullptr;
     }
 
-    QAbstractItemModel *pOldModel=pFilter->sourceModel();
+    QAbstractItemModel *pOldModel=g_pFilter->sourceModel();
 
-    pFilter->setSourceModel(0);
+    g_pFilter->setSourceModel(0);
 
     delete pOldModel;
 
@@ -321,9 +321,9 @@ void GuiMainWindow::cleanUp()
 
 void GuiMainWindow::on_lineEditSearch_textChanged(const QString &arg1)
 {
-    pFilter->setFilterRegExp(arg1);
-    pFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    pFilter->setFilterKeyColumn(1);
+    g_pFilter->setFilterRegExp(arg1);
+    g_pFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    g_pFilter->setFilterKeyColumn(1);
 }
 
 void GuiMainWindow::onCurrentChanged(const QModelIndex &current,const QModelIndex &previous)
@@ -344,10 +344,10 @@ void GuiMainWindow::handle()
 
         if(list.count())
         {
-            pdbData.handleOptions=getHandleOptions();
+            g_pdbData.handleOptions=getHandleOptions();
             quint32 nID=list.at(0).data(Qt::DisplayRole).toUInt();
 
-            QWinPDB::ELEM_INFO elemInfo=pdbData.pWinPDB->handleElement(nID,&(pdbData.handleOptions));
+            QWinPDB::ELEM_INFO elemInfo=g_pdbData.pWinPDB->handleElement(nID,&(g_pdbData.handleOptions));
 
             QString sText=elemInfo.sText;
 

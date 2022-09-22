@@ -95,9 +95,9 @@ private:
     };
 
     Ui::GuiMainWindow *ui;
-    PDBProcess::PDBDATA pdbData;
+    PDBProcess::PDBDATA g_pdbData;
     XOptions g_xOptions;
-    QSortFilterProxyModel *pFilter;
+    QSortFilterProxyModel *g_pFilter;
 };
 
 #endif // GUIMAINWINDOW_H
