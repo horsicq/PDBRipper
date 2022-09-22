@@ -10,3 +10,6 @@
 [submodule "XWinPDB"]
 	path = XWinPDB
 	url = https://github.com/horsicq/XWinPDB
+[submodule "XAboutWidget"]
+	path = XAboutWidget
+	url = https://github.com/horsicq/XAboutWidget
