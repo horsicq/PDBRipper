@@ -45,6 +45,16 @@ include(../build.pri)
     include(../XOptions/xoptionswidget.pri)
 }
 
+!contains(XCONFIG, xwinpdb) {
+    XCONFIG += xwinpdb
+    include(../XWinPDB/xwinpdb.pri)
+}
+
+!contains(XCONFIG, xaboutwidget) {
+    XCONFIG += xaboutwidget
+    include(../XAboutWidget/xaboutwidget.pri)
+}
+
 RESOURCES += \
     resources.qrc
 
