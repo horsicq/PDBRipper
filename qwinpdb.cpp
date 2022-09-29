@@ -2120,6 +2120,8 @@ void QWinPDB::getStats(QWinPDB::STATS *pStats)
                         }
                     }
 
+//                    qDebug("%d %d",record.dwID,dwSymTag);
+
                     pSymbol->Release();
 
                     pStats->nCurrent++;
