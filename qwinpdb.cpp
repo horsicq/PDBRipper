@@ -147,7 +147,7 @@ bool QWinPDB::loadFromFile(QString sFileName)
 
     if(FAILED(hr))
     {
-        emit errorMessage(tr("Cannot load msdia library"));
+        emit errorMessage(tr("Cannot load MSDIA library"));
 
         return false;
     }
