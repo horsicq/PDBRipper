@@ -2857,7 +2857,7 @@ typedef enum CV_HREG_e
     CV_M32R_R9    =   19,
     CV_M32R_R10   =   20,
     CV_M32R_R11   =   21,
-    CV_M32R_R12   =   22,   // Gloabal Pointer, if used
+    CV_M32R_R12   =   22,   // Global Pointer, if used
     CV_M32R_R13   =   23,   // Frame Pointer, if allocated
     CV_M32R_R14   =   24,   // Link Register
     CV_M32R_R15   =   25,   // Stack Pointer
