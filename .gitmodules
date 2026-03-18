@@ -4,9 +4,6 @@
 [submodule "XShortcuts"]
 	path = XShortcuts
 	url = https://github.com/horsicq/XShortcuts
-[submodule "build_tools"]
-	path = build_tools
-	url = https://github.com/horsicq/build_tools
 [submodule "XWinPDB"]
 	path = XWinPDB
 	url = https://github.com/horsicq/XWinPDB
@@ -22,3 +19,6 @@
 [submodule "Formats"]
 	path = Formats
 	url = https://github.com/horsicq/Formats
+[submodule "build_tools"]
+	path = build_tools
+	url = https://github.com/horsicq/build_tools.git
