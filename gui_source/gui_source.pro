@@ -7,6 +7,7 @@ TEMPLATE = app
 
 SOURCES +=\
     ../qwinpdb.cpp \
+    ../qstaticpdb.cpp \
     ../pdbprocess.cpp \
     dialogabout.cpp \
     dialogexport.cpp \
@@ -19,6 +20,7 @@ HEADERS += \
     ../global.h \
     ../qwinpdb.h \
     ../qwinpdb_def.h \
+    ../qstaticpdb.h \
     ../pdbprocess.h \
     dialogabout.h \
     dialogexport.h \
@@ -48,6 +50,11 @@ include(../build.pri)
 !contains(XCONFIG, xwinpdb) {
     XCONFIG += xwinpdb
     include(../XWinPDB/xwinpdb.pri)
+}
+
+!contains(XCONFIG, xpdb) {
+    XCONFIG += xpdb
+    include(../../_mylibs/XPDB/xpdb.pri)
 }
 
 !contains(XCONFIG, xaboutwidget) {

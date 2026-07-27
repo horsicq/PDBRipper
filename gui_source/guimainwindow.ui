@@ -185,6 +185,16 @@
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="checkBoxStaticParsing">
+                 <property name="toolTip">
+                  <string>Parse the PDB directly instead of using MSDIA</string>
+                 </property>
+                 <property name="text">
+                  <string>Use static parsing</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QGroupBox" name="groupBoxFixOffsets">
                  <property name="minimumSize">
                   <size>

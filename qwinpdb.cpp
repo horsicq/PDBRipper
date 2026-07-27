@@ -1000,6 +1000,78 @@ QWinPDB::RTYPE QWinPDB::getSymbolType(IDiaSymbol *pSymbol,QWinPDB::HANDLE_OPTION
     return result;
 }
 
+QString QWinPDB::baseTypeToString(int nBaseType,int nSize,bool bFixTypes)
+{
+    QString sResult;
+
+    // TODO Check!
+    switch(nBaseType)
+    {
+        case 0:     sResult="<btNoType>";          break;
+        case 1:     sResult="void";                break;
+        case 2:     sResult="char";                break;
+        case 3:     sResult="wchar_t";             break;
+        case 4:     sResult="signed char";         break;
+        case 5:     sResult="unsigned char";       break;
+        case 6:     sResult="int";                 break;
+        case 7:     sResult="unsigned int";        break;
+        case 8:     sResult="float";               break;
+        case 9:     sResult="BCD";                 break;
+        case 10:    sResult="bool";                break;
+        case 11:    sResult="short";               break;
+        case 12:    sResult="unsigned short";      break;
+        case 13:    sResult="long";                break;
+        case 14:    sResult="unsigned long";       break;
+        case 15:    sResult="__int8";              break;
+        case 16:    sResult="__int16";             break;
+        case 17:    sResult="__int32";             break;
+        case 18:    sResult="__int64";             break;
+        case 19:    sResult="__int128";            break;
+        case 20:    sResult="unsigned __int8";     break;
+        case 21:    sResult="unsigned __int16";    break;
+        case 22:    sResult="unsigned __int32";    break;
+        case 23:    sResult="unsigned __int64";    break;
+        case 24:    sResult="unsigned __int128";   break;
+        case 25:    sResult="CURRENCY";            break;
+        case 26:    sResult="DATE";                break;
+        case 27:    sResult="VARIANT";             break;
+        case 28:    sResult="COMPLEX";             break;
+        case 29:    sResult="BIT";                 break;
+        case 30:    sResult="BSTR";                break;
+        case 31:    sResult="HRESULT";             break;
+        case 32:    sResult="char16_t";            break;
+        case 33:    sResult="char32_t";            break;
+    }
+
+    if(bFixTypes)
+    {
+        // TODO Check!
+        if(((nBaseType==7)||(nBaseType==14))&&(nSize!=4)) // "unsigned int"
+        {
+            switch(nSize)
+            {
+                case 1:     sResult="unsigned char";       break;
+                case 2:     sResult="unsigned short";      break;
+                case 4:     sResult="unsigned int";        break;
+                case 8:     sResult="unsigned long long";  break;
+            }
+        }
+
+        if(((nBaseType==6)||(nBaseType==13))&&(nSize!=4)) // "int"
+        {
+            switch(nSize)
+            {
+                case 1:     sResult="char";                break;
+                case 2:     sResult="short";               break;
+                case 4:     sResult="int";                 break;
+                case 8:     sResult="long long";           break;
+            }
+        }
+    }
+
+    return sResult;
+}
+
 QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType,QWinPDB::HANDLE_OPTIONS *pHandleOptions)
 {
     RTYPE result={};
@@ -1021,70 +1093,7 @@ QWinPDB::RTYPE QWinPDB::_getType(IDiaSymbol *pType,QWinPDB::HANDLE_OPTIONS *pHan
             result.type=RD_BASETYPE;
             result.nBaseType=baseType._baseType; // TODO const
 
-            // TODO Check!
-            switch(result.nBaseType)
-            {
-                case 0:     result.sTypeName="<btNoType>";          break;
-                case 1:     result.sTypeName="void";                break;
-                case 2:     result.sTypeName="char";                break;
-                case 3:     result.sTypeName="wchar_t";             break;
-                case 4:     result.sTypeName="signed char";         break;
-                case 5:     result.sTypeName="unsigned char";       break;
-                case 6:     result.sTypeName="int";                 break;
-                case 7:     result.sTypeName="unsigned int";        break;
-                case 8:     result.sTypeName="float";               break;
-                case 9:     result.sTypeName="BCD";                 break;
-                case 10:    result.sTypeName="bool";                break;
-                case 11:    result.sTypeName="short";               break;
-                case 12:    result.sTypeName="unsigned short";      break;
-                case 13:    result.sTypeName="long";                break;
-                case 14:    result.sTypeName="unsigned long";       break;
-                case 15:    result.sTypeName="__int8";              break;
-                case 16:    result.sTypeName="__int16";             break;
-                case 17:    result.sTypeName="__int32";             break;
-                case 18:    result.sTypeName="__int64";             break;
-                case 19:    result.sTypeName="__int128";            break;
-                case 20:    result.sTypeName="unsigned __int8";     break;
-                case 21:    result.sTypeName="unsigned __int16";    break;
-                case 22:    result.sTypeName="unsigned __int32";    break;
-                case 23:    result.sTypeName="unsigned __int64";    break;
-                case 24:    result.sTypeName="unsigned __int128";   break;
-                case 25:    result.sTypeName="CURRENCY";            break;
-                case 26:    result.sTypeName="DATE";                break;
-                case 27:    result.sTypeName="VARIANT";             break;
-                case 28:    result.sTypeName="COMPLEX";             break;
-                case 29:    result.sTypeName="BIT";                 break;
-                case 30:    result.sTypeName="BSTR";                break;
-                case 31:    result.sTypeName="HRESULT";             break;
-                case 32:    result.sTypeName="char16_t";            break;
-                case 33:    result.sTypeName="char32_t";            break;
-            }
-
-            if(pHandleOptions->bFixTypes)
-            {
-                // TODO Check!
-                if(((result.nBaseType==7)||(result.nBaseType==14))&&(result.nSize!=4)) // "unsigned int"
-                {
-                    switch(result.nSize)
-                    {
-                        case 1:     result.sTypeName="unsigned char";       break;
-                        case 2:     result.sTypeName="unsigned short";      break;
-                        case 4:     result.sTypeName="unsigned int";        break;
-                        case 8:     result.sTypeName="unsigned long long";  break;
-                    }
-                }
-
-                if(((result.nBaseType==6)||(result.nBaseType==13))&&(result.nSize!=4)) // "int"
-                {
-                    switch(result.nSize)
-                    {
-                        case 1:     result.sTypeName="char";                break;
-                        case 2:     result.sTypeName="short";               break;
-                        case 4:     result.sTypeName="int";                 break;
-                        case 8:     result.sTypeName="long long";           break;
-                    }
-                }
-            }
+            result.sTypeName=baseTypeToString(result.nBaseType,result.nSize,pHandleOptions->bFixTypes);
         }
         else if(dwSymTag==SymTagUDT)
         {
@@ -2167,6 +2176,24 @@ QWinPDB::ELEM QWinPDB::getElem(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptio
     return result;
 }
 
+QWinPDB::ELEM QWinPDB::getElemWithHashes(quint32 nID,QWinPDB::HANDLE_OPTIONS *pHandleOptions,QSet<quint32> *pStTypeHashes)
+{
+    ELEM result={};
+
+    IDiaSymbol *pParent=nullptr;
+
+    if(getSymbolByID(nID,&pParent))
+    {
+        QSet<quint32> stUniq;
+
+        result=_getElem(pParent,pHandleOptions,0,&stUniq,pStTypeHashes);
+
+        pParent->Release();
+    }
+
+    return result;
+}
+
 QWinPDB::ELEM QWinPDB::_getElem(IDiaSymbol *pParent,HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq,QSet<quint32> *pStTypeHashes)
 {
     ELEM result={};
@@ -2882,15 +2909,12 @@ bool QWinPDB::handleExport(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHan
 
                 for(int i=0;(i<nCount)&&(!__bIsProcessStop);i++)
                 {
-                    IDiaSymbol *pParent=nullptr;
+                    QSet<quint32> stTypeHashes;
 
-                    if(getSymbolByID(listSymbols.at(i).dwID,&pParent))
+                    QWinPDB::ELEM elem=getElemWithHashes(listSymbols.at(i).dwID,pHandleOptions,&stTypeHashes);
+
+                    if(elem.baseInfo.nID)
                     {
-                        QSet<quint32> stUniq;
-                        QSet<quint32> stTypeHashes;
-
-                        QWinPDB::ELEM elem=_getElem(pParent,pHandleOptions,0,&stUniq,&stTypeHashes);
-
                         quint32 nHash=stringHash(elem.baseInfo.sName);
 
                         listSymbols[i].nHash=nHash;
@@ -2900,8 +2924,6 @@ bool QWinPDB::handleExport(QWinPDB::STATS *pStats, QWinPDB::HANDLE_OPTIONS *pHan
 
                         pStats->nCurrent++;
                         pStats->sStatus=elem.baseInfo.sName;
-
-                        pParent->Release();
 
                         if(!stCurrent.contains(nHash))
                         {

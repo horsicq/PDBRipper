@@ -41,6 +41,8 @@
 #include "global.h"
 #include "qwinpdb_def.h"
 
+quint32 stringHash(QString sString);
+
 class QWinPDB : public QObject
 {
     Q_OBJECT
@@ -541,11 +543,15 @@ public:
     };
 
     explicit QWinPDB(QObject *parent=nullptr);
-    ~QWinPDB();
+    virtual ~QWinPDB();
     static HANDLE_OPTIONS getDefaultHandleOptions();
-    bool loadFromFile(QString sFileName);
+    // The data producing methods are virtual: QStaticPDB overrides them and reads
+    // the PDB directly(XPDB) instead of using MSDIA. Everything else, in particular
+    // the rendering(getElemInfo/handleElement/handleExport), is shared, so both
+    // backends produce the same output.
+    virtual bool loadFromFile(QString sFileName);
     PDB_INFO getAllTags(HANDLE_OPTIONS *pHandleOptions);
-    void getStats(QWinPDB::STATS *pStats);
+    virtual void getStats(QWinPDB::STATS *pStats);
     void stop();
     void setProcessEnable(bool bState);
 
@@ -614,7 +620,9 @@ public:
         QList<ELEM_BASEINFO> listChildrenBaseInfos;
     };
 
-    ELEM getElem(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
+    virtual ELEM getElem(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
+    // Used by the dependency sort: the same element, plus the hashes of the types it refers to
+    virtual ELEM getElemWithHashes(quint32 nID,HANDLE_OPTIONS *pHandleOptions,QSet<quint32> *pStTypeHashes);
     ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq,QSet<quint32> *pStTypeHashes);
     void fixOffsets(QWinPDB::ELEM *pElem);
     void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
@@ -624,7 +632,11 @@ public:
     bool handleExport(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
     ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
 
-private:
+    // Name of a base type as MSDIA reports it. Shared with QStaticPDB so both
+    // backends spell the built-in types the same way.
+    static QString baseTypeToString(int nBaseType,int nSize,bool bFixTypes);
+
+protected:
     void cleanup();
     QString generateGUID();
     VALUE getValue(IDiaSymbol *pSymbol);
@@ -694,7 +706,7 @@ signals:
     void errorMessage(QString sText);
     void infoMessage(QString sText);
 
-private:
+protected:
     IDiaDataSource *g_pDiaDataSource;
     IDiaSession *g_pDiaSession;
     IDiaSymbol *g_pGlobal;

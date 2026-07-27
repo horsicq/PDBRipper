@@ -23,6 +23,7 @@
 #include <QCommandLineOption>
 #include "consoleoutput.h"
 #include "../pdbprocess.h"
+#include "../qstaticpdb.h"
 #include "../global.h"
 
 int main(int argc,char *argv[])
@@ -56,6 +57,7 @@ int main(int argc,char *argv[])
     QCommandLineOption clSortByDeps                 (QStringList()<<"d"<<"sortbydeps",          "Sort by dependencies."                         );
     QCommandLineOption clExportCpp                  (QStringList()<<"p"<<"exportcpp",           "Export C++."                                   );
     QCommandLineOption clExportXntsv                (QStringList()<<"x"<<"exportxntsv",         "Export XNTSV."                                 );
+    QCommandLineOption clStaticParsing              (QStringList()<<"t"<<"static",              "Use static parsing(do not use MSDIA)."         );
 
     parser.addOption(clOutputFile);
     parser.addOption(clShowComments);
@@ -68,6 +70,7 @@ int main(int argc,char *argv[])
     parser.addOption(clSortByDeps);
     parser.addOption(clExportCpp);
     parser.addOption(clExportXntsv);
+    parser.addOption(clStaticParsing);
 
     parser.process(app);
 
@@ -75,7 +78,16 @@ int main(int argc,char *argv[])
 
     PDBProcess::PDBDATA pdbData={};
 
-    pdbData.pWinPDB=new QWinPDB;
+    pdbData.bStaticParsing=parser.isSet(clStaticParsing);
+
+    if(pdbData.bStaticParsing)
+    {
+        pdbData.pWinPDB=new QStaticPDB;
+    }
+    else
+    {
+        pdbData.pWinPDB=new QWinPDB;
+    }
 
     QObject::connect(pdbData.pWinPDB,SIGNAL(infoMessage(QString)),&consoleOutput,SLOT(infoMessage(QString)));
     QObject::connect(pdbData.pWinPDB,SIGNAL(errorMessage(QString)),&consoleOutput,SLOT(errorMessage(QString)));

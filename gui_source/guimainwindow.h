@@ -33,6 +33,7 @@
 #include "dialogexport.h"
 #include "dialogoptions.h"
 #include "dialogprocess.h"
+#include "../qstaticpdb.h"
 #include "xoptions.h"
 
 namespace Ui
@@ -76,6 +77,7 @@ private slots:
     void on_comboBoxFixOffsets_currentIndexChanged(int index);
     void on_checkBoxAddAlignment_toggled(bool checked);
     void on_checkBoxFixTypes_toggled(bool checked);
+    void on_checkBoxStaticParsing_toggled(bool checked);
 
     void errorMessage(QString sText);
 

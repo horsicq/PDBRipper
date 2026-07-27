@@ -250,7 +250,14 @@ void GuiMainWindow::processFile(QString sFileName)
 
         cleanUp();
 
-        g_pdbData.pWinPDB=new QWinPDB;
+        if(g_pdbData.bStaticParsing)
+        {
+            g_pdbData.pWinPDB=new QStaticPDB;
+        }
+        else
+        {
+            g_pdbData.pWinPDB=new QWinPDB;
+        }
 
         connect(g_pdbData.pWinPDB,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
 
@@ -375,6 +382,19 @@ void GuiMainWindow::on_checkBoxFixTypes_toggled(bool checked)
     Q_UNUSED(checked)
 
     handle();
+}
+
+void GuiMainWindow::on_checkBoxStaticParsing_toggled(bool checked)
+{
+    g_pdbData.bStaticParsing=checked;
+
+    // The backend is chosen when the file is opened, so reopen the current one
+    QString sFileName=g_pdbData.sPDBFileName;
+
+    if(sFileName!="")
+    {
+        processFile(sFileName);
+    }
 }
 
 void GuiMainWindow::errorMessage(QString sText)

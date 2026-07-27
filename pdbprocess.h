@@ -42,6 +42,7 @@ public:
         QWinPDB::STATS stats;
         QWinPDB::HANDLE_OPTIONS handleOptions;
         QString sPDBFileName;
+        bool bStaticParsing; // Use QStaticPDB(XPDB) instead of the MSDIA based QWinPDB
     };
 
     explicit PDBProcess(QObject *parent,PDBDATA *pData,TYPE type);
