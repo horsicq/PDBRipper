@@ -36,17 +36,15 @@
 #include "../qstaticpdb.h"
 #include "xoptions.h"
 
-namespace Ui
-{
+namespace Ui {
 class GuiMainWindow;
 }
 
-class GuiMainWindow : public QMainWindow
-{
+class GuiMainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit GuiMainWindow(QWidget *pParent=0);
+    explicit GuiMainWindow(QWidget *pParent = 0);
     ~GuiMainWindow();
 
 private slots:
@@ -65,7 +63,7 @@ private slots:
     void cleanUp();
 
     void on_lineEditSearch_textChanged(const QString &arg1);
-    void onCurrentChanged(const QModelIndex &current,const QModelIndex &previous);
+    void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
     void handle();
     void on_tableViewSymbols_clicked(const QModelIndex &index);
@@ -87,9 +85,8 @@ protected:
     void dropEvent(QDropEvent *event) override;
 
 private:
-    enum CBT
-    {
-        CBT_CLASSES=0,
+    enum CBT {
+        CBT_CLASSES = 0,
         CBT_STRUCTS,
         CBT_UNIONS,
         CBT_INTERFACES,
@@ -102,4 +99,4 @@ private:
     QSortFilterProxyModel *g_pFilter;
 };
 
-#endif // GUIMAINWINDOW_H
+#endif  // GUIMAINWINDOW_H

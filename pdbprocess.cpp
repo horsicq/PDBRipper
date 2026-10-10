@@ -20,24 +20,21 @@
  */
 #include "pdbprocess.h"
 
-PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData,TYPE type) : QObject(parent)
+PDBProcess::PDBProcess(QObject *parent, PDBDATA *pData, TYPE type) : QObject(parent)
 {
-    this->g_pData=pData;
-    this->g_type=type;
+    this->g_pData = pData;
+    this->g_type = type;
 
-    connect(pData->pWinPDB,SIGNAL(completed()),this,SIGNAL(completed()));
-    connect(pData->pWinPDB,SIGNAL(errorMessage(QString)),this,SIGNAL(errorMessage(QString)));
+    connect(pData->pWinPDB, SIGNAL(completed()), this, SIGNAL(completed()));
+    connect(pData->pWinPDB, SIGNAL(errorMessage(QString)), this, SIGNAL(errorMessage(QString)));
 }
 
 void PDBProcess::process()
 {
-    if(g_type==TYPE_IMPORT)
-    {
+    if (g_type == TYPE_IMPORT) {
         g_pData->pWinPDB->getStats(&(g_pData->stats));
-    }
-    else if(g_type==TYPE_EXPORT)
-    {
-        g_pData->pWinPDB->handleExport(&(g_pData->stats),&(g_pData->handleOptions));
+    } else if (g_type == TYPE_EXPORT) {
+        g_pData->pWinPDB->handleExport(&(g_pData->stats), &(g_pData->handleOptions));
     }
 }
 

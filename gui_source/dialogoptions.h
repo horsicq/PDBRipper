@@ -32,16 +32,15 @@ namespace Ui {
 class DialogOptions;
 }
 
-class DialogOptions : public QDialog
-{
+class DialogOptions : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogOptions(QWidget *parent,XOptions *pOptions);
+    explicit DialogOptions(QWidget *parent, XOptions *pOptions);
     ~DialogOptions();
 
 private:
     Ui::DialogOptions *ui;
 };
 
-#endif // DIALOGOPTIONS_H
+#endif  // DIALOGOPTIONS_H

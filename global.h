@@ -30,4 +30,4 @@
 #define X_ORGANIZATIONDOMAIN "ntinfo.biz"
 #define X_OPTIONSFILE "pdbripper.ini"
 
-#endif // GLOBAL_H
+#endif  // GLOBAL_H

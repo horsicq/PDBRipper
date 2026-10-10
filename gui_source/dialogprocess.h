@@ -27,17 +27,15 @@
 #include <QTimer>
 #include "../pdbprocess.h"
 
-namespace Ui
-{
+namespace Ui {
 class DialogProcess;
 }
 
-class DialogProcess : public QDialog
-{
+class DialogProcess : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogProcess(QWidget *parent,PDBProcess::PDBDATA *pData,PDBProcess::TYPE type);
+    explicit DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBProcess::TYPE type);
     ~DialogProcess();
 
 private slots:
@@ -61,4 +59,4 @@ private:
     PDBProcess::PDBDATA *g_pData;
 };
 
-#endif // DIALOGPROCESS_H
+#endif  // DIALOGPROCESS_H

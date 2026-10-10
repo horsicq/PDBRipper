@@ -30,12 +30,11 @@ namespace Ui {
 class DialogExport;
 }
 
-class DialogExport : public QDialog
-{
+class DialogExport : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogExport(QWidget *parent,PDBProcess::PDBDATA *pData);
+    explicit DialogExport(QWidget *parent, PDBProcess::PDBDATA *pData);
     ~DialogExport();
 
 private:
@@ -52,4 +51,4 @@ private:
     PDBProcess::PDBDATA *pData;
 };
 
-#endif // DIALOGEXPORT_H
+#endif  // DIALOGEXPORT_H

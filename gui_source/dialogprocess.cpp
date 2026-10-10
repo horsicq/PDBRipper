@@ -21,42 +21,37 @@
 #include "dialogprocess.h"
 #include "ui_dialogprocess.h"
 
-DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBProcess::TYPE type) :
-    QDialog(parent),
-    ui(new Ui::DialogProcess)
+DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBProcess::TYPE type) : QDialog(parent), ui(new Ui::DialogProcess)
 {
     ui->setupUi(this);
 
-    g_pData=pData;
+    g_pData = pData;
 
-    if(type==PDBProcess::TYPE_EXPORT)
-    {
+    if (type == PDBProcess::TYPE_EXPORT) {
         setWindowTitle(tr("Export"));
-    }
-    else if(type==PDBProcess::TYPE_IMPORT)
-    {
+    } else if (type == PDBProcess::TYPE_IMPORT) {
         setWindowTitle(tr("Import"));
     }
 
-    pThread=new QThread;
+    pThread = new QThread;
 
-    pPDBProcess=new PDBProcess(0,pData,type);
+    pPDBProcess = new PDBProcess(0, pData, type);
     pPDBProcess->moveToThread(pThread);
 
-    connect(pPDBProcess,SIGNAL(completed()),this,SLOT(onCompleted()));
+    connect(pPDBProcess, SIGNAL(completed()), this, SLOT(onCompleted()));
 
-    connect(pPDBProcess,SIGNAL(errorMessage(QString)),this,SIGNAL(errorMessage(QString)));
-    connect(pPDBProcess,SIGNAL(infoMessage(QString)),this,SIGNAL(infoMessage(QString)));
+    connect(pPDBProcess, SIGNAL(errorMessage(QString)), this, SIGNAL(errorMessage(QString)));
+    connect(pPDBProcess, SIGNAL(infoMessage(QString)), this, SIGNAL(infoMessage(QString)));
 
-    bIsRun=true;
+    bIsRun = true;
     connect(pThread, SIGNAL(started()), pPDBProcess, SLOT(process()));
     pThread->start();
 
-    g_pTimer=new QTimer(this);
-    connect(g_pTimer,SIGNAL(timeout()),this,SLOT(timerSlot()));
+    g_pTimer = new QTimer(this);
+    connect(g_pTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     g_pTimer->start(1000);
 
-    nReturnCode=QDialog::Accepted;
+    nReturnCode = QDialog::Accepted;
 
     ui->progressBarTotal->setMaximum(100);
     ui->progressBarTotal->setValue(0);
@@ -64,8 +59,7 @@ DialogProcess::DialogProcess(QWidget *parent, PDBProcess::PDBDATA *pData, PDBPro
 
 DialogProcess::~DialogProcess()
 {
-    if(bIsRun)
-    {
+    if (bIsRun) {
         pPDBProcess->stop();
     }
 
@@ -80,25 +74,22 @@ DialogProcess::~DialogProcess()
 
 void DialogProcess::on_pushButtonCancel_clicked()
 {
-    nReturnCode=QDialog::Rejected;
+    nReturnCode = QDialog::Rejected;
 
-    if(bIsRun)
-    {
+    if (bIsRun) {
         pPDBProcess->stop();
-        bIsRun=false;
+        bIsRun = false;
     }
 }
 
 void DialogProcess::timerSlot()
 {
-    if(g_pData)
-    {
-        if(g_pData->stats.nTotal)
-        {
+    if (g_pData) {
+        if (g_pData->stats.nTotal) {
             ui->progressBarTotal->setMaximum(g_pData->stats.nTotal);
             ui->progressBarTotal->setValue(g_pData->stats.nCurrent);
 
-            QString sStatus=g_pData->stats.sStatus.left(64);
+            QString sStatus = g_pData->stats.sStatus.left(64);
 
             ui->labelStatus->setText(sStatus);
         }

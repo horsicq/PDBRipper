@@ -21,11 +21,11 @@
 #ifndef QWINPDB_H
 #define QWINPDB_H
 
-#pragma comment(lib,"Advapi32.lib")
-#pragma comment(lib,"OleAut32.lib")
+#pragma comment(lib, "Advapi32.lib")
+#pragma comment(lib, "OleAut32.lib")
 
-#define ALIGN_DOWN  (x, align) ((x) & ~((align) - 1))
-#define ALIGN_UP    (x, align) (((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
+#define ALIGN_DOWN (x, align)((x) & ~((align) - 1))
+#define ALIGN_UP (x, align)(((x) & ((align) - 1)) ? ALIGN_DOWN((x), (align)) + (align) : (x))
 
 #include <QCollator>
 #include <QDebug>
@@ -43,25 +43,20 @@
 
 quint32 stringHash(QString sString);
 
-class QWinPDB : public QObject
-{
+class QWinPDB : public QObject {
     Q_OBJECT
 
 public:
-
-    struct VALUE
-    {
+    struct VALUE {
         bool bIsValid;
         QVariant vValue;
     };
 
-    struct SYMTAG
-    {
+    struct SYMTAG {
         QString sName;
     };
 
-    struct RECORD_COMPILAND
-    {
+    struct RECORD_COMPILAND {
         BOOL _editAndContinueEnabled;
         DWORD _lexicalParentId;
         QString _libraryName;
@@ -70,20 +65,18 @@ public:
         DWORD _symIndexId;
     };
 
-    enum RD
-    {
-        RD_UNKNOWN=0,
+    enum RD {
+        RD_UNKNOWN = 0,
         RD_BASETYPE,
         RD_UDT,
         RD_ENUM,
         RD_FUNCTION
     };
 
-    struct RTYPE
-    {
+    struct RTYPE {
         RD type;
         int nBaseType;
-//        QString sType;
+        //        QString sType;
         QString sTypeName;
         QString sUDTName;
         QString sName;
@@ -105,9 +98,8 @@ public:
         QList<QString> listFunctionArgs;
     };
 
-    struct RECORD_DATA
-    {
-        DWORD _access; // TODO enum
+    struct RECORD_DATA {
+        DWORD _access;  // TODO enum
         DWORD _addressOffset;
         DWORD _addressSection;
         BOOL _addressTaken;
@@ -115,7 +107,7 @@ public:
         DWORD _classParentId;
         BOOL _compilerGenerated;
         BOOL _constType;
-        DWORD _dataKind; // enum
+        DWORD _dataKind;  // enum
         BOOL _isAggregated;
         BOOL _isSplitted;
         ULONGLONG _length;
@@ -138,9 +130,8 @@ public:
         RTYPE rtype;
     };
 
-    struct RECORD_FUNCTION
-    {
-        DWORD _access; // TODO enum
+    struct RECORD_FUNCTION {
+        DWORD _access;  // TODO enum
         DWORD _addressOffset;
         DWORD _addressSection;
         DWORD _classParentId;
@@ -175,8 +166,8 @@ public:
         DWORD _token;
         DWORD _typeId;
         BOOL _unalignedType;
-//        QString _undecoratedName;
-//        QString _undecoratedNameEx;
+        //        QString _undecoratedName;
+        //        QString _undecoratedNameEx;
         BOOL _virtual;
         ULONGLONG _virtualAddress;
         DWORD _virtualBaseOffset;
@@ -185,8 +176,7 @@ public:
         RTYPE rtype;
     };
 
-    struct RECORD_UDT
-    {
+    struct RECORD_UDT {
         DWORD _classParentId;
         BOOL _constructor;
         BOOL _constType;
@@ -208,8 +198,7 @@ public:
         QString sType;
     };
 
-    struct RECORD_TYPEDEF
-    {
+    struct RECORD_TYPEDEF {
         DWORD _baseType;
         DWORD _classParentId;
         BOOL _constructor;
@@ -233,8 +222,7 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_PUBLICSYMBOL
-    {
+    struct RECORD_PUBLICSYMBOL {
         DWORD _addressOffset;
         DWORD _addressSection;
         BOOL _code;
@@ -250,8 +238,7 @@ public:
         QString _undecoratedName;
     };
 
-    struct RECORD_ENUM
-    {
+    struct RECORD_ENUM {
         DWORD _baseType;
         DWORD _classParentId;
         BOOL _constructor;
@@ -273,8 +260,7 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_POINTERTYPE
-    {
+    struct RECORD_POINTERTYPE {
         BOOL _constType;
         ULONGLONG _length;
         DWORD _lexicalParentId;
@@ -285,9 +271,8 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_BASECLASS
-    {
-        DWORD _access; // TODO enum
+    struct RECORD_BASECLASS {
+        DWORD _access;  // TODO enum
         DWORD _classParentId;
         BOOL _constructor;
         BOOL _constType;
@@ -314,9 +299,8 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_FUNCTIONTYPE
-    {
-        DWORD _callingConvention; // TODO enum
+    struct RECORD_FUNCTIONTYPE {
+        DWORD _callingConvention;  // TODO enum
         DWORD _classParentId;
         BOOL _constType;
         DWORD _count;
@@ -328,9 +312,8 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_ARRAYTYPE
-    {
-        DWORD _arrayIndexTypeId; // TODO enum
+    struct RECORD_ARRAYTYPE {
+        DWORD _arrayIndexTypeId;  // TODO enum
         BOOL _constType;
         DWORD _count;
         ULONGLONG _length;
@@ -342,8 +325,7 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_VTABLE
-    {
+    struct RECORD_VTABLE {
         DWORD _classParentId;
         BOOL _constType;
         DWORD _lexicalParentId;
@@ -353,16 +335,14 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_FUNCTIONARGTYPE
-    {
+    struct RECORD_FUNCTIONARGTYPE {
         DWORD _classParentId;
         DWORD _lexicalParentId;
         DWORD _symIndexId;
         DWORD _typeId;
     };
 
-    struct RECORD_BASETYPE
-    {
+    struct RECORD_BASETYPE {
         DWORD _baseType;
         BOOL _constType;
         ULONGLONG _length;
@@ -372,8 +352,7 @@ public:
         BOOL _volatileType;
     };
 
-    struct RECORD_FUNCDEBUGSTART
-    {
+    struct RECORD_FUNCDEBUGSTART {
         DWORD _addressOffset;
         DWORD _addressSection;
         BOOL _customCallingConvention;
@@ -393,8 +372,7 @@ public:
         ULONGLONG _virtualAddress;
     };
 
-    struct RECORD_FUNCDEBUGEND
-    {
+    struct RECORD_FUNCDEBUGEND {
         DWORD _addressOffset;
         DWORD _addressSection;
         BOOL _customCallingConvention;
@@ -414,8 +392,7 @@ public:
         ULONGLONG _virtualAddress;
     };
 
-    struct RECORD_CALLSITE
-    {
+    struct RECORD_CALLSITE {
         DWORD _addressOffset;
         DWORD _addressSection;
         DWORD _lexicalParentId;
@@ -426,8 +403,7 @@ public:
         RTYPE rtype;
     };
 
-    struct RECORD_LABEL
-    {
+    struct RECORD_LABEL {
         DWORD _addressOffset;
         DWORD _addressSection;
         BOOL _customCallingConvention;
@@ -447,8 +423,7 @@ public:
         ULONGLONG _virtualAddress;
     };
 
-    struct RECORD_BLOCK
-    {
+    struct RECORD_BLOCK {
         DWORD _addressOffset;
         DWORD _addressSection;
         ULONGLONG _length;
@@ -461,30 +436,28 @@ public:
         ULONGLONG _virtualAddress;
     };
 
-    struct PDB_INFO
-    {
-        QMap<quint32,RECORD_COMPILAND> mapCompiland;
-        QMap<quint32,RECORD_DATA> mapData;
-        QMap<quint32,RECORD_FUNCTION> mapFunction;
-        QMap<quint32,RECORD_UDT> mapUDT_struct;
-        QMap<quint32,RECORD_UDT> mapUDT_class;
-        QMap<quint32,RECORD_UDT> mapUDT_union;
-        QMap<quint32,RECORD_UDT> mapUDT_interface;
-        QMap<quint32,RECORD_TYPEDEF> mapTypeDef;
-        QMap<quint32,RECORD_PUBLICSYMBOL> mapPublicSymbol;
-        QMap<quint32,RECORD_ENUM> mapEnum;
-        QMap<quint32,RECORD_POINTERTYPE> mapPointerType;
-        QMap<quint32,RECORD_BASECLASS> mapBaseClass;
-        QMap<quint32,RECORD_FUNCTIONTYPE> mapFunctionType;
-        QMap<quint32,RECORD_ARRAYTYPE> mapArrayType;
-        QMap<quint32,RECORD_VTABLE> mapVTable;
-        QMap<quint32,RECORD_FUNCTIONARGTYPE> mapFunctionArgType;
-        QMap<quint32,RECORD_BASETYPE> mapBaseType;
+    struct PDB_INFO {
+        QMap<quint32, RECORD_COMPILAND> mapCompiland;
+        QMap<quint32, RECORD_DATA> mapData;
+        QMap<quint32, RECORD_FUNCTION> mapFunction;
+        QMap<quint32, RECORD_UDT> mapUDT_struct;
+        QMap<quint32, RECORD_UDT> mapUDT_class;
+        QMap<quint32, RECORD_UDT> mapUDT_union;
+        QMap<quint32, RECORD_UDT> mapUDT_interface;
+        QMap<quint32, RECORD_TYPEDEF> mapTypeDef;
+        QMap<quint32, RECORD_PUBLICSYMBOL> mapPublicSymbol;
+        QMap<quint32, RECORD_ENUM> mapEnum;
+        QMap<quint32, RECORD_POINTERTYPE> mapPointerType;
+        QMap<quint32, RECORD_BASECLASS> mapBaseClass;
+        QMap<quint32, RECORD_FUNCTIONTYPE> mapFunctionType;
+        QMap<quint32, RECORD_ARRAYTYPE> mapArrayType;
+        QMap<quint32, RECORD_VTABLE> mapVTable;
+        QMap<quint32, RECORD_FUNCTIONARGTYPE> mapFunctionArgType;
+        QMap<quint32, RECORD_BASETYPE> mapBaseType;
     };
 
-    enum SYMBOL_TYPE
-    {
-        SYMBOL_TYPE_UNKNOWN=0,
+    enum SYMBOL_TYPE {
+        SYMBOL_TYPE_UNKNOWN = 0,
         SYMBOL_TYPE_STRUCT,
         SYMBOL_TYPE_CLASS,
         SYMBOL_TYPE_INTERFACE,
@@ -492,8 +465,7 @@ public:
         SYMBOL_TYPE_ENUM
     };
 
-    struct SYMBOL_RECORD
-    {
+    struct SYMBOL_RECORD {
         DWORD dwID;
         QString sName;
         SYMBOL_TYPE type;
@@ -502,37 +474,32 @@ public:
         QSet<quint32> stTypeHashes;
     };
 
-    struct STATS
-    {
+    struct STATS {
         QList<SYMBOL_RECORD> listSymbols;
         qint32 nTotal;
         qint32 nCurrent;
         QString sStatus;
     };
 
-    enum FO
-    {
-        FO_NO=0,
+    enum FO {
+        FO_NO = 0,
         FO_STRUCTSANDUNIONS,
         FO_ALL
     };
 
-    enum ST
-    {
-        ST_NO=0,
+    enum ST {
+        ST_NO = 0,
         ST_ID,
         ST_NAME,
         ST_DEP
     };
 
-    enum ET
-    {
-        ET_CPLUSPLUS=0,
+    enum ET {
+        ET_CPLUSPLUS = 0,
         ET_XNTSV
     };
 
-    struct HANDLE_OPTIONS
-    {
+    struct HANDLE_OPTIONS {
         bool bShowComments;
         bool bFixTypes;
         bool bAddAlignment;
@@ -542,7 +509,7 @@ public:
         QString sResultFileName;
     };
 
-    explicit QWinPDB(QObject *parent=nullptr);
+    explicit QWinPDB(QObject *parent = nullptr);
     virtual ~QWinPDB();
     static HANDLE_OPTIONS getDefaultHandleOptions();
     // The data producing methods are virtual: QStaticPDB overrides them and reads
@@ -555,9 +522,8 @@ public:
     void stop();
     void setProcessEnable(bool bState);
 
-    enum ELEM_TYPE
-    {
-        ELEM_TYPE_UNKNOWN=0,
+    enum ELEM_TYPE {
+        ELEM_TYPE_UNKNOWN = 0,
         ELEM_TYPE_UDT,
         ELEM_TYPE_FUNCTION,
         ELEM_TYPE_TYPEDEF,
@@ -575,16 +541,14 @@ public:
         ELEM_TYPE_FAKEDATA
     };
 
-    struct ELEM_BASEINFO
-    {
+    struct ELEM_BASEINFO {
         DWORD nID;
         DWORD nTypeID;
         QString sName;
         QString sTypeName;
     };
 
-    struct ELEM
-    {
+    struct ELEM {
         ELEM_BASEINFO baseInfo;
 
         DWORD dwOffset;
@@ -609,8 +573,7 @@ public:
         bool bInvalid;
     };
 
-    struct ELEM_INFO
-    {
+    struct ELEM_INFO {
         bool bIsValid;
         ELEM_BASEINFO baseInfo;
         QString sText;
@@ -620,21 +583,21 @@ public:
         QList<ELEM_BASEINFO> listChildrenBaseInfos;
     };
 
-    virtual ELEM getElem(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
+    virtual ELEM getElem(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
     // Used by the dependency sort: the same element, plus the hashes of the types it refers to
-    virtual ELEM getElemWithHashes(quint32 nID,HANDLE_OPTIONS *pHandleOptions,QSet<quint32> *pStTypeHashes);
-    ELEM _getElem(IDiaSymbol *pParent,QWinPDB::HANDLE_OPTIONS *pHandleOptions,int nLevel,QSet<quint32> *pStUniq,QSet<quint32> *pStTypeHashes);
+    virtual ELEM getElemWithHashes(quint32 nID, HANDLE_OPTIONS *pHandleOptions, QSet<quint32> *pStTypeHashes);
+    ELEM _getElem(IDiaSymbol *pParent, QWinPDB::HANDLE_OPTIONS *pHandleOptions, int nLevel, QSet<quint32> *pStUniq, QSet<quint32> *pStTypeHashes);
     void fixOffsets(QWinPDB::ELEM *pElem);
-    void _appendElem(QWinPDB::ELEM *pElem,QList<ELEM> *pListChildren,int nStartPosition,int nEndPosition);
+    void _appendElem(QWinPDB::ELEM *pElem, QList<ELEM> *pListChildren, int nStartPosition, int nEndPosition);
     QList<ELEM> _fixBitFields(QList<ELEM> *pListChildren);
-    ELEM_INFO getElemInfo(const ELEM *pElem,HANDLE_OPTIONS *pHandleOptions,int nLevel,bool bIsClass);
-    ELEM_INFO handleElement(quint32 nID,HANDLE_OPTIONS *pHandleOptions);
-    bool handleExport(QWinPDB::STATS *pStats,HANDLE_OPTIONS *pHandleOptions);
+    ELEM_INFO getElemInfo(const ELEM *pElem, HANDLE_OPTIONS *pHandleOptions, int nLevel, bool bIsClass);
+    ELEM_INFO handleElement(quint32 nID, HANDLE_OPTIONS *pHandleOptions);
+    bool handleExport(QWinPDB::STATS *pStats, HANDLE_OPTIONS *pHandleOptions);
     ELEM_BASEINFO getBaseInfo(IDiaSymbol *pParent);
 
     // Name of a base type as MSDIA reports it. Shared with QStaticPDB so both
     // backends spell the built-in types the same way.
-    static QString baseTypeToString(int nBaseType,int nSize,bool bFixTypes);
+    static QString baseTypeToString(int nBaseType, int nSize, bool bFixTypes);
 
 protected:
     void cleanup();
@@ -643,8 +606,8 @@ protected:
     qint64 variantToQint64(VARIANT value);
     QString indent(int nLevel);
     RECORD_UDT _getRecordUDT(IDiaSymbol *pSymbol);
-    RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
-    RECORD_DATA _getRecordData(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_FUNCTION _getRecordFunction(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
+    RECORD_DATA _getRecordData(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_BASETYPE _getRecordBaseType(IDiaSymbol *pSymbol);
     RECORD_FUNCTIONARGTYPE _getRecordFunctionArgType(IDiaSymbol *pSymbol);
     RECORD_VTABLE _getRecordVTable(IDiaSymbol *pSymbol);
@@ -658,30 +621,29 @@ protected:
     RECORD_ARRAYTYPE _getRecordArrayType(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGSTART _getRecordFuncDebugStart(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGEND _getRecordFuncDebugEnd(IDiaSymbol *pSymbol);
-    RECORD_CALLSITE _getRecordCallSite(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_CALLSITE _getRecordCallSite(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_LABEL _getRecordLabel(IDiaSymbol *pSymbol);
     RECORD_BLOCK _getRecordBlock(IDiaSymbol *pSymbol);
     void _checkSymbol(IDiaSymbol *pSymbol);
-    RTYPE getSymbolType(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
-    RTYPE _getType(IDiaSymbol *pType,HANDLE_OPTIONS *pHandleOptions);
+    RTYPE getSymbolType(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
+    RTYPE _getType(IDiaSymbol *pType, HANDLE_OPTIONS *pHandleOptions);
     QString getSymbolTypeString(IDiaSymbol *pSymbol);
     QString _getTypeString(IDiaSymbol *pType);
     DWORD _getSymTag(IDiaSymbol *pSymbol);
-    bool getSymbolByID(DWORD dwID,IDiaSymbol **ppSymbol);
+    bool getSymbolByID(DWORD dwID, IDiaSymbol **ppSymbol);
 
-    struct RTYPESTRUCT
-    {
+    struct RTYPESTRUCT {
         QString sType;
         QString sName;
     };
 
-    static RTYPESTRUCT rtypeToStruct(RTYPE rtype,bool bIsClass);
+    static RTYPESTRUCT rtypeToStruct(RTYPE rtype, bool bIsClass);
 
-    static QString rtypeToString(RTYPE rtype,bool bIsClass);
+    static QString rtypeToString(RTYPE rtype, bool bIsClass);
     static QString getAccessString(int nAccess);
     static QString _getTab(int nLevel);
 
-    static QString _fixName(QString sName,quint32 nID);
+    static QString _fixName(QString sName, quint32 nID);
     static QString getName(IDiaSymbol *pSymbol);
 
     RECORD_BASETYPE _getRecordBaseType_fast(IDiaSymbol *pSymbol);
@@ -690,14 +652,14 @@ protected:
     RECORD_ARRAYTYPE _getRecordArrayType_fast(IDiaSymbol *pSymbol);
     RECORD_ENUM _getRecordEnum_fast(IDiaSymbol *pSymbol);
     RECORD_FUNCTIONTYPE _getRecordFunctionType_fast(IDiaSymbol *pSymbol);
-    RECORD_FUNCTION _getRecordFunction_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_FUNCTION _getRecordFunction_fast(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_TYPEDEF _getRecordTypeDef_fast(IDiaSymbol *pSymbol);
-    RECORD_DATA _getRecordData_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_DATA _getRecordData_fast(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_BASECLASS _getRecordBaseClass_fast(IDiaSymbol *pSymbol);
     RECORD_VTABLE _getRecordVTable_fast(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGSTART _getRecordFuncDebugStart_fast(IDiaSymbol *pSymbol);
     RECORD_FUNCDEBUGEND _getRecordFuncDebugEnd_fast(IDiaSymbol *pSymbol);
-    RECORD_CALLSITE _getRecordCallSite_fast(IDiaSymbol *pSymbol,HANDLE_OPTIONS *pHandleOptions);
+    RECORD_CALLSITE _getRecordCallSite_fast(IDiaSymbol *pSymbol, HANDLE_OPTIONS *pHandleOptions);
     RECORD_LABEL _getRecordLabel_fast(IDiaSymbol *pSymbol);
     RECORD_BLOCK _getRecordBlock_fast(IDiaSymbol *pSymbol);
 
@@ -714,4 +676,4 @@ protected:
     bool __bIsProcessStop;
 };
 
-#endif // QWINPDB_H
+#endif  // QWINPDB_H

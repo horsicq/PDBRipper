@@ -23,17 +23,16 @@
 
 ConsoleOutput::ConsoleOutput(QObject *parent) : QObject(parent)
 {
-
 }
 
 void ConsoleOutput::infoMessage(QString sText)
 {
-    QString _sText=sText;
-    printf("%s\n",_sText.toUtf8().data());
+    QString _sText = sText;
+    printf("%s\n", _sText.toUtf8().data());
 }
 
 void ConsoleOutput::errorMessage(QString sText)
 {
-    QString _sText=sText;
-    printf("Error: %s\n",_sText.toUtf8().data());
+    QString _sText = sText;
+    printf("Error: %s\n", _sText.toUtf8().data());
 }

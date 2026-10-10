@@ -25,27 +25,24 @@
 #include <QObject>
 #include "qwinpdb.h"
 
-class PDBProcess : public QObject
-{
+class PDBProcess : public QObject {
     Q_OBJECT
 
 public:
-    enum TYPE
-    {
-        TYPE_IMPORT=0,
+    enum TYPE {
+        TYPE_IMPORT = 0,
         TYPE_EXPORT
     };
 
-    struct PDBDATA
-    {
+    struct PDBDATA {
         QWinPDB *pWinPDB;
         QWinPDB::STATS stats;
         QWinPDB::HANDLE_OPTIONS handleOptions;
         QString sPDBFileName;
-        bool bStaticParsing; // Use QStaticPDB(XPDB) instead of the MSDIA based QWinPDB
+        bool bStaticParsing;  // Use QStaticPDB(XPDB) instead of the MSDIA based QWinPDB
     };
 
-    explicit PDBProcess(QObject *parent,PDBDATA *pData,TYPE type);
+    explicit PDBProcess(QObject *parent, PDBDATA *pData, TYPE type);
 
     void stop();
 
@@ -62,4 +59,4 @@ private:
     TYPE g_type;
 };
 
-#endif // PDBPROCESS_H
+#endif  // PDBPROCESS_H
